@@ -1,0 +1,30 @@
+# ============================================================
+# Materiales crudos — nunca al repo.
+# Los masters (video, fotos HD, fuentes sin subsetear) viven acá
+# mientras se procesan. Solo el resultado final optimizado entra
+# a src/assets/. Ver HERO_SPEC.md: "hero-master.mp4 ... dejarlo
+# fuera del repo, Git no es para binarios de 15 MB".
+# ============================================================
+/assets/
+/fonts/
+
+# ============================================================
+# Node / Vite
+# ============================================================
+node_modules/
+dist/
+.vite/
+*.local
+
+# ============================================================
+# Secretos
+# ============================================================
+.env
+.env.*
+!.env.example
+
+# ============================================================
+# Sistema / editor
+# ============================================================
+.DS_Store
+*.log
