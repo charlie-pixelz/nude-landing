@@ -1,0 +1,39 @@
+/* Tokens de marca — fuente única: Brand-Guidelines-NUDE.pdf, en la raíz del repo.
+   No se inventan valores fuera de esta lista. */
+:root {
+  /* color de marca */
+  --negro: #141110;
+  --rosa: #F3C9D3;
+  --peri: #8FA2E3;
+  --crema: #F6F1EA;
+  --linea: #2E2926;
+
+  /* texto sobre negro */
+  --texto-cuerpo: #DDD6CE;
+  --texto-bajada: #B8B0A8;
+  --texto-metadato: #7A736C;
+  --texto-marca-agua: #5C554F;
+
+  /* texto sobre rosa */
+  --rosa-titular: var(--negro);
+  --rosa-bajada: #4A3A3E;
+
+  /* texto sobre periwinkle */
+  --peri-titular: var(--negro);
+  --peri-bajada: #2A3763;
+
+  /* tipografía */
+  --f-display: 'Halloween Days', 'Archivo Black', sans-serif;
+  --f-heading: 'Archivo Black', sans-serif;
+  --f-body: 'Archivo', sans-serif;
+  --f-mono: 'Space Mono', monospace;
+
+  /* escala — nunca bajo 16px */
+  --fs-h1: clamp(64px, 9vw, 76px);
+  --fs-h2: clamp(40px, 5.5vw, 48px);
+  --fs-bajada: clamp(20px, 2.2vw, 24px);
+  --fs-cuerpo: clamp(17px, 1vw, 18px);
+  --fs-etiqueta: clamp(13px, 1vw, 15px);
+
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
