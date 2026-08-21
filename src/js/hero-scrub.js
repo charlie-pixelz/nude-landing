@@ -66,11 +66,22 @@ export function initHeroScrub() {
     if (!bitmap) return;
     const cw = canvas.width;
     const ch = canvas.height;
-    const scale = Math.max(cw / bitmap.width, ch / bitmap.height);
+    // el pack ocupa ~55% del alto del sticky, centrado, anclado abajo
+    // (HERO_SPEC.md: "el tercio superior despejado de detalle, ahí
+    // vive el H1"). No es "cover" ni "fit por ancho": el video es
+    // casi tan alto como la pantalla, así que llenar el ancho
+    // completo infla el alto mucho más allá de esa proporción.
+    // El fondo del canvas es --rosa, igual que el video, así que el
+    // espacio libre alrededor no se nota.
+    const targetH = ch * 0.55;
+    const scale = targetH / bitmap.height;
     const w = bitmap.width * scale;
-    const h = bitmap.height * scale;
+    const h = targetH;
+    const bottomMargin = ch * 0.04;
+    const x = (cw - w) / 2;
+    const y = ch - h - bottomMargin;
     ctx.clearRect(0, 0, cw, ch);
-    ctx.drawImage(bitmap, (cw - w) / 2, (ch - h) / 2, w, h);
+    ctx.drawImage(bitmap, x, y, w, h);
   }
 
   function frameForProgress(progress) {

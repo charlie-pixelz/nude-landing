@@ -6,32 +6,41 @@
   <title>NUDE · Papel higiénico húmedo · Chile</title>
   <meta name="description" content="Papel higiénico húmedo, se degrada en el agua. Ya está en Jumbo.">
   <meta name="robots" content="noindex">
+  <link rel="preload" as="image" href="/hero-poster.webp" fetchpriority="high">
 </head>
 <body>
 
 <header class="nav" id="nav">
-  <div class="wrap" style="display:flex;align-items:center;gap:24px;height:72px">
-    <a href="#" aria-label="NUDE, inicio" style="display:flex">
-      <img src="/src/assets/img/logo-negro.png" alt="NUDE" style="height:36px;width:auto;filter:invert(1)">
+  <div class="wrap nav-inner">
+    <a class="nav-logo" href="#hero" aria-label="NUDE, inicio">
+      <img src="/src/assets/img/logo-negro.png" alt="NUDE">
     </a>
-    <span class="etiqueta" style="margin-left:auto">Fase 1 · esqueleto</span>
+    <nav class="nav-links" aria-label="Navegación principal">
+      <a href="#como">Cómo se hace</a>
+      <a href="#formatos">Formatos</a>
+    </nav>
+    <a class="btn btn-primario nav-cta" href="#donde">Dónde encontrarlo</a>
   </div>
 </header>
 
 <main>
-  <section class="pad" data-nav="pink" style="background:var(--rosa);min-height:100svh;display:flex;align-items:center;padding-block:120px">
-    <div class="wrap">
-      <span class="etiqueta rv" style="color:var(--rosa-bajada)">Desde 1.800</span>
-      <h1 class="h1 rv-split" data-split style="color:var(--negro);margin-top:24px">¿Todavía te limpias en seco?</h1>
-      <p class="bajada rv" style="color:var(--rosa-bajada);margin-top:24px">Repo con Vite, tokens de marca y fuentes autoalojadas ya desplegado. El hero real es la Fase 2.</p>
-    </div>
-  </section>
-
-  <section class="pad">
-    <div class="wrap">
-      <span class="etiqueta rv">Estado</span>
-      <h2 class="h2 rv" style="margin-top:20px">Esqueleto desplegado.</h2>
-      <p class="bajada rv" style="margin-top:20px">dataLayer activo, banner de consentimiento instalado, tres píxeles listos para enchufar sus IDs en <code>.env</code>.</p>
+  <section class="hero" id="hero" data-nav="pink">
+    <div class="hero-track">
+      <div class="hero-sticky">
+        <canvas class="hero-canvas" aria-hidden="true"></canvas>
+        <img class="hero-poster" src="/hero-poster.webp" alt="Pack de NUDE papel higiénico húmedo sobre fondo rosa">
+        <div class="wrap">
+          <div class="hero-content">
+            <span class="etiqueta rv">1800 · 2026</span>
+            <!-- el asterisco después de "abajo" queda sin nota al pie por ahora:
+                 pendiente de conversar con Javier en la Fase 3 (ver historial). -->
+            <h1 class="h1 rv-split" data-split>Esto (limpiarse ahí abajo *) quedó igual desde 1800.</h1>
+            <p class="bajada rv" style="--d:200ms">Papel higiénico húmedo, llegó a Jumbo.</p>
+            <p class="firma rv" style="--d:280ms">NUDE. Así se hace.</p>
+            <a class="btn btn-primario rv" href="#como" style="--d:360ms">Cómo se hace</a>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 </main>

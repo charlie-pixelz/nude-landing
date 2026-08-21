@@ -1,0 +1,131 @@
+/* Hero — video-scroll sobre rosa. Ver HERO_SPEC.md Parte 3.
+   El hero NO usa <video>: canvas + secuencia de imágenes, porque
+   iOS Safari hace seek lento sobre MP4 con GOP largo. */
+
+.hero {
+  background: var(--rosa);
+}
+
+.hero-track {
+  height: 250vh;
+  position: relative;
+}
+@media (min-width: 760px) {
+  .hero-track {
+    height: 300vh;
+  }
+}
+
+.hero-sticky {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+  background: var(--rosa);
+  display: flex;
+  align-items: flex-start;
+}
+/* el padding va en hero-content, no acá: hero-canvas es hermano con
+   position:absolute + inset:0, y hereda el padding del contenedor si
+   se lo ponemos a .hero-sticky (se posiciona relativo al padding-box).
+   Así el canvas mide el 100svh completo, sin depender de dónde
+   empieza el texto. */
+.hero-content {
+  padding-top: calc(72px + clamp(24px, 5vh, 56px));
+}
+
+.hero-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.hero-poster {
+  /* el pack ocupa ~55% del alto (HERO_SPEC.md), centrado, anclado
+     abajo — mismo encuadre que dibuja el canvas en hero-scrub.js.
+     No es inset:0 + object-fit: eso da "cover"/"contain" sobre el
+     100% del alto, que para este video (9:16, casi tan alto como
+     la pantalla) deja el pack ocupando ~80% del alto. */
+  position: absolute;
+  left: 50%;
+  bottom: 4%;
+  height: 55%;
+  width: auto;
+  transform: translateX(-50%);
+  transition: opacity 0.2s;
+}
+.hero-poster.hide {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 760px;
+  color: var(--negro);
+}
+.hero-content .etiqueta {
+  color: var(--rosa-bajada);
+}
+.hero-content .h1 {
+  /* copy larga (frase, no pregunta corta): misma proporción que
+     .cut-line del prototipo para titulares-oración, no la escala
+     H1 de portada de una sola palabra/pregunta corta. */
+  font-family: 'Archivo Black', sans-serif;
+  font-size: clamp(30px, 6.6vw, 58px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--negro);
+  max-width: 15ch;
+  margin-top: 18px;
+}
+.hero-content .bajada {
+  margin-top: 18px;
+  max-width: 420px;
+  font-size: 18px;
+  color: var(--rosa-bajada);
+}
+.hero-content .firma {
+  margin-top: 10px;
+  font-size: 16px;
+  letter-spacing: -0.01em;
+  color: var(--negro);
+}
+.hero-content .btn {
+  margin-top: 24px;
+}
+.hero .btn-primario {
+  background: var(--negro);
+  color: var(--crema);
+  border-color: var(--negro);
+}
+.hero .btn-primario:hover {
+  background: #2e2926;
+  border-color: #2e2926;
+}
+
+/* prefers-reduced-motion / saveData: hero-scrub.js marca .hero-static.
+   Cero scrub, el poster se queda fijo, el track colapsa a 100svh. */
+.hero-static .hero-track {
+  height: 100svh;
+}
+.hero-static .hero-sticky {
+  position: static;
+}
+.hero-static .hero-canvas {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-track {
+    height: 100svh;
+  }
+  .hero-sticky {
+    position: static;
+  }
+  .hero-canvas {
+    display: none;
+  }
+}
