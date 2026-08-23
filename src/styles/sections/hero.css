@@ -88,12 +88,14 @@
      composición en dos columnas el bloque bajó de 155px a ~116px de alto,
      así que sobra banda limpia para darle respiro arriba y abajo. */
   padding-top: calc(72px + clamp(16px, 3.5vh, 40px));
-  /* Sube la bajada y el CTA sobre el aire base. Tope medido: con 20px
-     la bajada entra en la sombra dura del pack y su contraste cae a 3.26,
-     bajo el mínimo AA de 4.5 (medido sobre los 96 frames, peor caso f_065).
-     8px es lo máximo que mantiene AA con el --rosa-bajada del brandbook.
-     Los 20px completos solo pasan si la bajada va en #141110. */
-  padding-bottom: calc(clamp(20px, 3.5vh, 40px) + 8px);
+  /* La sombra del pack llega hasta el 82,6% del alto de la pantalla, y esa
+     proporción se mantiene en cualquier viewport porque el frame llena el
+     alto. Bajo esa línea el fondo es rosa limpio; encima, la bajada pierde
+     contraste (medido: a 440x956 pasa AA desde y=790 y falla desde y=783).
+     El bloque B mide ~146px, así que el aire que queda abajo es lo que
+     sobra de ese 17,4%: de ahí sale la fórmula. En pantallas cortas el
+     bloque se comprime solo con los clamp de más abajo. */
+  padding-bottom: clamp(6px, calc(9vh - 73px), 24px);
   pointer-events: none;
 }
 /* solo lo accionable recibe el puntero: el resto deja pasar el scroll */
@@ -149,10 +151,19 @@
    y ahí el paréntesis queda un pelo más ancho que "Esto". */
 .t-par  { font-size: max(16px, calc(96cqw / 8.1968)); }
 .t-fin  { font-size: calc(96cqw / 4.3389); }
-/* La caja de la display es ~1,17x el tamaño de fuente, así que entre
-   "Esto" y el paréntesis queda un aire óptico que no puso nadie. El margen
-   negativo lo recorta; el valor está en em para que escale con el titular. */
-.t-esto { margin-bottom: -0.29em; }
+/* Alineación ÓPTICA, no de cajas. A distinto tamaño la letra cae en
+   distinto lugar dentro de su caja, así que igualar las cajas dejaba "Esto"
+   17,5px más abajo que "quedó igual" y encima solapado con el paréntesis.
+   Medido con las métricas reales de la fuente (actualBoundingBox):
+     margin-top    sube "Esto" hasta que el borde de la "o" coincide con el
+                   borde superior de la tinta de "quedó igual"
+     margin-bottom deja el paréntesis con su base alineada a "desde 1800.",
+                   conservando ~6px de aire respecto de "Esto"
+   Van en em para que la relación se mantenga en cualquier ancho. */
+.t-esto {
+  margin-top: -0.245em;
+  margin-bottom: -0.173em;
+}
 .t-par  { margin-top: 0; }
 .t-fin + .t-fin { margin-top: 0.06em; }
 
@@ -179,7 +190,12 @@
   .t-regla { display: none; }
   /* Sube el bloque de tres líneas: estaba muy separado de "Esto" y muy
      pegado al bloque B. Lo que sobra arriba se transforma en aire abajo. */
-  .t-esto { margin-bottom: -0.15em; }
+  /* En escritorio las columnas van apiladas: no hay nada a la derecha
+     con qué alinear, así que el desplazamiento óptico se anula. */
+  .t-esto {
+    margin-top: 0;
+    margin-bottom: -0.15em;
+  }
   .t-par { margin-top: 0; }
 }
 @media (min-width: 760px) {
@@ -202,18 +218,24 @@
 .hero-abajo .bajada {
   max-width: 420px;
   margin-inline: auto;
-  font-size: 20px;
+  /* Escala con el ancho para no partirse en dos líneas: a 375px, 20px la
+     parte, el bloque B crece 30px y sube lo suficiente para meterse en la
+     sombra del pack. Con una sola línea el bloque cabe bajo la sombra en
+     todos los anchos. */
+  font-size: clamp(17px, 4.6vw, 22px);
   color: var(--rosa-bajada);
 }
 .hero-abajo .firma {
-  margin-top: 8px;
+  margin-top: clamp(4px, 0.85vh, 8px);
   font-size: 20px;
   letter-spacing: -0.01em;
   color: var(--negro);
 }
 .hero-abajo .btn {
-  margin-top: 20px;
-  height: 56px;
+  /* Se comprime en pantallas cortas para que el bloque entero siga
+     cabiendo bajo la sombra. 48px sigue sobre el mínimo táctil de 44. */
+  margin-top: clamp(10px, 2.1vh, 20px);
+  height: clamp(48px, 5.9vh, 56px);
   padding-inline: 30px;
 }
 @media (min-width: 760px) {
