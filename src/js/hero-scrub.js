@@ -6,6 +6,16 @@
 // import.meta.glob resuelve las URLs finales (hasheadas, con el base
 // correcto para GitHub Pages) en build time — evita el problema de
 // rutas absolutas que rompe en un project page.
+// Dos sets, uno por caso de uso, porque la geometría es distinta:
+//   sm 810x1440  -> móvil, el frame llena el alto. Ampliación 1,13x.
+//                   2,4 MB, dentro del presupuesto de 2,5 MB del hero.
+//   lg 1080x1920 -> escritorio, el frame llena el 46% del ancho pegado a
+//                   la derecha, o sea ~1324px reales en una pantalla
+//                   retina de 1440. Con el set chico eso era 1,63x de
+//                   ampliación; con éste baja a 1,23x. 3,4 MB, que sólo
+//                   descarga escritorio: el presupuesto duro es el móvil.
+// 1080x1920 es la resolución nativa del máster; más grande sería inventar
+// pixeles que la fuente no tiene.
 const SM_FRAMES = import.meta.glob('../assets/hero-frames/sm/*.webp', {
   eager: true,
   query: '?url',
@@ -42,7 +52,7 @@ export function initHeroScrub() {
     return;
   }
 
-  const urls = window.innerWidth <= 760 ? orderedUrls(SM_FRAMES) : orderedUrls(LG_FRAMES);
+  const urls = orderedUrls(window.matchMedia('(min-width: 760px)').matches ? LG_FRAMES : SM_FRAMES);
   const N = urls.length;
   if (!N) return;
 
@@ -62,26 +72,52 @@ export function initHeroScrub() {
     canvas.height = Math.round(rect.height * dpr);
   }
 
+  // Proporción del ancho que ocupa el frame en escritorio, pegado a la
+  // derecha. Tiene que coincidir con el width del .hero-poster en hero.css:
+  // si no coinciden, se ve un salto al activarse el scrub.
+  const COL_ESCRITORIO = 0.46;
+  const mqEscritorio = window.matchMedia('(min-width: 760px)');
+
   function draw(bitmap) {
     if (!bitmap) return;
     const cw = canvas.width;
     const ch = canvas.height;
-    // el pack ocupa ~55% del alto del sticky, centrado, anclado abajo
-    // (HERO_SPEC.md: "el tercio superior despejado de detalle, ahí
-    // vive el H1"). No es "cover" ni "fit por ancho": el video es
-    // casi tan alto como la pantalla, así que llenar el ancho
-    // completo infla el alto mucho más allá de esa proporción.
-    // El fondo del canvas es --rosa, igual que el video, así que el
-    // espacio libre alrededor no se nota.
-    const targetH = ch * 0.55;
-    const scale = targetH / bitmap.height;
-    const w = bitmap.width * scale;
-    const h = targetH;
-    const bottomMargin = ch * 0.04;
-    const x = (cw - w) / 2;
-    const y = ch - h - bottomMargin;
     ctx.clearRect(0, 0, cw, ch);
+
+    let x, y, w, h;
+    if (mqEscritorio.matches) {
+      // Escritorio: el pack manda a la derecha y el texto vive a la
+      // izquierda. Llena el ancho de su columna y recorta arriba/abajo,
+      // que es donde el frame sólo tiene fondo.
+      w = cw * COL_ESCRITORIO;
+      h = bitmap.height * (w / bitmap.width);
+      x = cw - w;
+      y = (ch - h) / 2;
+    } else {
+      // Móvil: llena el alto y desborda a lo ancho; los bordes laterales
+      // del frame quedan fuera de pantalla, así que no hay costura.
+      h = ch;
+      w = bitmap.width * (ch / bitmap.height);
+      x = (cw - w) / 2;
+      y = 0;
+    }
     ctx.drawImage(bitmap, x, y, w, h);
+
+    if (mqEscritorio.matches) {
+      // Difuminado del borde izquierdo. El fondo del video trae un gradiente
+      // de luz de ~13 unidades RGB a lo ancho, así que su borde nunca calza
+      // exacto con el --rosa del CSS: sin esto se ve una línea vertical.
+      // destination-out borra con un degradado en vez de pintar encima, así
+      // el rosa que queda detrás es el del CSS, no una aproximación.
+      const f = w * 0.1;
+      const g = ctx.createLinearGradient(x, 0, x + f, 0);
+      g.addColorStop(0, 'rgba(0,0,0,1)');
+      g.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.globalCompositeOperation = 'destination-out';
+      ctx.fillStyle = g;
+      ctx.fillRect(x, 0, f, ch);
+      ctx.globalCompositeOperation = 'source-over';
+    }
   }
 
   function frameForProgress(progress) {

@@ -29,12 +29,45 @@
       <div class="hero-sticky">
         <canvas class="hero-canvas" aria-hidden="true"></canvas>
         <img class="hero-poster" src="/hero-poster.webp" alt="Pack de NUDE papel higiénico húmedo sobre fondo rosa">
-        <div class="wrap">
-          <div class="hero-content">
-            <span class="etiqueta rv">1800 · 2026</span>
+        <!-- Dos zonas, no un bloque corrido. Medí la ocupación del producto
+             cuadro a cuadro sobre el encuadre visible: las bandas superior
+             (~33% del alto) e inferior (~17%) quedan libres de producto en
+             TODO el recorrido del scrub, y el pack ocupa la franja central
+             de borde a borde. El texto vive en esas dos zonas limpias; el
+             producto se queda solo en el medio, a sangre. Por eso no hace
+             falta halo ni caja: no hay cruce que compensar. -->
+        <div class="hero-zonas">
+          <div class="wrap hero-arriba">
             <!-- el asterisco después de "abajo" queda sin nota al pie por ahora:
                  pendiente de conversar con Javier en la Fase 3 (ver historial). -->
-            <h1 class="h1 rv-split" data-split>Esto (limpiarse ahí abajo *) quedó igual desde 1800.</h1>
+            <!-- Quiebre de línea fijo, no el wrap natural: el wrap partía el
+                 paréntesis ("...ahí / abajo *)"). Va escrito con la misma
+                 estructura .mask > .ln que produce splitLines, y SIN data-split
+                 para que reveal.js no lo vuelva a partir por ancho. El texto
+                 es el mismo del brief; los saltos solo cambian dónde corta.
+                 Los espacios entre líneas quedan en el HTML, así el texto
+                 accesible sigue leyéndose como una sola frase. -->
+            <!-- El tamaño de cada línea sale del ancho de SU columna, no de un
+                 número fijo: cada .mask lleva font-size: calc(<n>cqw / factor),
+                 donde el factor es el ancho medido de esa línea en Halloween
+                 Days por unidad de tamaño. Así "Esto" y el paréntesis quedan
+                 exactamente del mismo ancho, y en escritorio —donde las dos
+                 columnas se apilan a ancho completo— las cuatro líneas quedan
+                 alineadas a ambos márgenes sin tocar un solo valor.
+                 Sin data-split: los quiebres son fijos, no del wrap. -->
+            <h1 class="h1 rv-split">
+              <span class="t-col t-a">
+                <span class="mask t-esto"><span class="ln">Esto</span></span>
+                <span class="mask t-par"><span class="ln" style="transition-delay:100ms">(limpiarse ahí abajo *)</span></span>
+              </span>
+              <span class="t-regla" aria-hidden="true"></span>
+              <span class="t-col t-b">
+                <span class="mask t-fin"><span class="ln" style="transition-delay:200ms">quedó igual</span></span>
+                <span class="mask t-fin"><span class="ln" style="transition-delay:300ms">desde 1800.</span></span>
+              </span>
+            </h1>
+          </div>
+          <div class="wrap hero-abajo">
             <p class="bajada rv" style="--d:200ms">Papel higiénico húmedo, llegó a Jumbo.</p>
             <p class="firma rv" style="--d:280ms">NUDE. Así se hace.</p>
             <a class="btn btn-primario rv" href="#como" style="--d:360ms">Cómo se hace</a>

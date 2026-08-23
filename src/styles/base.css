@@ -230,8 +230,17 @@ a:hover {
     letter-spacing: 0.1em;
   }
 }
+/* La nav es fixed y se superpone al contenido. El hero es a sangre y
+   arranca debajo de ella a propósito: reserva sus propios 72px dentro
+   de .hero-zonas. Con padding-top en <main>, el hero (100svh) quedaba
+   empujado 72px y el CTA caía bajo el pliegue al cargar. Las secciones
+   que vienen después llevan su propio espaciado; lo único que necesitan
+   a nivel global es que los anclajes no queden tapados por la barra. */
 main {
-  padding-top: 72px;
+  padding-top: 0;
+}
+main > section {
+  scroll-margin-top: 72px;
 }
 
 .consent-banner {
