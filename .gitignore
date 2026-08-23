@@ -28,3 +28,10 @@ dist/
 # ============================================================
 .DS_Store
 *.log
+
+# ============================================================
+# Transcripciones de sesión — contexto de trabajo, no código.
+# Se conservan localmente pero no entran al repo: el historial de
+# lo decidido vive en los mensajes de commit y en los MD de la raíz.
+# ============================================================
+session-*.txt
