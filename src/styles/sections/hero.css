@@ -87,7 +87,7 @@
   /* 72px = nav fija. El resto es el aire sobre el título: con la
      composición en dos columnas el bloque bajó de 155px a ~116px de alto,
      así que sobra banda limpia para darle respiro arriba y abajo. */
-  padding-top: calc(72px + clamp(16px, 3.5vh, 40px));
+  padding-top: calc(72px + clamp(24px, 5.2vh, 56px));
   /* La sombra del pack llega hasta el 82,6% del alto de la pantalla, y esa
      proporción se mantiene en cualquier viewport porque el frame llena el
      alto. Bajo esa línea el fondo es rosa limpio; encima, la bajada pierde
@@ -95,7 +95,7 @@
      El bloque B mide ~146px, así que el aire que queda abajo es lo que
      sobra de ese 17,4%: de ahí sale la fórmula. En pantallas cortas el
      bloque se comprime solo con los clamp de más abajo. */
-  padding-bottom: clamp(6px, calc(9vh - 73px), 24px);
+  padding-bottom: clamp(10px, calc(9vh - 46px), 20px);
   pointer-events: none;
 }
 /* solo lo accionable recibe el puntero: el resto deja pasar el scroll */
@@ -226,15 +226,18 @@
   color: var(--rosa-bajada);
 }
 .hero-abajo .firma {
-  margin-top: clamp(4px, 0.85vh, 8px);
-  font-size: 20px;
+  margin-top: clamp(4px, 0.7vh, 8px);
+  /* Escala con el ancho igual que la bajada: en pantallas cortas los
+     píxeles que libera son los que permiten mantener los 20px bajo el CTA
+     sin que el bloque entre en la sombra. */
+  font-size: clamp(17px, 4.6vw, 22px);
   letter-spacing: -0.01em;
   color: var(--negro);
 }
 .hero-abajo .btn {
   /* Se comprime en pantallas cortas para que el bloque entero siga
      cabiendo bajo la sombra. 48px sigue sobre el mínimo táctil de 44. */
-  margin-top: clamp(10px, 2.1vh, 20px);
+  margin-top: clamp(8px, 1.4vh, 14px);
   height: clamp(48px, 5.9vh, 56px);
   padding-inline: 30px;
 }
