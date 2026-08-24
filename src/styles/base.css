@@ -41,7 +41,11 @@ h1, h2, h3, p {
 a {
   color: var(--rosa);
 }
-a:hover {
+/* "Links en rosa, hover periwinkle" es regla de brandbook para ENLACES de
+   texto. Sin el :not(.btn) también pintaba el texto de los botones, y en el
+   CTA primario —que en hover se va a periwinkle de fondo— quedaba
+   periwinkle sobre periwinkle: el texto desaparecía. */
+a:not(.btn):hover {
   color: var(--peri);
 }
 
@@ -108,6 +112,9 @@ a:hover {
 .btn-primario:hover {
   background: var(--peri);
   border-color: var(--peri);
+  /* sobre periwinkle el texto va negro (brandbook). Declararlo acá evita
+     depender de que ninguna otra regla toque el color en hover. */
+  color: var(--negro);
 }
 
 .btn-secundario {
@@ -198,6 +205,14 @@ a:hover {
 .nav.on-peri .nav-cta {
   background: var(--negro);
   border-color: var(--negro);
+  color: var(--crema);
+}
+/* sobre una barra rosa o periwinkle, mandar el CTA a periwinkle en hover no
+   tiene sentido: se aclara el negro y el texto se queda en crema. */
+.nav.on-pink .nav-cta:hover,
+.nav.on-peri .nav-cta:hover {
+  background: #2e2926;
+  border-color: #2e2926;
   color: var(--crema);
 }
 .nav-inner {
