@@ -35,3 +35,23 @@ dist/
 # lo decidido vive en los mensajes de commit y en los MD de la raíz.
 # ============================================================
 session-*.txt
+
+# ============================================================
+# Documentación interna y material del cliente — no se publica.
+# El repo es público para que Javier pueda revisar la URL, así que
+# acá queda fuera todo lo que no es el sitio:
+#   · el manual de marca es propiedad del cliente
+#   · PLAN.md lleva estimaciones y riesgos del encargo
+#   · CLAUDE.md y HERO_SPEC.md son doctrina de trabajo interna
+#   · legacy/ y spike-fase0/ son material de referencia ya consumido
+# Todo sigue en el disco de Charlie. Cuando el repo migre a la cuenta
+# de la marca, en privado, estos archivos vuelven: son parte del
+# handoff de la Fase 7.
+# ============================================================
+Brand-Guidelines-NUDE.pdf
+CLAUDE.md
+PLAN.md
+HERO_SPEC.md
+/legacy/
+/spike-fase0/
+/skills/

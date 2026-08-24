@@ -21,10 +21,6 @@
         "4173"
       ],
       "port": 4173
-    },
-    {
-      "name": "spike-fase0",
-      "url": "http://localhost:8123"
     }
   ]
 }
