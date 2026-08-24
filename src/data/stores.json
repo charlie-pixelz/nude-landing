@@ -1,0 +1,33 @@
+{
+  "_nota": "Tiendas donde está NUDE. Este archivo lo edita el cliente sin tocar código: agregar una tienda es agregar un objeto a la lista de su región. El sitio se reconstruye solo al hacer push. No inventar tiendas: cada una tiene que venir confirmada por la marca.",
+  "_pendiente": "Las 9 tiendas de abajo vienen del prototipo de agosto y NO están confirmadas por Javier. Confirmar antes de publicar.",
+  "regiones": [
+    {
+      "id": "rm",
+      "nombre": "Metropolitana",
+      "tiendas": [
+        { "nombre": "Jumbo Costanera Center", "comuna": "Providencia", "confirmada": false },
+        { "nombre": "Jumbo La Dehesa", "comuna": "Lo Barnechea", "confirmada": false },
+        { "nombre": "Jumbo Bilbao", "comuna": "La Reina", "confirmada": false }
+      ]
+    },
+    {
+      "id": "vina",
+      "nombre": "Viña del Mar",
+      "tiendas": [
+        { "nombre": "Jumbo 15 Norte", "comuna": "Viña del Mar", "confirmada": false },
+        { "nombre": "Jumbo Reñaca", "comuna": "Viña del Mar", "confirmada": false },
+        { "nombre": "Jumbo Marina", "comuna": "Viña del Mar", "confirmada": false }
+      ]
+    },
+    {
+      "id": "conce",
+      "nombre": "Concepción",
+      "tiendas": [
+        { "nombre": "Jumbo El Trébol", "comuna": "Talcahuano", "confirmada": false },
+        { "nombre": "Jumbo Centro", "comuna": "Concepción", "confirmada": false },
+        { "nombre": "Jumbo San Pedro", "comuna": "San Pedro de la Paz", "confirmada": false }
+      ]
+    }
+  ]
+}

@@ -33,7 +33,12 @@
   --fs-h2: clamp(40px, 5.5vw, 48px);
   --fs-bajada: clamp(20px, 2.2vw, 24px);
   --fs-cuerpo: clamp(17px, 1vw, 18px);
-  --fs-etiqueta: clamp(13px, 1vw, 15px);
+  /* El brandbook pide la etiqueta en 13-15px y, en la MISMA frase, "nada
+     bajo 16px" (CLAUDE.md:83). Se contradicen. Gana el piso de 16px: es la
+     regla escrita como absoluta y es además el criterio de aceptación de la
+     Fase 3 en PLAN.md. El rol de etiqueta lo siguen dando la familia mono y
+     el tracking de 0.18em, no el tamaño diminuto. */
+  --fs-etiqueta: clamp(16px, 1.1vw, 18px);
 
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
 }

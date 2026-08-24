@@ -38,8 +38,9 @@
              falta halo ni caja: no hay cruce que compensar. -->
         <div class="hero-zonas">
           <div class="wrap hero-arriba">
-            <!-- el asterisco después de "abajo" queda sin nota al pie por ahora:
-                 pendiente de conversar con Javier en la Fase 3 (ver historial). -->
+            <!-- El asterisco tiene su nota al pie en la sección 01, que es
+                 donde el copy del brief la pone. En el hero queda suelto a
+                 propósito: es el anzuelo. -->
             <!-- Quiebre de línea fijo, no el wrap natural: el wrap partía el
                  paréntesis ("...ahí / abajo *)"). Va escrito con la misma
                  estructura .mask > .ln que produce splitLines, y SIN data-split
@@ -76,12 +77,231 @@
       </div>
     </div>
   </section>
+
+  <!-- ══════════ 01 · EL CORTE ══════════ -->
+  <section class="pad" id="corte">
+    <div class="wrap">
+      <p class="kicker rv">01 · Lo que nadie preguntó</p>
+      <div class="corte-lineas">
+        <p class="corte-linea rv-split"><span class="mask"><span class="ln">Cambió el teléfono.</span></span></p>
+        <p class="corte-linea rv-split"><span class="mask"><span class="ln" style="transition-delay:90ms">Cambió el auto.</span></span></p>
+        <p class="corte-linea rv-split"><span class="mask"><span class="ln" style="transition-delay:180ms">Cambió la casa.</span></span></p>
+        <p class="corte-linea es-rosa rv-split"><span class="mask"><span class="ln" style="transition-delay:270ms">Esto * quedó igual desde 1.800.</span></span></p>
+      </div>
+      <!-- El personaje de marca ES el asterisco: por eso vive acá, pegado a
+           la nota al pie, y no decorando una sección cualquiera. Cierra el
+           asterisco que quedó suelto en el hero. -->
+      <div class="corte-nota rv" style="--d:340ms">
+        <img class="corte-personaje" src="/src/assets/img/brand-character.svg" alt="" aria-hidden="true" width="393" height="397" loading="lazy">
+        <p class="corte-pie">* Limpiarse ahí abajo.</p>
+      </div>
+      <p class="corte-cierre rv" style="--d:400ms">Nadie lo cuestionó, porque nadie sabía que había otra forma.</p>
+    </div>
+  </section>
+
+  <!-- ══════════ 02 · CÓMO SE HACE ══════════ -->
+  <section class="pad" id="como">
+    <div class="wrap">
+      <p class="kicker rv">02 · Así se empieza</p>
+      <h2 class="h2 rv-split" data-split>Cómo se hace.</h2>
+      <p class="bajada seccion-bajada rv" style="--d:80ms">Tres movimientos. Doscientos años tarde.</p>
+      <ol class="pasos">
+        <li class="paso rv">
+          <span class="paso-num">01</span>
+          <p class="paso-texto">Levantas la tapa.</p>
+        </li>
+        <li class="paso rv" style="--d:120ms">
+          <span class="paso-num">02</span>
+          <p class="paso-texto">Sacas uno.</p>
+        </li>
+        <li class="paso rv" style="--d:240ms">
+          <span class="paso-num">03</span>
+          <p class="paso-texto">Listo.</p>
+        </li>
+      </ol>
+      <p class="como-cierre rv-split"><span class="mask"><span class="ln">Uno. Húmedo. XL.</span></span></p>
+      <p class="etiqueta como-meta rv" style="--d:120ms">Lo tiras al WC y cierras la tapa</p>
+    </div>
+  </section>
+
+  <!-- ══════════ 03 · MANIFIESTO ══════════ -->
+  <section class="pad" id="manifiesto">
+    <div class="wrap manifiesto">
+      <div class="manifiesto-head">
+        <p class="kicker rv">03 · Manifiesto</p>
+        <h2 class="h2 rv-split" data-split>Así se hace.</h2>
+      </div>
+      <div class="manifiesto-cuerpo">
+        <p class="rv">Hay cosas que se hacen porque siempre se hicieron así.</p>
+        <p class="rv">Nadie las eligió. Se heredaron.</p>
+        <p class="rv">Doscientos años atrás alguien resolvió esto con lo que tenía a mano. Papel. Seco. Doblado. Y así quedó.</p>
+        <p class="rv">Pasaron los autos, los teléfonos, las casas, internet. Esto siguió igual, todos los días, en el único lugar donde nadie mira lo que hace el otro.</p>
+        <p class="rv">Por eso nadie preguntó.</p>
+        <p class="rv manifiesto-giro"><strong>Nosotros preguntamos.</strong></p>
+        <p class="rv">Resulta que se hace distinto hace rato. Con agua. Con papel húmedo. Con un gesto que dura lo mismo.</p>
+        <p class="rv">Lo veníamos haciendo todos igual. Y está bien, nadie nos dijo nada.</p>
+        <p class="rv">Ahora ya sabes.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ 04 · SE DEGRADA (periwinkle) ══════════ -->
+  <section class="pad seccion-peri" id="degrada" data-nav="peri">
+    <div class="wrap">
+      <p class="kicker rv">04 · La pregunta de siempre</p>
+      <h2 class="degrada-h rv-split" data-split>Se degrada en el agua.</h2>
+      <p class="bajada degrada-sub rv" style="--d:160ms">Máximo dos hojas por descarga.</p>
+      <p class="etiqueta degrada-meta rv" style="--d:240ms">Nada de papelero al lado</p>
+    </div>
+  </section>
+
+  <!-- ══════════ 05 · FORMATOS ══════════ -->
+  <section class="pad" id="formatos">
+    <div class="wrap">
+      <p class="kicker rv">05 · Los formatos</p>
+      <h2 class="h2 rv-split" data-split>Cuatro formas de tenerlo.</h2>
+      <p class="bajada seccion-bajada rv" style="--d:80ms">Todos XL, 20 x 18 cm. Cambia dónde vive cada uno.</p>
+      <ul class="formatos">
+        <li class="formato rv">
+          <p class="formato-cifra">40</p>
+          <p class="formato-nombre">Wipes</p>
+          <p class="formato-rol">El de la casa.</p>
+          <p class="formato-desc">El del baño, con tapa. El que se queda.</p>
+          <a class="btn btn-secundario" href="#donde">Dónde encontrarlo</a>
+        </li>
+        <li class="formato rv" style="--d:90ms">
+          <p class="formato-cifra">120</p>
+          <p class="formato-nombre">Tripack</p>
+          <p class="formato-rol">El que dura el mes.</p>
+          <p class="formato-desc">Tres packs de 40. Para casa llena.</p>
+          <a class="btn btn-secundario" href="#donde">Dónde encontrarlo</a>
+        </li>
+        <li class="formato rv" style="--d:180ms">
+          <p class="formato-marca">Para partir</p>
+          <p class="formato-cifra">10</p>
+          <p class="formato-nombre">Wipes</p>
+          <p class="formato-rol">El de partida.</p>
+          <p class="formato-desc">El más chico. Para probar cómo se hace.</p>
+          <a class="btn btn-secundario" href="#donde">Dónde encontrarlo</a>
+        </li>
+        <li class="formato rv" style="--d:270ms">
+          <p class="formato-cifra">30</p>
+          <p class="formato-nombre">Single wipes</p>
+          <p class="formato-rol">El que anda contigo.</p>
+          <p class="formato-desc">Envueltos uno a uno. Bolso, mochila, oficina, viaje.</p>
+          <a class="btn btn-secundario" href="#donde">Dónde encontrarlo</a>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ══════════ 06 · LA FICHA ══════════ -->
+  <!-- El prototipo resolvía esta sección con blobs rosados e iconos de línea
+       (gotita, escudo, check, hoja). El brandbook prohíbe explícitamente la
+       "iconografía de farmacia", así que acá el dato se ordena por tipografía
+       y jerarquía de tono, que es lo que el propio manual pide. -->
+  <section class="pad" id="ficha">
+    <div class="wrap">
+      <p class="kicker rv">06 · La ficha</p>
+      <h2 class="h2 rv-split" data-split>Lo que trae.</h2>
+      <dl class="ficha">
+        <div class="ficha-fila rv">
+          <dt class="ficha-clave">Tamaño</dt>
+          <dd class="ficha-valor">XL · 20 x 18 cm</dd>
+        </div>
+        <div class="ficha-fila rv" style="--d:70ms">
+          <dt class="ficha-clave">Fórmula</dt>
+          <dd class="ficha-valor">95% agua</dd>
+        </div>
+        <div class="ficha-fila rv" style="--d:140ms">
+          <dt class="ficha-clave">Activos</dt>
+          <dd class="ficha-valor">Aloe vera y vitamina E</dd>
+        </div>
+        <div class="ficha-fila rv" style="--d:210ms">
+          <dt class="ficha-clave">Aroma</dt>
+          <dd class="ficha-valor">Sin perfume</dd>
+        </div>
+        <div class="ficha-fila rv" style="--d:280ms">
+          <dt class="ficha-clave">Piel</dt>
+          <dd class="ficha-valor">Hipoalergénico</dd>
+        </div>
+        <div class="ficha-fila rv" style="--d:350ms">
+          <dt class="ficha-clave">Testeo</dt>
+          <dd class="ficha-valor">Dermatológicamente testeado</dd>
+        </div>
+        <div class="ficha-fila rv" style="--d:420ms">
+          <dt class="ficha-clave">Material</dt>
+          <dd class="ficha-valor">Material degradable · 100% ecofibra</dd>
+        </div>
+      </dl>
+      <p class="etiqueta ficha-registro rv">Reg. Sanitario 2941C-3 · Instituto de Salud Pública de Chile</p>
+    </div>
+  </section>
+
+  <!-- ══════════ MARQUESINA ══════════ -->
+  <div class="marquesina" aria-hidden="true">
+    <div class="marquesina-cinta">
+      <span>Ya está en Jumbo</span><span>Metropolitana</span><span>Viña del Mar</span><span>Concepción</span><span>NUDE. Así se hace.</span>
+      <span>Ya está en Jumbo</span><span>Metropolitana</span><span>Viña del Mar</span><span>Concepción</span><span>NUDE. Así se hace.</span>
+      <span>Ya está en Jumbo</span><span>Metropolitana</span><span>Viña del Mar</span><span>Concepción</span><span>NUDE. Así se hace.</span>
+    </div>
+  </div>
+
+  <!-- ══════════ 07 · DÓNDE ══════════ -->
+  <section class="pad" id="donde">
+    <div class="wrap">
+      <p class="kicker rv">07 · Dónde encontrarlo</p>
+      <h2 class="h2 rv-split" data-split>Ya está en Jumbo.</h2>
+      <p class="bajada seccion-bajada rv" style="--d:80ms">Región Metropolitana, Viña del Mar y Concepción, por ahora.</p>
+
+      <!-- Pestañas y listado los construye src/js/stores.js desde
+           src/data/stores.json. Acá sólo van los contenedores vacíos: si los
+           datos vivieran en el markup, el handoff de la Fase 7 no existe. -->
+      <div class="tiendas rv" id="tiendas">
+        <div class="tiendas-tabs"></div>
+        <div class="tiendas-panel"></div>
+      </div>
+
+      <div class="avisame rv" id="avisame">
+        <h3 class="avisame-h">Todavía no llega a tu ciudad.</h3>
+        <p class="avisame-sub">Déjanos tu comuna y avisamos apenas se pueda.</p>
+        <form class="avisame-form" id="notify-form" novalidate>
+          <label class="visualmente-oculto" for="notify-email">Tu correo</label>
+          <input id="notify-email" type="email" name="email" placeholder="Tu correo" autocomplete="email" required>
+          <label class="visualmente-oculto" for="notify-comuna">Tu comuna</label>
+          <input id="notify-comuna" type="text" name="comuna" placeholder="Tu comuna" autocomplete="address-level2" required>
+          <button class="btn btn-primario" type="submit">Avísame</button>
+        </form>
+        <p class="avisame-msg es-ok" id="notify-ok" role="status" hidden>Listo. Te avisamos.</p>
+        <p class="avisame-msg es-error" id="notify-error" role="alert" hidden>Revisa el correo, algo quedó mal escrito.</p>
+      </div>
+    </div>
+  </section>
 </main>
 
-<footer style="border-top:1px solid var(--linea);padding-block:48px">
+<footer class="pie" id="footer">
   <div class="wrap">
-    <p class="etiqueta">NUDE</p>
-    <p class="bajada" style="margin-top:8px">Así se hace.</p>
+    <div class="pie-grid">
+      <div class="pie-marca">
+        <img src="/src/assets/img/logo-negro.png" alt="NUDE" class="pie-logo">
+        <p class="pie-linea">Papel higiénico húmedo.</p>
+      </div>
+      <nav class="pie-col" aria-label="Secciones del sitio">
+        <p class="pie-titulo">Sitio</p>
+        <a href="#como">Cómo se hace</a>
+        <a href="#formatos">Formatos</a>
+        <a href="#donde">Dónde encontrarlo</a>
+      </nav>
+      <div class="pie-col">
+        <p class="pie-titulo">Redes</p>
+        <a href="https://www.instagram.com/nude_" target="_blank" rel="noopener">@nude_</a>
+        <a href="https://nudewipes.cl" target="_blank" rel="noopener">nudewipes.cl</a>
+        <p class="pie-titulo pie-titulo-2">Contacto</p>
+        <a href="mailto:hola@nudewipes.cl">hola@nudewipes.cl</a>
+      </div>
+    </div>
+    <p class="pie-legal">Importado y distribuido por Importadora y Comercial Alianza Limitada. Reg. Sanitario 2941C-3, Instituto de Salud Pública de Chile.</p>
+    <p class="firma pie-firma">NUDE. Así se hace.</p>
   </div>
 </footer>
 

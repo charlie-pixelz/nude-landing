@@ -90,7 +90,8 @@ a:hover {
   height: 54px;
   padding: 0 32px;
   font-family: var(--f-mono);
-  font-size: 14px;
+  /* mismo piso de 16px que el resto del sitio */
+  font-size: 16px;
   text-transform: uppercase;
   letter-spacing: 0.14em;
   text-decoration: none;
@@ -171,9 +172,33 @@ a:hover {
   height: 72px;
   background: var(--negro);
 }
-.nav.on-pink,
-.nav.on-peri {
+/* Zonas de color: al entrar en una sección de color la barra toma ese
+   color y se funde con la sección, en vez de cortarla con una banda negra.
+   Antes esto era letra muerta: la única regla era color:var(--negro) sobre
+   una barra negra, y cada hijo define su propio color, así que no hacía
+   nada. El logo pierde el invert —sobre rosa y periwinkle va la versión
+   negra, como manda el brandbook— y el CTA se invierte para no
+   desaparecer sobre su propio color. */
+.nav {
+  transition: background 0.4s var(--ease);
+}
+.nav.on-pink { background: var(--rosa); }
+.nav.on-peri { background: var(--peri); }
+.nav.on-pink .nav-links a,
+.nav.on-peri .nav-links a {
   color: var(--negro);
+}
+.nav.on-pink .nav-links a:hover { color: var(--rosa-bajada); }
+.nav.on-peri .nav-links a:hover { color: var(--peri-bajada); }
+.nav.on-pink .nav-logo img,
+.nav.on-peri .nav-logo img {
+  filter: none;
+}
+.nav.on-pink .nav-cta,
+.nav.on-peri .nav-cta {
+  background: var(--negro);
+  border-color: var(--negro);
+  color: var(--crema);
 }
 .nav-inner {
   display: flex;
@@ -183,7 +208,10 @@ a:hover {
 }
 .nav-logo {
   display: flex;
+  align-items: center;
   flex: 0 0 auto;
+  /* el logo es un enlace a inicio: necesita alto de dedo, no de imagen */
+  min-height: 44px;
 }
 .nav-logo img {
   height: 36px;
@@ -197,7 +225,7 @@ a:hover {
 }
 .nav-links a {
   font-family: var(--f-mono);
-  font-size: 13px;
+  font-size: 16px;
   text-transform: uppercase;
   letter-spacing: 0.18em;
   color: var(--crema);
@@ -224,10 +252,12 @@ a:hover {
   }
   .nav-cta {
     margin-left: auto;
-    height: 40px;
+    /* 44px es el mínimo táctil; bajo eso el botón fijo del hero se vuelve
+       difícil de acertar con el pulgar. */
+    height: 44px;
     padding: 0 16px;
-    font-size: 11px;
-    letter-spacing: 0.1em;
+    font-size: 16px;
+    letter-spacing: 0.08em;
   }
 }
 /* La nav es fixed y se superpone al contenido. El hero es a sangre y
@@ -257,7 +287,7 @@ main > section {
 }
 .consent-banner p {
   color: var(--texto-cuerpo);
-  font-size: 15px;
+  font-size: 16px;
   line-height: 1.5;
 }
 .consent-banner-actions {
