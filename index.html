@@ -238,6 +238,21 @@
     </div>
   </section>
 
+  <!-- ══════════ 07 · DUDAS ══════════ -->
+  <!-- Va acá y no al final a propósito: el sitio tiene que cerrar en Jumbo.
+       Las preguntas las construye src/js/faq.js desde src/data/faq.json, y
+       una pregunta sin respuesta no se publica. Si algún día no queda
+       ninguna respondida, la sección entera se oculta sola. -->
+  <section class="pad" id="dudas">
+    <div class="wrap">
+      <p class="kicker rv">07 · Dudas</p>
+      <h2 class="h2 rv-split" data-split>Lo que igual se pregunta.</h2>
+      <div class="faq rv" id="faq" style="--d:80ms">
+        <div class="faq-lista"></div>
+      </div>
+    </div>
+  </section>
+
   <!-- ══════════ MARQUESINA ══════════ -->
   <div class="marquesina" aria-hidden="true">
     <div class="marquesina-cinta">
@@ -250,7 +265,7 @@
   <!-- ══════════ 07 · DÓNDE ══════════ -->
   <section class="pad" id="donde">
     <div class="wrap">
-      <p class="kicker rv">07 · Dónde encontrarlo</p>
+      <p class="kicker rv">08 · Dónde encontrarlo</p>
       <h2 class="h2 rv-split" data-split>Ya está en Jumbo.</h2>
       <p class="bajada seccion-bajada rv" style="--d:80ms">Región Metropolitana, Viña del Mar y Concepción, por ahora.</p>
 
@@ -272,6 +287,11 @@
           <input id="notify-comuna" type="text" name="comuna" placeholder="Tu comuna" autocomplete="address-level2" required>
           <button class="btn btn-primario" type="submit">Avísame</button>
         </form>
+        <!-- Correo + comuna de personas en Chile son datos personales: la ley
+             19.628 pide decir para qué se piden. Este texto es provisorio y
+             se reemplaza en la Fase 6 por el que redacte la marca, con el
+             enlace a la política de privacidad. -->
+        <p class="avisame-legal">Solo lo usamos para avisarte cuando llegue a tu ciudad.</p>
         <p class="avisame-msg es-ok" id="notify-ok" role="status" hidden>Listo. Te avisamos.</p>
         <p class="avisame-msg es-error" id="notify-error" role="alert" hidden>Revisa el correo, algo quedó mal escrito.</p>
       </div>

@@ -14,9 +14,10 @@ sabiendo tres cosas: qué es, que se tira al WC, y que está en Jumbo.
 | | |
 |---|---|
 | Hero con scroll-scrub | listo |
-| Cuerpo, secciones 01 a 07 | listo |
+| Cuerpo, secciones 01 a 08 | listo |
 | Tiendas desde JSON | listo, pendientes de confirmar con la marca |
-| Formulario "avísame" | maqueta, sin conectar |
+| Preguntas frecuentes desde JSON | 7 publicadas, 6 esperando dato de la marca |
+| Formulario "avísame" | listo, falta el endpoint del servicio de correo |
 | Medición (GA4, Meta, TikTok) | instalada, sin IDs reales |
 | Textos legales y 404 | pendiente |
 
@@ -44,15 +45,21 @@ ffmpeg, pero no para trabajar en el sitio.
 - **Fuentes autoalojadas y subseteadas** a latin + latin-ext, con
   `font-display: swap`.
 - **Los datos editables viven en JSON**, no en el markup. `src/data/stores.json`
-  es lo que permite que la marca agregue una tienda sin tocar código.
+  y `src/data/faq.json` son lo que permite que la marca agregue una tienda o
+  una pregunta sin tocar código. Una pregunta sin respuesta no se publica: el
+  archivo sirve de lista de pendientes sin dejar huecos en el sitio.
+- **El formulario no tiene backend.** Manda un POST a `VITE_FORM_ENDPOINT`, y
+  cambiar de servicio es cambiar esa variable. Sin la variable el formulario
+  valida y avisa que es una maqueta.
 - **`prefers-reduced-motion` se respeta de verdad:** con la preferencia activa
   no hay scrub y los frames del hero ni siquiera se descargan.
 
 ```
 src/
 ├── styles/   tokens.css · base.css · sections/
-├── js/       hero-scrub.js · reveal.js · nav-zones.js · stores.js · analytics.js
-├── data/     stores.json
+├── js/       hero-scrub.js · reveal.js · nav-zones.js · stores.js
+│            faq.js · form.js · analytics.js
+├── data/     stores.json · faq.json
 └── assets/   fonts/ · img/ · hero-frames/
 ```
 

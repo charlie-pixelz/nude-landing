@@ -1,4 +1,4 @@
-/* Cuerpo del sitio — secciones 01 a 07, marquesina y pie.
+/* Cuerpo del sitio — secciones 01 a 08, marquesina y pie.
    Reglas que manda el brandbook y que se respetan acá:
    · un fondo de color por vista, nunca dos. El sitio es negro dominante;
      la sección 04 es la única superficie periwinkle completa.
@@ -291,6 +291,57 @@
   color: var(--texto-marca-agua);
 }
 
+/* ── 07 · dudas ──────────────────────────────────────────── */
+/* <details> nativos. Nada gira ni rebota (brandbook): el signo cambia de
+   + a −, no rota. La jerarquía es por tono, no por color. */
+.faq {
+  margin-top: 40px;
+  border-top: 1px solid var(--linea);
+}
+.faq-item {
+  border-bottom: 1px solid var(--linea);
+}
+.faq-p {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  padding-block: 22px;
+  font-family: var(--f-body);
+  font-weight: 700;
+  font-size: var(--fs-cuerpo);
+  line-height: 1.4;
+  color: var(--crema);
+  cursor: pointer;
+  list-style: none;
+}
+/* el triángulo por defecto de Safari y de Chrome, cada uno por su lado */
+.faq-p::-webkit-details-marker { display: none; }
+.faq-p::marker { content: ''; }
+
+.faq-p::after {
+  content: '+';
+  margin-left: auto;
+  font-family: var(--f-mono);
+  font-size: var(--fs-etiqueta);
+  color: var(--texto-metadato);
+  transition: color 0.25s var(--ease);
+}
+.faq-item[open] .faq-p::after { content: '−'; }
+.faq-p:hover::after,
+.faq-item[open] .faq-p::after { color: var(--rosa); }
+
+.faq-p:focus-visible {
+  outline: 2px solid var(--rosa);
+  outline-offset: -2px;
+}
+.faq-r {
+  padding-bottom: 24px;
+  max-width: 56ch;
+  font-size: var(--fs-cuerpo);
+  line-height: 1.6;
+  color: var(--texto-cuerpo);
+}
+
 /* ── marquesina ──────────────────────────────────────────── */
 .marquesina {
   background: var(--rosa);
@@ -420,8 +471,11 @@
   padding: 0 20px;
   height: 52px;
 }
+/* El placeholder es el único rótulo que se ve (las <label> están ocultas),
+   así que tiene que cumplir AA como texto normal. En metadato daba 4.02:1
+   sobre negro y AA pide 4.5. En bajada da 8.78:1. */
 .avisame-form input::placeholder {
-  color: var(--texto-metadato);
+  color: var(--texto-bajada);
 }
 .avisame-form input:focus-visible {
   outline: 2px solid var(--rosa);
@@ -438,6 +492,44 @@
 }
 .avisame-msg.es-ok { color: var(--rosa); }
 .avisame-msg.es-error { color: var(--peri); }
+
+/* Aviso legal: se tiene que poder leer, no insinuar. Mismo motivo que el
+   placeholder, en bajada y no en metadato. */
+.avisame-legal {
+  margin-top: 14px;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--texto-bajada);
+}
+
+/* campo inválido: borde y foco en periwinkle, que es el color del mensaje
+   de error. El rojo no existe en el sistema de marca. */
+.avisame-form input[aria-invalid='true'] {
+  border-color: var(--peri);
+}
+.avisame-form input[aria-invalid='true']:focus-visible {
+  outline-color: var(--peri);
+}
+
+/* mientras se envía: el botón queda inerte pero legible, sin spinner ni
+   nada que gire. */
+.avisame-form .btn[disabled] {
+  opacity: 0.55;
+  cursor: default;
+  pointer-events: none;
+}
+
+/* trampa para bots. Fuera de flujo y fuera de pantalla, nunca visible.
+   Clase propia y no .visualmente-oculto, porque las reglas de
+   .avisame-form input le devolverían alto y padding. */
+.trampa-bot {
+  position: absolute !important;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
 
 /* ── pie ─────────────────────────────────────────────────── */
 .pie {

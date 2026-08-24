@@ -1,0 +1,71 @@
+{
+  "_nota": "Preguntas frecuentes. Este archivo lo edita el cliente sin tocar código: agregar una pregunta es agregar un objeto a la lista. Una pregunta con la respuesta vacía NO se publica, queda esperando. Así el archivo sirve de lista de pendientes y el sitio nunca muestra un hueco.",
+  "_pendiente": "Las 6 preguntas con respuesta vacía necesitan el dato de la marca. No se responden por cuenta propia: son datos de producto, de precio o de posicionamiento (CLAUDE.md, 'no inventes datos').",
+  "preguntas": [
+    {
+      "p": "¿Se puede tirar al WC?",
+      "r": "Sí. Se degrada en el agua. Máximo dos hojas por descarga.",
+      "fuente": "sitio"
+    },
+    {
+      "p": "¿Hay que dejar un papelero al lado?",
+      "r": "No.",
+      "fuente": "sitio"
+    },
+    {
+      "p": "¿Tiene perfume?",
+      "r": "No lleva perfume.",
+      "fuente": "sitio"
+    },
+    {
+      "p": "¿Sirve para piel sensible?",
+      "r": "Es hipoalergénico y dermatológicamente testeado.",
+      "fuente": "sitio"
+    },
+    {
+      "p": "¿En qué formatos viene?",
+      "r": "En cuatro. De 40 wipes, tripack de 120, de 10 wipes y de 30 single wipes.",
+      "fuente": "sitio"
+    },
+    {
+      "p": "¿Dónde lo compro?",
+      "r": "En Jumbo. Región Metropolitana, Viña del Mar y Concepción, por ahora.",
+      "fuente": "sitio"
+    },
+    {
+      "p": "¿Tiene registro sanitario?",
+      "r": "Sí. Reg. Sanitario 2941C-3, del Instituto de Salud Pública de Chile.",
+      "fuente": "sitio"
+    },
+    {
+      "p": "¿Reemplaza al papel higiénico seco?",
+      "r": "",
+      "_para_javier": "Posicionamiento, no dato técnico. ¿Reemplaza o acompaña? La respuesta define cómo se para la marca en góndola."
+    },
+    {
+      "p": "¿Lo pueden usar los niños?",
+      "r": "",
+      "_para_javier": "Necesita respaldo del registro sanitario. Si hay edad mínima o alguna restricción, va escrita."
+    },
+    {
+      "p": "¿Funciona con fosa séptica?",
+      "r": "",
+      "_para_javier": "Pregunta real de regiones. Si no hay dato duro, la pregunta se saca; no se responde de oído."
+    },
+    {
+      "p": "¿Cuánto cuesta?",
+      "r": "",
+      "_para_javier": "Precio de góndola por formato. Ojo: si cambia, el sitio queda desactualizado. Puede convenir no publicarlo."
+    },
+    {
+      "p": "¿Se puede comprar en línea?",
+      "r": "",
+      "_para_javier": "Hoy el sitio no vende. Si Jumbo lo tiene en su tienda en línea, esta respuesta es un enlace."
+    },
+    {
+      "p": "¿De qué está hecho?",
+      "r": "",
+      "_para_javier": "Falta la lista de ingredientes del envase. Va copiada al pie de la letra, sin corregir ni resumir (CLAUDE.md)."
+    }
+  ]
+}
