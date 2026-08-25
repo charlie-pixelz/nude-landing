@@ -105,20 +105,19 @@
 
   <!-- ══════════ 03 · MANIFIESTO ══════════ -->
   <section class="pad" id="manifiesto">
-    <!-- El kicker sale de la columna izquierda y ocupa su propia fila a todo
-         el ancho. Así el titular y el cuerpo arrancan en la misma fila de la
-         grilla y quedan alineados por construcción, sin un margen calculado
-         a ojo que se rompa al cambiar el tamaño del kicker. -->
+    <!-- Tres filas de grilla, y cada elemento declara la suya: el kicker se
+         lleva la fila 1 completa, el titular la 2, y el personaje y el cuerpo
+         comparten la 3. Así el cuerpo arranca a la misma altura que el
+         personaje por construcción, sin un margen calculado a ojo que se
+         rompa cuando el titular cambie de tamaño o parta en dos líneas. -->
     <div class="wrap manifiesto">
       <p class="kicker rv manifiesto-kicker">03 · Manifiesto</p>
-      <div class="manifiesto-head">
-        <h2 class="h2 rv-split" data-split>Así se hace.</h2>
-        <!-- Segunda vista del personaje, de frente. La 01 usa la de espaldas:
-             el manifiesto es donde la marca da la cara, así que acá se da
-             vuelta. Decorativo, sin texto alternativo. -->
-        <img class="manifiesto-personaje rv" src="/src/assets/img/brand-character-front.svg"
-             alt="" aria-hidden="true" width="88" height="86" loading="lazy" style="--d:120ms">
-      </div>
+      <h2 class="h2 rv-split manifiesto-h" data-split>Así se hace.</h2>
+      <!-- Segunda vista del personaje, de frente. La 01 usa la de espaldas:
+           el manifiesto es donde la marca da la cara, así que acá se da
+           vuelta. Decorativo, sin texto alternativo. -->
+      <img class="manifiesto-personaje rv" src="/src/assets/img/brand-character-front.svg"
+           alt="" aria-hidden="true" width="88" height="86" loading="lazy" style="--d:120ms">
       <div class="manifiesto-cuerpo">
         <p class="rv">Hay cosas que se hacen porque siempre se hicieron así.</p>
         <p class="rv">Nadie las eligió. Se heredaron.</p>

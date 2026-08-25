@@ -7,15 +7,22 @@
      cifra o firma. */
 
 /* ── andamiaje común ─────────────────────────────────────── */
-/* Dos secciones seguidas suman el padding de las dos: el hueco real entre
-   bloques es el doble de este número. Venía de 140px (280 de hueco), pasó a
-   96 (192), probamos 24 y quedó apretado: 40 es el valor que Charlie fijó
-   mirando el resultado. Contra una banda de color el hueco es de 40; entre
-   dos secciones negras, 80, porque ahí suman los dos paddings.
-   Ojo: esto NO aplica a las superficies de color, que llevan su propio
-   padding más abajo. Ahí el aire es lo que hace respirar al bloque. */
+/* EL SEPARADOR ENTRE IDEAS VALE 40px, SIEMPRE.
+   Cada idea comunicacional es una sección y se separa de la siguiente por
+   40px, sin importar qué haya a cada lado.
+   El problema de la vuelta anterior: con padding simétrico de 40, dos
+   secciones negras seguidas sumaban 80 (40 + 40), mientras que contra una
+   banda de color daba 40, porque ahí sólo aporta el vecino. La mitad de los
+   límites medía el doble que la otra mitad.
+   La regla ahora es que cada lado aporta 20 y el separador da 40:
+     · las secciones ponen 20 arriba y 20 abajo (esto);
+     · las superficies de color —hero, banda periwinkle, marquesina, banda
+       del formulario— ponen sus propios 20 de margen, porque cortan el
+       fondo y necesitan completar el par.
+   Ojo: el padding INTERNO de las superficies de color no es esto. Ese es
+   el aire de adentro del bloque y vive en cada regla, más abajo. */
 .pad {
-  padding-block: 40px;
+  padding-block: 20px;
 }
 
 .kicker {
@@ -133,14 +140,25 @@
     gap: 0 64px;
     align-items: start;
   }
-  /* El kicker se lleva su propia fila completa: lo que va debajo empieza
-     todo a la misma altura. */
+  /* Fila 1: el kicker, a todo el ancho. Fila 2: el titular, solo. Fila 3:
+     el personaje y el cuerpo, que por eso arrancan a la misma altura.
+     Se fue el position:sticky del titular: para que se quede pegado
+     necesitaría abarcar las dos filas de abajo, y ahí el personaje deja de
+     marcar dónde empieza el cuerpo. La alineación pesa más que el pin. */
   .manifiesto-kicker {
     grid-column: 1 / -1;
   }
-  .manifiesto-head {
-    position: sticky;
-    top: calc(var(--nav-h) + 34px);
+  .manifiesto-h {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  .manifiesto-personaje {
+    grid-column: 1;
+    grid-row: 3;
+  }
+  .manifiesto-cuerpo {
+    grid-column: 2;
+    grid-row: 3;
   }
 }
 .manifiesto-personaje {
@@ -160,13 +178,10 @@
   max-width: 58ch;
 }
 @media (min-width: 900px) {
-  /* Los 20px que .pad .h2 le da al titular, menos 4 de corrección óptica.
-     Alinear las cajas no alinea la tinta: el titular va a 48px con
-     interlineado 1.05 y el cuerpo a 18 con 1.6, así que el cuerpo arrastra
-     más aire sobre su primera línea. Medido con TextMetrics sobre la tinta
-     real, no sobre las cajas. */
+  /* El mismo margen que lleva el personaje, que es su vecino de fila: los
+     dos arrancan en el borde de la fila 3 y bajan lo mismo. */
   .manifiesto-cuerpo {
-    margin-top: 16px;
+    margin-top: 40px;
   }
 }
 .manifiesto-cuerpo p {
@@ -229,6 +244,8 @@
    parte del bloque, no separación entre secciones. Lo que Charlie pidió
    achicar son los huecos negros de arriba y de abajo, no el interior. */
 .seccion-peri {
+  /* Los 20 que le faltan al vecino para completar el separador de 40. */
+  margin-block: 20px;
   background: var(--peri);
   padding-block: clamp(48px, 7vh, 88px);
 }
@@ -454,10 +471,11 @@
 }
 
 /* ── marquesina ──────────────────────────────────────────── */
-/* Sin margen propio: los 40px de aire ya se los dan las secciones que tiene
-   arriba y abajo con su padding, igual que a la banda periwinkle de la 05.
-   Agregarle margin-block: 40 dejaba 80 a cada lado, el doble que el resto. */
+/* Es una banda de color: aporta sus 20 como cualquier otra superficie.
+   El padding-block de 18 es el aire de adentro de la cinta, no el
+   separador; si fueran lo mismo, esos 18px saldrían pintados de rosa. */
 .marquesina {
+  margin-block: 20px;
   background: var(--rosa);
   overflow: hidden;
   padding-block: 18px;
@@ -551,10 +569,12 @@
    caja negra sobre periwinkle es dos superficies discutiendo. Acá el color
    ES la caja. Sobre periwinkle el titular va en #141110 y la bajada en
    #2A3763, los dos del manual. */
-/* 40px arriba, los mismos 40 que el padding-bottom de la sección deja
-   abajo: antes tenía 80 arriba y 40 abajo y la banda quedaba descolgada. */
+/* Caso aparte: esta banda vive DENTRO de la sección 08, no entre dos
+   secciones. Arriba no hay ningún padding que aporte, así que pone los 40
+   completos; abajo sí lo hay, y con 20 suma los 40 contra el pie. */
 .avisame {
   margin-top: 40px;
+  margin-bottom: 20px;
   background: var(--peri);
   padding-block: clamp(48px, 8vh, 88px);
 }

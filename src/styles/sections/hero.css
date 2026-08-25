@@ -4,6 +4,10 @@
 
 .hero {
   background: var(--rosa);
+  /* Superficie de color: aporta sus 20 al separador, igual que la banda
+     periwinkle y la marquesina. Sin esto, el salto del hero a la 01 medía
+     20 y el resto 40. */
+  margin-bottom: 20px;
 }
 
 .hero-track {
