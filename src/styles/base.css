@@ -176,7 +176,7 @@ a:not(.btn):hover {
   inset-inline: 0;
   top: 0;
   z-index: 100;
-  height: 72px;
+  height: var(--nav-h);
   background: var(--negro);
 }
 /* Zonas de color: al entrar en una sección de color la barra toma ese
@@ -219,7 +219,7 @@ a:not(.btn):hover {
   display: flex;
   align-items: center;
   gap: 24px;
-  height: 72px;
+  height: var(--nav-h);
 }
 .nav-logo {
   display: flex;
@@ -228,8 +228,14 @@ a:not(.btn):hover {
   /* el logo es un enlace a inicio: necesita alto de dedo, no de imagen */
   min-height: 44px;
 }
+/* 58px contra los 36 de escritorio y los 30 de móvil: a ese tamaño el lockup
+   no se leía. Mismo valor en las dos vistas, porque el problema era de
+   legibilidad y no de espacio, y queda por encima de los 56 del pie que
+   Charlie tomó como referencia. La barra subió de 72 a 84 por el aire mínimo
+   que pide el brandbook (el alto de la "n"): con el logo a 58 quedan 13px
+   arriba y abajo, que es aproximadamente ese alto. */
 .nav-logo img {
-  height: 36px;
+  height: 58px;
   width: auto;
   filter: invert(1);
 }
@@ -263,7 +269,7 @@ a:not(.btn):hover {
     gap: 12px;
   }
   .nav-logo img {
-    height: 30px;
+    height: 58px;
   }
   .nav-cta {
     margin-left: auto;
@@ -285,7 +291,7 @@ main {
   padding-top: 0;
 }
 main > section {
-  scroll-margin-top: 72px;
+  scroll-margin-top: var(--nav-h);
 }
 
 .consent-banner {

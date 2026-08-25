@@ -41,4 +41,11 @@
   --fs-etiqueta: clamp(16px, 1.1vw, 18px);
 
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Alto de la barra fija. Es variable y no un número suelto porque lo usan
+     el padding del hero, el scroll-margin de las secciones y el propio nav:
+     si se tocan por separado, el titular se mete debajo de la barra.
+     La barra creció para que el logo pueda llegar al tamaño del pie sin
+     comerse el aire mínimo que pide el brandbook (el alto de la "n"). */
+  --nav-h: 84px;
 }

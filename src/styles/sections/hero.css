@@ -93,7 +93,7 @@
      la bajada bajo 4,5:1. El setup + el titular miden ~132px, así que el
      aire de arriba baja de 42px a 23px para que el bloque cierre antes de
      los 234. */
-  padding-top: calc(72px + clamp(14px, 2.8vh, 48px));
+  padding-top: calc(var(--nav-h) + clamp(6px, 1.4vh, 28px));
   /* La sombra del pack llega hasta el 82,6% del alto de la pantalla, y esa
      proporción se mantiene en cualquier viewport porque el frame llena el
      alto. Bajo esa línea el fondo es rosa limpio; encima, la bajada pierde
@@ -173,11 +173,17 @@
 }
 @media (min-width: 760px) {
   .hero-zonas {
-    padding-top: calc(72px + clamp(48px, 11vh, 120px));
+    padding-top: calc(var(--nav-h) + clamp(70px, 15vh, 165px));
     /* Más aire abajo: el bloque B sube y deja de pegarse al borde. En
        escritorio el texto vive a la izquierda y el producto a la derecha,
        así que moverlo no lo acerca al pack: no hay riesgo de contraste. */
-    padding-bottom: clamp(56px, 11vh, 130px);
+    /* Sube igual que bajó el bloque de arriba: con 90px de aire abajo y 123
+       arriba el conjunto quedaba descolgado hacia el pie. A 131 los dos
+       márgenes quedan parejos y el texto se lee centrado contra el alto de
+       la pantalla, que es lo que pidió Charlie. Acá se puede: en escritorio
+       el producto vive a la derecha, así que la franja central no tiene que
+       quedar libre para nada. */
+    padding-bottom: clamp(80px, 16vh, 180px);
     /* El margen lateral de .wrap deja el texto un poco pegado al borde en
        pantallas anchas; esto lo separa sin tocar el canvas. */
     padding-inline: clamp(0px, 2vw, 40px);

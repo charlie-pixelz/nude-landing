@@ -7,13 +7,14 @@
      cifra o firma. */
 
 /* ── andamiaje común ─────────────────────────────────────── */
-/* Dos secciones seguidas suman el padding de las dos, así que el hueco real
-   entre bloques es el doble de este número. A 12vh/140px daban hasta 280px
-   de negro vacío entre el final de un texto y el kicker siguiente, que es
-   más aire del que el contenido justifica. A 96px el hueco máximo queda en
-   192px: sigue respirando, deja de ser una pausa. */
+/* Dos secciones seguidas suman el padding de las dos: el hueco real entre
+   bloques es el doble de este número. Venía de 140px (280 de hueco), pasó a
+   96 (192) y ahora a 24 (48). Es denso a propósito, en clave editorial: la
+   separación la hace la tipografía y el kicker, no el vacío.
+   Ojo: esto NO aplica a las superficies de color, que llevan su propio
+   padding más abajo. Ahí el aire es lo que hace respirar al bloque. */
 .pad {
-  padding-block: clamp(56px, 7.5vh, 96px);
+  padding-block: clamp(20px, 2.6vh, 24px);
 }
 
 .kicker {
@@ -75,14 +76,20 @@
 .corte-linea.es-rosa {
   color: var(--rosa);
 }
+/* Centrado en móvil: pegado al borde derecho quedaba desbalanceado contra
+   un bloque de texto que ocupa el ancho completo. */
 .corte-personaje {
-  width: clamp(160px, 48vw, 260px);
+  width: clamp(160px, 52vw, 280px);
   height: auto;
-  justify-self: end;
+  justify-self: center;
 }
+/* En escritorio crece y se despega del borde: entra hacia la página en vez
+   de quedar colgado del margen. */
 @media (min-width: 900px) {
   .corte-personaje {
-    width: min(30vw, 400px);
+    width: min(36vw, 470px);
+    justify-self: end;
+    margin-right: clamp(0px, 3vw, 56px);
   }
 }
 .corte-cierre {
@@ -128,6 +135,18 @@
   .manifiesto-head {
     position: sticky;
     top: 112px;
+  }
+}
+.manifiesto-personaje {
+  display: block;
+  width: clamp(150px, 44vw, 220px);
+  height: auto;
+  margin-top: 28px;
+}
+@media (min-width: 900px) {
+  .manifiesto-personaje {
+    width: min(24vw, 300px);
+    margin-top: 40px;
   }
 }
 .manifiesto-cuerpo {
@@ -195,8 +214,12 @@
 }
 
 /* ── 05 · la prueba de siempre · superficie periwinkle ───── */
+/* La banda de color no sigue el padding apretado de .pad: acá el aire es
+   parte del bloque, no separación entre secciones. Lo que Charlie pidió
+   achicar son los huecos negros de arriba y de abajo, no el interior. */
 .seccion-peri {
   background: var(--peri);
+  padding-block: clamp(48px, 7vh, 88px);
 }
 .seccion-peri .kicker {
   color: var(--peri-bajada);
@@ -257,7 +280,7 @@
    al lado con qué alinearse, así que no vale gastar aire reservándole una
    banda a las otras tres tarjetas. */
 .formato-marca {
-  align-self: flex-start;
+  align-self: flex-end;
   margin-bottom: 16px;
   font-family: var(--f-mono);
   /* 16px es el piso que fija CLAUDE.md; la pastilla se achica por el
@@ -279,10 +302,14 @@
   .formato {
     padding-top: 56px;
   }
+  /* right: 24 y no 16, para que el borde derecho de la pastilla caiga en la
+     misma vertical que la cifra y el texto. A 16 quedaba 8px fuera de la
+     columna de contenido y se notaba justo por ser el único elemento de
+     color de la tarjeta. */
   .formato-marca {
     position: absolute;
-    top: 16px;
-    right: 16px;
+    top: 20px;
+    right: 24px;
     margin-bottom: 0;
   }
 }
@@ -534,20 +561,24 @@
     align-items: center;
   }
 }
+/* Campos en crema y no transparentes: sobre el periwinkle el campo vacío se
+   confundía con el fondo y no se leía como algo donde escribir. Relleno, la
+   caja se explica sola y el borde deja de tener que hacer ese trabajo. */
 .avisame-form input {
   font-family: var(--f-body);
   font-size: 17px;
   color: var(--negro);
-  background: none;
-  border: 1px solid rgba(20, 17, 16, 0.4);
+  background: var(--crema);
+  border: 1px solid var(--crema);
   border-radius: 999px;
   padding: 0 20px;
   height: 52px;
 }
 /* El placeholder es el único rótulo que se ve (las <label> están ocultas),
-   así que tiene que cumplir AA como texto normal: #2A3763 sobre periwinkle
-   da 4,63:1, sobre el 4,5 que pide AA. Justo, pero pasa; si el periwinkle
-   se aclara alguna vez, esto es lo primero que se cae. */
+   así que tiene que cumplir AA como texto normal. El gris de metadato sobre
+   crema da 4,16:1 y no llega al 4,5. El tono de bajada sobre periwinkle sí,
+   con holgura (10,24:1), y además es el color que le corresponde a este
+   bloque. Del sistema, no inventado. */
 .avisame-form input::placeholder {
   color: var(--peri-bajada);
 }
@@ -601,7 +632,7 @@
    movería el alto del campo 2px y saltaría toda la fila. */
 .avisame-form input[aria-invalid='true'] {
   border-color: var(--negro);
-  box-shadow: inset 0 0 0 1px var(--negro);
+  box-shadow: inset 0 0 0 2px var(--negro);
 }
 
 /* mientras se envía: el botón queda inerte pero legible, sin spinner ni
