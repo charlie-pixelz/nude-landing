@@ -84,12 +84,17 @@
 .corte-linea.es-rosa {
   color: var(--rosa);
 }
-/* Centrado en móvil: pegado al borde derecho quedaba desbalanceado contra
-   un bloque de texto que ocupa el ancho completo. */
+/* MISMO TAMAÑO QUE EL PERSONAJE DE LA 03, a propósito: son el mismo
+   personaje en dos vistas y tienen que leerse como tal. Los dos SVG llenan
+   su viewBox al 99,7% o más (medido dibujándolos en canvas y buscando el
+   borde de la tinta), así que igualar el ancho de la caja iguala el tamaño
+   visual; sus proporciones difieren un 3% (393x397 la de espaldas contra
+   88x86 la de frente). Si se cambia uno, se cambian los dos.
+   A la izquierda en móvil, igual que el de la 03. */
 .corte-personaje {
   width: clamp(160px, 52vw, 280px);
   height: auto;
-  justify-self: center;
+  justify-self: start;
 }
 /* En escritorio crece y se despega del borde: entra hacia la página en vez
    de quedar colgado del margen. */
@@ -133,6 +138,18 @@
 }
 
 /* ── 03 · manifiesto ─────────────────────────────────────── */
+/* Mismas medidas que .corte-personaje: ver la nota de allá.
+   Va ANTES del media query, no después: las dos reglas tienen la misma
+   especificidad, así que si la base queda abajo gana ella y el ancho de
+   escritorio nunca se aplica. Es el mismo error de orden que ya me costó
+   una vuelta en el hero. */
+.manifiesto-personaje {
+  display: block;
+  width: clamp(160px, 52vw, 280px);
+  height: auto;
+  margin-top: 28px;
+}
+
 @media (min-width: 900px) {
   .manifiesto {
     display: grid;
@@ -152,25 +169,23 @@
     grid-column: 1;
     grid-row: 2;
   }
+  /* Centrado contra el bloque de texto, no pegado arriba: la caja de texto
+     es bastante más alta que el personaje, y alinearlos por el techo lo
+     dejaba colgando en la mitad de arriba.
+     Los 40px de margin-top se conservan justamente para que el centrado dé
+     en el centro óptico del texto: la fila la define el cuerpo, que arrastra
+     esos mismos 40 de margen, así que sin ellos el personaje quedaría 20px
+     por encima de donde se ve el medio. */
   .manifiesto-personaje {
     grid-column: 1;
     grid-row: 3;
+    width: min(27vw, 340px);
+    align-self: center;
+    margin-top: 40px;
   }
   .manifiesto-cuerpo {
     grid-column: 2;
     grid-row: 3;
-  }
-}
-.manifiesto-personaje {
-  display: block;
-  width: clamp(150px, 44vw, 220px);
-  height: auto;
-  margin-top: 28px;
-}
-@media (min-width: 900px) {
-  .manifiesto-personaje {
-    width: min(24vw, 300px);
-    margin-top: 40px;
   }
 }
 .manifiesto-cuerpo {
@@ -311,8 +326,6 @@
   align-self: flex-end;
   margin-bottom: 16px;
   font-family: var(--f-mono);
-  /* 16px es el piso que fija CLAUDE.md; la pastilla se achica por el
-     interletrado y el padding, no bajando la tipografía. */
   /* 16px es el piso duro que fija CLAUDE.md, así que la pastilla sólo puede
      achicarse por interletrado y padding: de 0.1em a 0.04em y de 6/13 a
      5/10 la deja en ~133x26 contra los 151x28 de antes. Más chica que esto
