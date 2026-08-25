@@ -117,9 +117,14 @@
 /* Setup en tipografía chica, como lo marca el handoff de copy. Prepara el
    remate y no compite con él: por eso va en la de cuerpo y no en la display.
    Sobre rosa el color de bajada es #4A3A3E, del brandbook. */
+/* Una sola línea en móvil. Lo que la partía en dos no era el tamaño sino el
+   max-width de 26ch: a 17px la frase mide 322px y la columna tiene 342, o
+   sea que cabía y el tope la cortaba igual. Fuera el tope, y el piso baja a
+   16px para que siga entrando en pantallas de 360 (a 16px mide 303px en una
+   columna de 312). Bajo ~350px de ancho vuelve a partirse en dos, que es
+   mejor que desbordar. */
 .hero-setup {
-  max-width: 26ch;
-  font-size: clamp(17px, 4.4vw, 22px);
+  font-size: clamp(16px, 4.4vw, 22px);
   line-height: 1.35;
   color: var(--rosa-bajada);
 }

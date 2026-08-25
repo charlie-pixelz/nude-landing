@@ -9,12 +9,13 @@
 /* ── andamiaje común ─────────────────────────────────────── */
 /* Dos secciones seguidas suman el padding de las dos: el hueco real entre
    bloques es el doble de este número. Venía de 140px (280 de hueco), pasó a
-   96 (192) y ahora a 24 (48). Es denso a propósito, en clave editorial: la
-   separación la hace la tipografía y el kicker, no el vacío.
+   96 (192), probamos 24 y quedó apretado: 40 es el valor que Charlie fijó
+   mirando el resultado. Contra una banda de color el hueco es de 40; entre
+   dos secciones negras, 80, porque ahí suman los dos paddings.
    Ojo: esto NO aplica a las superficies de color, que llevan su propio
    padding más abajo. Ahí el aire es lo que hace respirar al bloque. */
 .pad {
-  padding-block: clamp(20px, 2.6vh, 24px);
+  padding-block: 40px;
 }
 
 .kicker {
@@ -87,7 +88,7 @@
    de quedar colgado del margen. */
 @media (min-width: 900px) {
   .corte-personaje {
-    width: min(36vw, 470px);
+    width: min(27vw, 340px);
     justify-self: end;
     margin-right: clamp(0px, 3vw, 56px);
   }
@@ -129,12 +130,17 @@
   .manifiesto {
     display: grid;
     grid-template-columns: 1fr 1.35fr;
-    gap: 64px;
+    gap: 0 64px;
     align-items: start;
+  }
+  /* El kicker se lleva su propia fila completa: lo que va debajo empieza
+     todo a la misma altura. */
+  .manifiesto-kicker {
+    grid-column: 1 / -1;
   }
   .manifiesto-head {
     position: sticky;
-    top: 112px;
+    top: calc(var(--nav-h) + 34px);
   }
 }
 .manifiesto-personaje {
@@ -154,8 +160,13 @@
   max-width: 58ch;
 }
 @media (min-width: 900px) {
+  /* Los 20px que .pad .h2 le da al titular, menos 4 de corrección óptica.
+     Alinear las cajas no alinea la tinta: el titular va a 48px con
+     interlineado 1.05 y el cuerpo a 18 con 1.6, así que el cuerpo arrastra
+     más aire sobre su primera línea. Medido con TextMetrics sobre la tinta
+     real, no sobre las cajas. */
   .manifiesto-cuerpo {
-    margin-top: 0;
+    margin-top: 16px;
   }
 }
 .manifiesto-cuerpo p {
@@ -285,14 +296,18 @@
   font-family: var(--f-mono);
   /* 16px es el piso que fija CLAUDE.md; la pastilla se achica por el
      interletrado y el padding, no bajando la tipografía. */
+  /* 16px es el piso duro que fija CLAUDE.md, así que la pastilla sólo puede
+     achicarse por interletrado y padding: de 0.1em a 0.04em y de 6/13 a
+     5/10 la deja en ~133x26 contra los 151x28 de antes. Más chica que esto
+     exige bajar la tipografía, y ahí hay que romper el piso. */
   font-size: 16px;
   line-height: 1;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.04em;
   color: var(--peri-titular);
   background: var(--peri);
   border-radius: 999px;
-  padding: 6px 12px 6px 14px;
+  padding: 5px 10px;
 }
 /* Desde que las tarjetas van lado a lado sí importa que las cifras arranquen
    al mismo alto, así que la marca pasa a absoluta arriba a la derecha y las
@@ -439,6 +454,9 @@
 }
 
 /* ── marquesina ──────────────────────────────────────────── */
+/* Sin margen propio: los 40px de aire ya se los dan las secciones que tiene
+   arriba y abajo con su padding, igual que a la banda periwinkle de la 05.
+   Agregarle margin-block: 40 dejaba 80 a cada lado, el doble que el resto. */
 .marquesina {
   background: var(--rosa);
   overflow: hidden;
@@ -533,8 +551,10 @@
    caja negra sobre periwinkle es dos superficies discutiendo. Acá el color
    ES la caja. Sobre periwinkle el titular va en #141110 y la bajada en
    #2A3763, los dos del manual. */
+/* 40px arriba, los mismos 40 que el padding-bottom de la sección deja
+   abajo: antes tenía 80 arriba y 40 abajo y la banda quedaba descolgada. */
 .avisame {
-  margin-top: clamp(48px, 7vw, 80px);
+  margin-top: 40px;
   background: var(--peri);
   padding-block: clamp(48px, 8vh, 88px);
 }
