@@ -1,10 +1,10 @@
 {
   "_nota": "Preguntas frecuentes. Este archivo lo edita el cliente sin tocar código: agregar una pregunta es agregar un objeto a la lista. Una pregunta con la respuesta vacía NO se publica, queda esperando. Así el archivo sirve de lista de pendientes y el sitio nunca muestra un hueco.",
-  "_pendiente": "Las 6 preguntas con respuesta vacía necesitan el dato de la marca. No se responden por cuenta propia: son datos de producto, de precio o de posicionamiento (CLAUDE.md, 'no inventes datos').",
+  "_pendiente": "Las 6 preguntas con respuesta vacía necesitan el dato de la marca. No se responden por cuenta propia: son datos de producto, de precio o de posicionamiento (CLAUDE.md, 'no inventes datos'). La sección está FUERA del sitio: el handoff de copy del 24 de agosto de 2026, marcado COPY FINAL, no la incluye. Volver a ponerla es reponer el bloque #dudas en index.html.",
   "preguntas": [
     {
       "p": "¿Se puede tirar al WC?",
-      "r": "Sí. Se degrada en el agua. Máximo dos hojas por descarga.",
+      "r": "Sí. Se va con el agua. Se degrada en el WC, máximo dos hojas por descarga.",
       "fuente": "sitio"
     },
     {

@@ -7,8 +7,13 @@
      cifra o firma. */
 
 /* ── andamiaje común ─────────────────────────────────────── */
+/* Dos secciones seguidas suman el padding de las dos, así que el hueco real
+   entre bloques es el doble de este número. A 12vh/140px daban hasta 280px
+   de negro vacío entre el final de un texto y el kicker siguiente, que es
+   más aire del que el contenido justifica. A 96px el hueco máximo queda en
+   192px: sigue respirando, deja de ser una pausa. */
 .pad {
-  padding-block: clamp(72px, 12vh, 140px);
+  padding-block: clamp(56px, 7.5vh, 96px);
 }
 
 .kicker {
@@ -43,9 +48,22 @@
   white-space: nowrap;
 }
 
-/* ── 01 · el corte ───────────────────────────────────────── */
+/* ── 01 · lo que nadie preguntó ──────────────────────────── */
+/* El personaje acompaña al texto por la derecha. Desde 900px van lado a
+   lado; bajo ese ancho las cinco líneas no dejan sitio para nada al costado,
+   así que baja a su propia fila, alineado a la derecha y grande. */
+.corte-grid {
+  display: grid;
+  gap: clamp(16px, 3vw, 48px);
+  align-items: center;
+}
+@media (min-width: 900px) {
+  .corte-grid {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+}
 .corte-lineas {
-  margin-top: 40px;
+  margin-top: 32px;
 }
 .corte-linea {
   font-family: var(--f-heading);
@@ -57,71 +75,46 @@
 .corte-linea.es-rosa {
   color: var(--rosa);
 }
-.corte-nota {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-top: 28px;
-}
 .corte-personaje {
-  width: clamp(52px, 11vw, 78px);
+  width: clamp(160px, 48vw, 260px);
   height: auto;
-  flex: 0 0 auto;
+  justify-self: end;
 }
-.corte-pie {
-  font-family: var(--f-mono);
-  font-size: var(--fs-etiqueta);
-  letter-spacing: 0.12em;
-  color: var(--texto-metadato);
+@media (min-width: 900px) {
+  .corte-personaje {
+    width: min(30vw, 400px);
+  }
 }
 .corte-cierre {
-  margin-top: 32px;
+  margin-top: 28px;
   max-width: 34ch;
   font-size: var(--fs-bajada);
   line-height: 1.45;
   color: var(--texto-bajada);
 }
 
-/* ── 02 · cómo se hace ───────────────────────────────────── */
-.pasos {
-  list-style: none;
-  margin-top: 52px;
-  display: grid;
-  gap: 32px;
+/* ── 02 · la aparición ───────────────────────────────────── */
+/* Mismo peso tipográfico que la 01: son las dos caras del mismo corte, y
+   repetir la escala es lo que hace que la segunda se lea como respuesta. */
+.aparicion-lineas {
+  margin-top: 32px;
 }
-@media (min-width: 760px) {
-  .pasos {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 40px;
-  }
-}
-.paso {
-  border-top: 1px solid var(--linea);
-  padding-top: 20px;
-}
-.paso-num {
-  display: block;
+.aparicion-linea {
   font-family: var(--f-heading);
-  font-size: clamp(44px, 7vw, 68px);
-  letter-spacing: -0.04em;
-  line-height: 1;
-  color: var(--rosa);
-}
-.paso-texto {
-  margin-top: 12px;
-  font-size: var(--fs-cuerpo);
-  color: var(--texto-cuerpo);
-}
-.como-cierre {
-  margin-top: 56px;
-  font-family: var(--f-heading);
-  font-size: clamp(28px, 5.2vw, 46px);
+  font-size: clamp(30px, 6.4vw, 60px);
+  line-height: 1.08;
   letter-spacing: -0.02em;
   color: var(--crema);
 }
-.como-meta {
-  margin-top: 12px;
-  color: var(--texto-metadato);
+/* Única línea en rosa de la sección: es la primera vez que el sitio dice el
+   nombre. Titular, no cuerpo: el brandbook lo permite exactamente acá. */
+.aparicion-remate {
+  margin-top: clamp(28px, 4.5vw, 52px);
+  font-family: var(--f-heading);
+  font-size: clamp(36px, 8vw, 72px);
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  color: var(--rosa);
 }
 
 /* ── 03 · manifiesto ─────────────────────────────────────── */
@@ -163,7 +156,45 @@
   color: var(--crema);
 }
 
-/* ── 04 · se degrada · superficie periwinkle ─────────────── */
+/* ── 04 · así se empieza ─────────────────────────────────── */
+.pasos {
+  list-style: none;
+  margin-top: 52px;
+  display: grid;
+  gap: 32px;
+}
+@media (min-width: 760px) {
+  .pasos {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+  }
+}
+.paso {
+  border-top: 1px solid var(--linea);
+  padding-top: 20px;
+}
+.paso-num {
+  display: block;
+  font-family: var(--f-heading);
+  font-size: clamp(44px, 7vw, 68px);
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: var(--rosa);
+}
+.paso-texto {
+  margin-top: 12px;
+  font-size: var(--fs-cuerpo);
+  color: var(--texto-cuerpo);
+}
+.como-cierre {
+  margin-top: 56px;
+  font-family: var(--f-heading);
+  font-size: clamp(28px, 5.2vw, 46px);
+  letter-spacing: -0.02em;
+  color: var(--crema);
+}
+
+/* ── 05 · la prueba de siempre · superficie periwinkle ───── */
 .seccion-peri {
   background: var(--peri);
 }
@@ -182,12 +213,23 @@
   margin-top: 24px;
   color: var(--peri-bajada);
 }
+/* Con el copy nuevo esta línea dejó de ser una etiqueta y pasó a ser una
+   frase ("Se degrada en el WC, máximo dos hojas por descarga"). En Space
+   Mono mayúsculas con 0.18em ocupaba tres renglones y se leía mal: el
+   brandbook reserva la mono para etiquetas, fechas, montos y KPIs, no para
+   frases. Va en la de cuerpo, en el tono de bajada. */
 .degrada-meta {
-  margin-top: 14px;
+  margin-top: 16px;
+  font-family: var(--f-body);
+  font-size: var(--fs-cuerpo);
+  line-height: 1.5;
+  text-transform: none;
+  letter-spacing: 0;
+  max-width: 40ch;
   color: var(--peri-bajada);
 }
 
-/* ── 05 · formatos ───────────────────────────────────────── */
+/* ── 06 · formatos ───────────────────────────────────────── */
 .formatos {
   list-style: none;
   margin-top: 52px;
@@ -208,18 +250,41 @@
   border-radius: 14px;
   padding: 28px 24px 24px;
 }
+/* Periwinkle y no rosa: la cifra ya es rosa, y dos rosas juntos en la misma
+   tarjeta aplanan la jerarquía. El periwinkle es el segundo acento del
+   sistema y acá hace justo su trabajo. Negro sobre periwinkle da 7,56:1.
+   En una columna la marca va en el flujo, arriba de la cifra: no hay nada
+   al lado con qué alinearse, así que no vale gastar aire reservándole una
+   banda a las otras tres tarjetas. */
 .formato-marca {
-  position: absolute;
-  top: 16px;
-  right: 16px;
+  align-self: flex-start;
+  margin-bottom: 16px;
   font-family: var(--f-mono);
-  font-size: var(--fs-etiqueta);
+  /* 16px es el piso que fija CLAUDE.md; la pastilla se achica por el
+     interletrado y el padding, no bajando la tipografía. */
+  font-size: 16px;
+  line-height: 1;
   text-transform: uppercase;
-  letter-spacing: 0.18em;
-  color: var(--negro);
-  background: var(--rosa);
+  letter-spacing: 0.1em;
+  color: var(--peri-titular);
+  background: var(--peri);
   border-radius: 999px;
-  padding: 5px 12px;
+  padding: 6px 12px 6px 14px;
+}
+/* Desde que las tarjetas van lado a lado sí importa que las cifras arranquen
+   al mismo alto, así que la marca pasa a absoluta arriba a la derecha y las
+   CUATRO reservan la banda. Antes iba absoluta sin banda reservada y a 4
+   columnas se montaba encima del número. */
+@media (min-width: 620px) {
+  .formato {
+    padding-top: 56px;
+  }
+  .formato-marca {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    margin-bottom: 0;
+  }
 }
 .formato-cifra {
   font-family: var(--f-heading);
@@ -255,7 +320,7 @@
   margin-top: 24px;
 }
 
-/* ── 06 · la ficha ───────────────────────────────────────── */
+/* ── 07 · la ficha ───────────────────────────────────────── */
 .ficha {
   margin-top: 48px;
   border-top: 1px solid var(--linea);
@@ -291,7 +356,11 @@
   color: var(--texto-marca-agua);
 }
 
-/* ── 07 · dudas ──────────────────────────────────────────── */
+/* ── dudas (fuera del sitio por ahora) ───────────────────── */
+/* El handoff de copy marcado COPY FINAL no incluye esta sección, así que la
+   sacamos del markup. El CSS y src/js/faq.js se quedan: el módulo no hace
+   nada si #faq no existe, y volver a poner la sección son dos líneas de
+   HTML el día que la marca confirme las respuestas que faltan. */
 /* <details> nativos. Nada gira ni rebota (brandbook): el signo cambia de
    + a −, no rota. La jerarquía es por tono, no por color. */
 .faq {
@@ -372,7 +441,7 @@
   }
 }
 
-/* ── 07 · dónde ──────────────────────────────────────────── */
+/* ── 08 · dónde encontrarlo ──────────────────────────────── */
 .tiendas {
   margin-top: 44px;
 }
@@ -432,23 +501,27 @@
   color: var(--texto-metadato);
 }
 
-/* avísame */
+/* avísame · banda periwinkle a sangre.
+   Sin caja adentro: el brandbook pide un fondo de color por vista, y una
+   caja negra sobre periwinkle es dos superficies discutiendo. Acá el color
+   ES la caja. Sobre periwinkle el titular va en #141110 y la bajada en
+   #2A3763, los dos del manual. */
 .avisame {
-  margin-top: 56px;
-  border: 1px solid var(--linea);
-  border-radius: 16px;
-  padding: clamp(24px, 4vw, 40px);
+  margin-top: clamp(48px, 7vw, 80px);
+  background: var(--peri);
+  padding-block: clamp(48px, 8vh, 88px);
 }
 .avisame-h {
   font-family: var(--f-heading);
-  font-size: clamp(22px, 3.4vw, 30px);
+  font-size: clamp(26px, 4.4vw, 40px);
+  line-height: 1.1;
   letter-spacing: -0.02em;
-  color: var(--crema);
+  color: var(--peri-titular);
 }
 .avisame-sub {
-  margin-top: 10px;
+  margin-top: 12px;
   font-size: var(--fs-cuerpo);
-  color: var(--texto-bajada);
+  color: var(--peri-bajada);
 }
 .avisame-form {
   margin-top: 24px;
@@ -464,22 +537,36 @@
 .avisame-form input {
   font-family: var(--f-body);
   font-size: 17px;
-  color: var(--crema);
+  color: var(--negro);
   background: none;
-  border: 1px solid var(--linea);
+  border: 1px solid rgba(20, 17, 16, 0.4);
   border-radius: 999px;
   padding: 0 20px;
   height: 52px;
 }
 /* El placeholder es el único rótulo que se ve (las <label> están ocultas),
-   así que tiene que cumplir AA como texto normal. En metadato daba 4.02:1
-   sobre negro y AA pide 4.5. En bajada da 8.78:1. */
+   así que tiene que cumplir AA como texto normal: #2A3763 sobre periwinkle
+   da 4,63:1, sobre el 4,5 que pide AA. Justo, pero pasa; si el periwinkle
+   se aclara alguna vez, esto es lo primero que se cae. */
 .avisame-form input::placeholder {
-  color: var(--texto-bajada);
+  color: var(--peri-bajada);
 }
 .avisame-form input:focus-visible {
-  outline: 2px solid var(--rosa);
+  outline: 2px solid var(--negro);
   outline-offset: 2px;
+}
+/* El CTA de esta banda no puede ser el primario rosa: rosa sobre periwinkle
+   es 1,1:1, ilegible. Negro con texto crema da 15,4:1 y además lo separa de
+   los "Ver en el mapa" de arriba, que son secundarios. */
+.btn-avisame {
+  background: var(--negro);
+  border: 1px solid var(--negro);
+  color: var(--crema);
+}
+.btn-avisame:hover {
+  background: #2e2926;
+  border-color: #2e2926;
+  color: var(--crema);
 }
 .avisame-form .btn {
   height: 52px;
@@ -490,25 +577,31 @@
   font-size: var(--fs-etiqueta);
   letter-spacing: 0.12em;
 }
-.avisame-msg.es-ok { color: var(--rosa); }
-.avisame-msg.es-error { color: var(--peri); }
+/* Los dos mensajes van en negro porque sobre periwinkle no hay un segundo
+   color legible en el sistema (no existe un rojo de marca). Lo que los
+   distingue no es el color: el de éxito reemplaza al formulario entero, y
+   el de error aparece con el formulario todavía puesto y el campo marcado.
+   El error va en negrita para que el peso haga la diferencia. */
+.avisame-msg.es-ok { color: var(--negro); }
+.avisame-msg.es-error {
+  color: var(--negro);
+  font-weight: 700;
+}
 
-/* Aviso legal: se tiene que poder leer, no insinuar. Mismo motivo que el
-   placeholder, en bajada y no en metadato. */
+/* Aviso legal: se tiene que poder leer, no insinuar. */
 .avisame-legal {
   margin-top: 14px;
   font-size: 16px;
   line-height: 1.5;
-  color: var(--texto-bajada);
+  color: var(--peri-bajada);
 }
 
-/* campo inválido: borde y foco en periwinkle, que es el color del mensaje
-   de error. El rojo no existe en el sistema de marca. */
+/* Campo inválido: se marca con el borde en negro sólido, no con un color.
+   Va por box-shadow y no subiendo el border-width, porque engordar el borde
+   movería el alto del campo 2px y saltaría toda la fila. */
 .avisame-form input[aria-invalid='true'] {
-  border-color: var(--peri);
-}
-.avisame-form input[aria-invalid='true']:focus-visible {
-  outline-color: var(--peri);
+  border-color: var(--negro);
+  box-shadow: inset 0 0 0 1px var(--negro);
 }
 
 /* mientras se envía: el botón queda inerte pero legible, sin spinner ni

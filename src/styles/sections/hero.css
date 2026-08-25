@@ -87,7 +87,13 @@
   /* 72px = nav fija. El resto es el aire sobre el título: con la
      composición en dos columnas el bloque bajó de 155px a ~116px de alto,
      así que sobra banda limpia para darle respiro arriba y abajo. */
-  padding-top: calc(72px + clamp(24px, 5.2vh, 56px));
+  /* Medido de nuevo contra los 96 frames a 375x812 con el copy nuevo: la
+     banda limpia de arriba llega hasta y=234 (28,8% del alto) y la de abajo
+     empieza en y=672 (82,8%). Fuera de esas dos franjas el peor frame deja
+     la bajada bajo 4,5:1. El setup + el titular miden ~132px, así que el
+     aire de arriba baja de 42px a 23px para que el bloque cierre antes de
+     los 234. */
+  padding-top: calc(72px + clamp(14px, 2.8vh, 48px));
   /* La sombra del pack llega hasta el 82,6% del alto de la pantalla, y esa
      proporción se mantiene en cualquier viewport porque el frame llena el
      alto. Bajo esa línea el fondo es rosa limpio; encima, la bajada pierde
@@ -95,7 +101,7 @@
      El bloque B mide ~146px, así que el aire que queda abajo es lo que
      sobra de ese 17,4%: de ahí sale la fórmula. En pantallas cortas el
      bloque se comprime solo con los clamp de más abajo. */
-  padding-bottom: clamp(10px, calc(9vh - 46px), 20px);
+  padding-bottom: clamp(10px, calc(9vh - 46px), 16px);
   pointer-events: none;
 }
 /* solo lo accionable recibe el puntero: el resto deja pasar el scroll */
@@ -108,69 +114,45 @@
   max-width: 760px;
 }
 
+/* Setup en tipografía chica, como lo marca el handoff de copy. Prepara el
+   remate y no compite con él: por eso va en la de cuerpo y no en la display.
+   Sobre rosa el color de bajada es #4A3A3E, del brandbook. */
+.hero-setup {
+  max-width: 26ch;
+  font-size: clamp(17px, 4.4vw, 22px);
+  line-height: 1.35;
+  color: var(--rosa-bajada);
+}
+
 .hero-arriba .h1 {
   /* Titular de portada en la display: rol correcto según el brandbook.
-     Móvil: dos columnas separadas por una regla. "Esto" + el paréntesis a
-     la izquierda, el cierre de la frase a la derecha. Repartir en horizontal
-     deja el bloque MÁS BAJO que apilando cuatro líneas, y por eso permite
-     tipografía más grande sin invadir la franja del producto. */
-  display: flex;
-  /* Alineadas por arriba: la caja de "Esto" lleva un margen inferior
-     negativo que iguala el alto de las dos columnas, así el borde de
-     arriba y el de abajo del titular coinciden en los dos lados. */
-  align-items: flex-start;
-  gap: 14px;
+     Una sola línea, así que no hay columnas ni regla que repartir: el
+     tamaño sale del ancho de su caja y ocupa el ancho completo. */
+  margin: clamp(6px, 1vh, 16px) 0 0;
   font-family: var(--f-display);
   line-height: 1;
   letter-spacing: 0;
   color: var(--negro);
-  margin: 0;
 }
 .t-col .ln {
   white-space: nowrap;
 }
 .t-col {
-  /* container-type hace que 1cqw = 1% del ancho de ESTA columna, que es
-     lo que permite que cada línea se dimensione contra su propia caja. */
+  /* container-type hace que 1cqw = 1% del ancho de ESTA caja, que es lo que
+     permite dimensionar la línea contra su propia columna y no contra el
+     viewport. Así el titular llena el ancho disponible en cualquier
+     pantalla sin un solo breakpoint de tamaño. */
   container-type: inline-size;
+  display: block;
   min-width: 0;
 }
-.t-a { flex: 0 0 42%; }
-.t-b { flex: 1 1 auto; }
-.t-regla {
-  align-self: stretch;
-  flex: 0 0 1px;
-  background: var(--negro);
-  opacity: 0.25;
-}
 /* 96cqw en vez de 100: deja un 4% de resguardo para el redondeo del
-   hinting, si no la línea más larga desborda su columna por 1-2px. */
-.t-esto { font-size: calc(96cqw / 1.6675); }
-/* Piso de 16px: es el mínimo que fija CLAUDE.md. A 440px (iPhone 17 Pro
-   Max) el cálculo da 18,4px y no se activa; en pantallas bajo ~390px sí,
-   y ahí el paréntesis queda un pelo más ancho que "Esto". */
-.t-par  { font-size: max(16px, calc(96cqw / 8.1968)); }
-.t-fin  { font-size: calc(96cqw / 4.3389); }
-/* Alineación ÓPTICA, no de cajas. A distinto tamaño la letra cae en
-   distinto lugar dentro de su caja, así que igualar las cajas dejaba "Esto"
-   17,5px más abajo que "quedó igual" y encima solapado con el paréntesis.
-   Medido con las métricas reales de la fuente (actualBoundingBox):
-     margin-top    sube "Esto" hasta que el borde de la "o" coincide con el
-                   borde superior de la tinta de "quedó igual"
-     margin-bottom deja el paréntesis con su base alineada a "desde 1800.",
-                   conservando ~6px de aire respecto de "Esto"
-   Van en em para que la relación se mantenga en cualquier ancho. */
-.t-esto {
-  margin-top: -0.245em;
-  margin-bottom: -0.173em;
-}
-.t-par  { margin-top: 0; }
-.t-fin + .t-fin { margin-top: 0.06em; }
+   hinting, si no la línea desborda su caja por 1-2px. El divisor es el
+   ancho real de "Hasta hoy." en Halloween Days por unidad de tamaño,
+   medido en el navegador con TextMetrics. */
+.t-hasta { font-size: calc(96cqw / 4.0356); }
 
 @media (min-width: 760px) {
-  /* Escritorio: las dos columnas se apilan y ocupan el mismo ancho, así
-     las cuatro líneas quedan justificadas a ambos márgenes por construcción.
-     La regla vertical no aplica acá. */
   /* El tope de 760px de .hero-arriba servía en móvil; acá deja el texto
      centrado en la página en vez de apoyado en el margen. En escritorio
      manda el ancho de .wrap y el titular lleva su propio tope. */
@@ -178,25 +160,16 @@
   .hero-abajo {
     max-width: none;
   }
+  /* El frame ocupa el 46% derecho y su borde izquierdo va difuminado sobre
+     un 10% de ese ancho. 44vw deja el titular dentro del rosa limpio, con
+     margen de sobra antes de que empiece el difuminado. */
   .hero-arriba .h1 {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0;
-    /* 26vw pone "Esto" cerca de 215px a 1440, que es la proporción del
-       boceto; el tope de 420px evita que se dispare en pantallas anchas. */
-    max-width: min(26vw, 420px);
+    max-width: min(44vw, 620px);
   }
-  .t-a, .t-b { flex: 0 0 auto; width: 100%; }
-  .t-regla { display: none; }
-  /* Sube el bloque de tres líneas: estaba muy separado de "Esto" y muy
-     pegado al bloque B. Lo que sobra arriba se transforma en aire abajo. */
-  /* En escritorio las columnas van apiladas: no hay nada a la derecha
-     con qué alinear, así que el desplazamiento óptico se anula. */
-  .t-esto {
-    margin-top: 0;
-    margin-bottom: -0.15em;
+  .hero-setup {
+    max-width: min(34vw, 460px);
+    font-size: 22px;
   }
-  .t-par { margin-top: 0; }
 }
 @media (min-width: 760px) {
   .hero-zonas {
@@ -234,15 +207,41 @@
   letter-spacing: -0.01em;
   color: var(--negro);
 }
+/* Dos CTA, como pide el handoff de copy. En móvil no caben lado a lado
+   ("DÓNDE ENCONTRARLO" solo ya mide más de media pantalla en mono con
+   0.18em), así que envuelven; en escritorio van en fila. */
+.hero-ctas {
+  margin-top: clamp(8px, 1.4vh, 14px);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+/* En móvil el segundo CTA no cabe, y no es una cuestión de gusto: la banda
+   limpia de abajo son 120px (de y=672 a y=792 a 375x812) y bajada + firma +
+   un botón ya ocupan 119. Un segundo botón empuja la bajada dentro de la
+   sombra del pack, donde el peor frame la deja en 1,97:1. Lado a lado
+   tampoco: "DÓNDE ENCONTRARLO" solo mide 267px de los 327 disponibles.
+   Desde 760px el texto vive a la izquierda, el producto a la derecha y los
+   dos entran sin discusión. */
+.hero-ctas .btn-secundario {
+  display: none;
+}
+@media (min-width: 760px) {
+  .hero-ctas .btn-secundario {
+    display: inline-flex;
+  }
+}
 .hero-abajo .btn {
   /* Se comprime en pantallas cortas para que el bloque entero siga
      cabiendo bajo la sombra. 48px sigue sobre el mínimo táctil de 44. */
-  margin-top: clamp(8px, 1.4vh, 14px);
+  margin-top: 0;
   height: clamp(48px, 5.9vh, 56px);
   padding-inline: 30px;
 }
 @media (min-width: 760px) {
   .hero-abajo { text-align: left; }
+  .hero-ctas { justify-content: flex-start; }
   /* Este bloque va después de las reglas base a propósito: con la misma
      especificidad gana la última, así que un override de escritorio
      colocado antes queda pisado por el valor de móvil. */
@@ -260,6 +259,16 @@
 .hero .btn-primario:hover {
   background: #2e2926;
   border-color: #2e2926;
+}
+/* Sobre rosa el borde --linea del secundario es invisible y el texto crema
+   no tiene contraste. Acá el secundario es negro sobre rosa: 12,6:1. */
+.hero .btn-secundario {
+  border-color: var(--negro);
+  color: var(--negro);
+}
+.hero .btn-secundario:hover {
+  background: var(--negro);
+  color: var(--crema);
 }
 
 /* prefers-reduced-motion / saveData: hero-scrub.js marca .hero-static.

@@ -34,93 +34,72 @@
              (~33% del alto) e inferior (~17%) quedan libres de producto en
              TODO el recorrido del scrub, y el pack ocupa la franja central
              de borde a borde. El texto vive en esas dos zonas limpias; el
-             producto se queda solo en el medio, a sangre. Por eso no hace
-             falta halo ni caja: no hay cruce que compensar. -->
+             producto se queda solo en el medio, a sangre. -->
         <div class="hero-zonas">
           <div class="wrap hero-arriba">
-            <!-- El asterisco tiene su nota al pie en la sección 01, que es
-                 donde el copy del brief la pone. En el hero queda suelto a
-                 propósito: es el anzuelo. -->
-            <!-- Quiebre de línea fijo, no el wrap natural: el wrap partía el
-                 paréntesis ("...ahí / abajo *)"). Va escrito con la misma
-                 estructura .mask > .ln que produce splitLines, y SIN data-split
-                 para que reveal.js no lo vuelva a partir por ancho. El texto
-                 es el mismo del brief; los saltos solo cambian dónde corta.
-                 Los espacios entre líneas quedan en el HTML, así el texto
-                 accesible sigue leyéndose como una sola frase. -->
-            <!-- El tamaño de cada línea sale del ancho de SU columna, no de un
-                 número fijo: cada .mask lleva font-size: calc(<n>cqw / factor),
-                 donde el factor es el ancho medido de esa línea en Halloween
-                 Days por unidad de tamaño. Así "Esto" y el paréntesis quedan
-                 exactamente del mismo ancho, y en escritorio —donde las dos
-                 columnas se apilan a ancho completo— las cuatro líneas quedan
-                 alineadas a ambos márgenes sin tocar un solo valor.
-                 Sin data-split: los quiebres son fijos, no del wrap. -->
+            <!-- La jerarquía la fija el handoff de copy: la línea larga es el
+                 setup en tipografía chica y el H1 es "Hasta hoy.", marcado
+                 como el elemento más grande del bloque. El setup prepara, el
+                 titular remata: por eso el titular va solo, sin competencia.
+                 El tamaño sale del ancho de su columna, no de un número fijo
+                 (font-size: calc(<n>cqw / factor), con el factor medido del
+                 ancho real de la frase en Halloween Days). Sin data-split:
+                 es una línea sola y no hay wrap que partir. -->
+            <p class="hero-setup rv">Limpiarte ahí abajo sigue igual desde 1800.</p>
             <h1 class="h1 rv-split">
-              <span class="t-col t-a">
-                <span class="mask t-esto"><span class="ln">Esto</span></span>
-                <span class="mask t-par"><span class="ln" style="transition-delay:100ms">(limpiarse ahí abajo *)</span></span>
-              </span>
-              <span class="t-regla" aria-hidden="true"></span>
-              <span class="t-col t-b">
-                <span class="mask t-fin"><span class="ln" style="transition-delay:200ms">quedó igual</span></span>
-                <span class="mask t-fin"><span class="ln" style="transition-delay:300ms">desde 1800.</span></span>
+              <span class="t-col">
+                <span class="mask t-hasta"><span class="ln" style="transition-delay:120ms">Hasta hoy.</span></span>
               </span>
             </h1>
           </div>
           <div class="wrap hero-abajo">
-            <p class="bajada rv" style="--d:200ms">Papel higiénico húmedo, llegó a Jumbo.</p>
+            <p class="bajada rv" style="--d:200ms">Papel higiénico húmedo, ya en Jumbo.</p>
             <p class="firma rv" style="--d:280ms">NUDE. Así se hace.</p>
-            <a class="btn btn-primario rv" href="#como" style="--d:360ms">Cómo se hace</a>
+            <div class="hero-ctas rv" style="--d:360ms">
+              <a class="btn btn-primario" href="#donde">Dónde encontrarlo</a>
+              <a class="btn btn-secundario" href="#como">Cómo se hace</a>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ══════════ 01 · EL CORTE ══════════ -->
+  <!-- ══════════ 01 · LO QUE NADIE PREGUNTÓ ══════════ -->
+  <!-- El personaje de marca acompaña al texto, a la derecha, y es lo segundo
+       más grande de la sección después de las líneas. No ilustra el chiste:
+       lo mira de al lado. Decorativo de verdad (alt vacío + aria-hidden),
+       porque no aporta información que no esté ya escrita. -->
   <section class="pad" id="corte">
-    <div class="wrap">
-      <p class="kicker rv">01 · Lo que nadie preguntó</p>
-      <div class="corte-lineas">
-        <p class="corte-linea rv-split"><span class="mask"><span class="ln">Cambió el teléfono.</span></span></p>
-        <p class="corte-linea rv-split"><span class="mask"><span class="ln" style="transition-delay:90ms">Cambió el auto.</span></span></p>
-        <p class="corte-linea rv-split"><span class="mask"><span class="ln" style="transition-delay:180ms">Cambió la casa.</span></span></p>
-        <p class="corte-linea es-rosa rv-split"><span class="mask"><span class="ln" style="transition-delay:270ms">Esto * quedó igual desde 1.800.</span></span></p>
+    <div class="wrap corte-grid">
+      <div class="corte-texto">
+        <p class="kicker rv">01 · Lo que nadie preguntó</p>
+        <div class="corte-lineas">
+          <p class="corte-linea rv-split"><span class="mask"><span class="ln">Cambió el teléfono.</span></span></p>
+          <p class="corte-linea rv-split"><span class="mask"><span class="ln" style="transition-delay:90ms">Cambió el auto.</span></span></p>
+          <p class="corte-linea rv-split"><span class="mask"><span class="ln" style="transition-delay:180ms">Cambió la casa.</span></span></p>
+          <p class="corte-linea rv-split"><span class="mask"><span class="ln" style="transition-delay:270ms">Cambió internet.</span></span></p>
+          <p class="corte-linea es-rosa rv-split"><span class="mask"><span class="ln" style="transition-delay:360ms">Limpiarte después de hacer del 2 no.</span></span></p>
+        </div>
+        <p class="corte-cierre rv" style="--d:440ms">Nadie lo cuestionó. Nadie sabía que había otra forma.</p>
       </div>
-      <!-- El personaje de marca ES el asterisco: por eso vive acá, pegado a
-           la nota al pie, y no decorando una sección cualquiera. Cierra el
-           asterisco que quedó suelto en el hero. -->
-      <div class="corte-nota rv" style="--d:340ms">
-        <img class="corte-personaje" src="/src/assets/img/brand-character.svg" alt="" aria-hidden="true" width="393" height="397" loading="lazy">
-        <p class="corte-pie">* Limpiarse ahí abajo.</p>
-      </div>
-      <p class="corte-cierre rv" style="--d:400ms">Nadie lo cuestionó, porque nadie sabía que había otra forma.</p>
+      <img class="corte-personaje rv" src="/src/assets/img/brand-character.svg" alt="" aria-hidden="true" width="393" height="397" loading="lazy" style="--d:200ms">
     </div>
   </section>
 
-  <!-- ══════════ 02 · CÓMO SE HACE ══════════ -->
-  <section class="pad" id="como">
+  <!-- ══════════ 02 · LA APARICIÓN ══════════ -->
+  <!-- Sección nueva del handoff de copy. Es el giro: dos líneas cortas, el
+       dato, y el remate. El remate es la única línea en rosa de la sección,
+       porque es la primera vez que el sitio dice el nombre. -->
+  <section class="pad" id="aparicion">
     <div class="wrap">
-      <p class="kicker rv">02 · Así se empieza</p>
-      <h2 class="h2 rv-split" data-split>Cómo se hace.</h2>
-      <p class="bajada seccion-bajada rv" style="--d:80ms">Tres movimientos. Doscientos años tarde.</p>
-      <ol class="pasos">
-        <li class="paso rv">
-          <span class="paso-num">01</span>
-          <p class="paso-texto">Levantas la tapa.</p>
-        </li>
-        <li class="paso rv" style="--d:120ms">
-          <span class="paso-num">02</span>
-          <p class="paso-texto">Sacas uno.</p>
-        </li>
-        <li class="paso rv" style="--d:240ms">
-          <span class="paso-num">03</span>
-          <p class="paso-texto">Listo.</p>
-        </li>
-      </ol>
-      <p class="como-cierre rv-split"><span class="mask"><span class="ln">Uno. Húmedo. XL.</span></span></p>
-      <p class="etiqueta como-meta rv" style="--d:120ms">Lo tiras al WC y cierras la tapa</p>
+      <p class="kicker rv">02 · La aparición</p>
+      <div class="aparicion-lineas">
+        <p class="aparicion-linea rv-split"><span class="mask"><span class="ln">Alguien lo probó húmedo.</span></span></p>
+        <p class="aparicion-linea rv-split"><span class="mask"><span class="ln" style="transition-delay:120ms">Y ya no hubo vuelta atrás.</span></span></p>
+      </div>
+      <p class="bajada seccion-bajada rv" style="--d:240ms">Papel higiénico húmedo, XL, se degrada en el agua.</p>
+      <p class="aparicion-remate rv-split"><span class="mask"><span class="ln" style="transition-delay:320ms">Esto es NUDE.</span></span></p>
     </div>
   </section>
 
@@ -138,27 +117,53 @@
         <p class="rv">Pasaron los autos, los teléfonos, las casas, internet. Esto siguió igual, todos los días, en el único lugar donde nadie mira lo que hace el otro.</p>
         <p class="rv">Por eso nadie preguntó.</p>
         <p class="rv manifiesto-giro"><strong>Nosotros preguntamos.</strong></p>
-        <p class="rv">Resulta que se hace distinto hace rato. Con agua. Con papel húmedo. Con un gesto que dura lo mismo.</p>
-        <p class="rv">Lo veníamos haciendo todos igual. Y está bien, nadie nos dijo nada.</p>
         <p class="rv">Ahora ya sabes.</p>
       </div>
     </div>
   </section>
 
-  <!-- ══════════ 04 · SE DEGRADA (periwinkle) ══════════ -->
-  <section class="pad seccion-peri" id="degrada" data-nav="peri">
+  <!-- ══════════ 04 · ASÍ SE EMPIEZA · GESTO ══════════ -->
+  <!-- Pasa a ir después del manifiesto: el handoff de copy la numera 04, y el
+       orden importa. Primero el problema, la aparición y el porqué; recién
+       ahí el gesto. -->
+  <section class="pad" id="como">
     <div class="wrap">
-      <p class="kicker rv">04 · La pregunta de siempre</p>
-      <h2 class="degrada-h rv-split" data-split>Se degrada en el agua.</h2>
-      <p class="bajada degrada-sub rv" style="--d:160ms">Máximo dos hojas por descarga.</p>
-      <p class="etiqueta degrada-meta rv" style="--d:240ms">Nada de papelero al lado</p>
+      <p class="kicker rv">04 · Así se empieza</p>
+      <h2 class="h2 rv-split" data-split>Cómo se hace.</h2>
+      <p class="bajada seccion-bajada rv" style="--d:80ms">Tres movimientos. Doscientos años tarde.</p>
+      <ol class="pasos">
+        <li class="paso rv">
+          <span class="paso-num">01</span>
+          <p class="paso-texto">Levantas la tapa.</p>
+        </li>
+        <li class="paso rv" style="--d:120ms">
+          <span class="paso-num">02</span>
+          <p class="paso-texto">Sacas uno.</p>
+        </li>
+        <li class="paso rv" style="--d:240ms">
+          <span class="paso-num">03</span>
+          <p class="paso-texto">Lo tiras al WC.</p>
+        </li>
+      </ol>
+      <p class="como-cierre rv-split"><span class="mask"><span class="ln">Uno. Húmedo. XL.</span></span></p>
     </div>
   </section>
 
-  <!-- ══════════ 05 · FORMATOS ══════════ -->
+  <!-- ══════════ 05 · LA PRUEBA DE SIEMPRE (periwinkle) ══════════ -->
+  <section class="pad seccion-peri" id="degrada" data-nav="peri">
+    <div class="wrap">
+      <p class="kicker rv">05 · La prueba de siempre</p>
+      <h2 class="degrada-h rv-split" data-split>Se va con el agua.</h2>
+      <p class="bajada degrada-sub rv" style="--d:160ms">Nada de papelero al lado.</p>
+      <p class="degrada-meta rv" style="--d:240ms">Se degrada en el WC, máximo dos hojas por descarga.</p>
+    </div>
+  </section>
+
+
+  <!-- ══════════ 06 · LOS FORMATOS ══════════ -->
   <section class="pad" id="formatos">
     <div class="wrap">
-      <p class="kicker rv">05 · Los formatos</p>
+      <p class="kicker rv">06 · Los formatos</p>
       <h2 class="h2 rv-split" data-split>Cuatro formas de tenerlo.</h2>
       <p class="bajada seccion-bajada rv" style="--d:80ms">Todos XL, 20 x 18 cm. Cambia dónde vive cada uno.</p>
       <ul class="formatos">
@@ -195,14 +200,14 @@
     </div>
   </section>
 
-  <!-- ══════════ 06 · LA FICHA ══════════ -->
+  <!-- ══════════ 07 · LA FICHA ══════════ -->
   <!-- El prototipo resolvía esta sección con blobs rosados e iconos de línea
        (gotita, escudo, check, hoja). El brandbook prohíbe explícitamente la
        "iconografía de farmacia", así que acá el dato se ordena por tipografía
        y jerarquía de tono, que es lo que el propio manual pide. -->
   <section class="pad" id="ficha">
     <div class="wrap">
-      <p class="kicker rv">06 · La ficha</p>
+      <p class="kicker rv">07 · La ficha</p>
       <h2 class="h2 rv-split" data-split>Lo que trae.</h2>
       <dl class="ficha">
         <div class="ficha-fila rv">
@@ -238,21 +243,6 @@
     </div>
   </section>
 
-  <!-- ══════════ 07 · DUDAS ══════════ -->
-  <!-- Va acá y no al final a propósito: el sitio tiene que cerrar en Jumbo.
-       Las preguntas las construye src/js/faq.js desde src/data/faq.json, y
-       una pregunta sin respuesta no se publica. Si algún día no queda
-       ninguna respondida, la sección entera se oculta sola. -->
-  <section class="pad" id="dudas">
-    <div class="wrap">
-      <p class="kicker rv">07 · Dudas</p>
-      <h2 class="h2 rv-split" data-split>Lo que igual se pregunta.</h2>
-      <div class="faq rv" id="faq" style="--d:80ms">
-        <div class="faq-lista"></div>
-      </div>
-    </div>
-  </section>
-
   <!-- ══════════ MARQUESINA ══════════ -->
   <div class="marquesina" aria-hidden="true">
     <div class="marquesina-cinta">
@@ -277,15 +267,25 @@
         <div class="tiendas-panel"></div>
       </div>
 
-      <div class="avisame rv" id="avisame">
-        <h3 class="avisame-h">Todavía no llega a tu ciudad.</h3>
+    </div>
+
+    <!-- La banda del formulario va a sangre y en periwinkle. Dos motivos:
+         separa el cierre del pie, y le da al form el protagonismo que no
+         tenía metido en una caja. Sin caja adentro a propósito: el brandbook
+         pide un fondo de color por vista, no una caja sobre otra. Esta banda
+         y la sección 05 son las dos únicas superficies periwinkle del sitio
+         y no se cruzan nunca en la misma pantalla.
+         data-nav="peri" para que la barra siga la zona, como la 05. -->
+    <div class="avisame rv" id="avisame" data-nav="peri">
+      <div class="wrap">
+        <h3 class="avisame-h">¿Todavía no llega a tu ciudad?</h3>
         <p class="avisame-sub">Déjanos tu comuna y avisamos apenas se pueda.</p>
         <form class="avisame-form" id="notify-form" novalidate>
           <label class="visualmente-oculto" for="notify-email">Tu correo</label>
           <input id="notify-email" type="email" name="email" placeholder="Tu correo" autocomplete="email" required>
           <label class="visualmente-oculto" for="notify-comuna">Tu comuna</label>
           <input id="notify-comuna" type="text" name="comuna" placeholder="Tu comuna" autocomplete="address-level2" required>
-          <button class="btn btn-primario" type="submit">Avísame</button>
+          <button class="btn btn-avisame" type="submit">Avísame</button>
         </form>
         <!-- Correo + comuna de personas en Chile son datos personales: la ley
              19.628 pide decir para qué se piden. Este texto es provisorio y
@@ -314,7 +314,7 @@
       </nav>
       <div class="pie-col">
         <p class="pie-titulo">Redes</p>
-        <a href="https://www.instagram.com/nude_" target="_blank" rel="noopener">@nude_</a>
+        <a href="https://www.instagram.com/estamosnude" target="_blank" rel="noopener">@estamosnude</a>
         <a href="https://nudewipes.cl" target="_blank" rel="noopener">nudewipes.cl</a>
         <p class="pie-titulo pie-titulo-2">Contacto</p>
         <a href="mailto:hola@nudewipes.cl">hola@nudewipes.cl</a>

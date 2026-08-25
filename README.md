@@ -14,9 +14,9 @@ sabiendo tres cosas: qué es, que se tira al WC, y que está en Jumbo.
 | | |
 |---|---|
 | Hero con scroll-scrub | listo |
-| Cuerpo, secciones 01 a 08 | listo |
+| Cuerpo, secciones 01 a 08 | listo, con el copy final del 24 de agosto |
 | Tiendas desde JSON | listo, pendientes de confirmar con la marca |
-| Preguntas frecuentes desde JSON | 7 publicadas, 6 esperando dato de la marca |
+| Preguntas frecuentes desde JSON | armadas, fuera del sitio: el copy final no las incluye |
 | Formulario "avísame" | listo, falta el endpoint del servicio de correo |
 | Medición (GA4, Meta, TikTok) | instalada, sin IDs reales |
 | Textos legales y 404 | pendiente |
