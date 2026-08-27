@@ -138,6 +138,29 @@
 }
 
 /* ── 03 · manifiesto ─────────────────────────────────────── */
+/* Superficie rosa, misma mecánica que .seccion-peri: la sección aporta sus
+   20px de margen y el vecino los otros 20 del separador. */
+.seccion-rosa {
+  margin-block: 20px;
+  background: var(--rosa);
+  padding-block: clamp(48px, 7vh, 88px);
+}
+.seccion-rosa .kicker {
+  color: var(--rosa-bajada);
+}
+.seccion-rosa .h2 {
+  color: var(--rosa-titular);
+}
+.seccion-rosa .manifiesto-cuerpo p {
+  color: var(--rosa-bajada);
+}
+/* El giro sigue marcándose con peso y tamaño, no con color: sobre rosa el
+   color de titular es el mismo negro del resto, así que la diferencia la
+   hace la tipografía, que era la intención original. */
+.seccion-rosa .manifiesto-giro strong {
+  color: var(--rosa-titular);
+}
+
 /* Mismas medidas que .corte-personaje: ver la nota de allá.
    Va ANTES del media query, no después: las dos reglas tienen la misma
    especificidad, así que si la base queda abajo gana ella y el ancho de
