@@ -50,14 +50,12 @@
     {
       "p": "¿Funciona con fosa séptica?",
       "r": "Sí. Al ser flushable, está diseñado para desintegrarse, por lo que es compatible con fosa séptica.",
-      "fuente": "Javier, 26 de agosto de 2026",
-      "_ojo": "Va textual como la mandó Javier. Pero 'flushable' choca con dos reglas del proyecto: el tono es chileno directo, y CLAUDE.md dice que la palabra inglesa vive sólo en el envase. Si esta respuesta se publica, conviene que él mismo la reescriba en castellano."
+      "fuente": "Javier, 26 de agosto de 2026"
     },
     {
       "p": "¿Cuánto cuesta?",
       "r": "Encuéntralos en Jumbo.",
-      "fuente": "Javier, 26 de agosto de 2026",
-      "_ojo": "Javier decidió no publicar precio porque lo fija el retail y cambia. Esta línea es la que él dio como reemplazo. Si suena evasiva como respuesta a '¿cuánto cuesta?', la alternativa es sacar la pregunta entera."
+      "fuente": "Javier, 26 de agosto de 2026, que decidió no publicar precio porque lo fija el retail y cambia"
     },
     {
       "p": "¿Se puede comprar en línea?",
