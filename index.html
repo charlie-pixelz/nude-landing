@@ -122,9 +122,12 @@
       <!-- Segunda vista del personaje, de frente. La 01 usa la de espaldas:
            el manifiesto es donde la marca da la cara, así que acá se da
            vuelta. Decorativo, sin texto alternativo. -->
-      <!-- La variante negra, no la blanca: sobre rosa va el personaje en negro,
-         igual que el logo. Es el mismo archivo con los cuatro fill cambiados. -->
-    <img class="manifiesto-personaje rv" src="/src/assets/img/brand-character-front-negro.svg"
+      <!-- El archivo original, blanco con línea negra, también sobre rosa. Se
+           probó una variante en negativo y no convenció: la silueta blanca con
+           la línea negra encima es el dibujo como está hecho, y esa línea le da
+           toda la definición que el blanco sobre rosa no tiene por contraste.
+           Es decorativo (aria-hidden), así que el contraste no es requisito. -->
+      <img class="manifiesto-personaje rv" src="/src/assets/img/brand-character-front.svg"
            alt="" aria-hidden="true" width="88" height="86" loading="lazy" style="--d:120ms">
       <div class="manifiesto-cuerpo">
         <p class="rv">Hay cosas que se hacen porque siempre se hicieron así.</p>
