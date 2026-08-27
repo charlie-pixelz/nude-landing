@@ -128,7 +128,12 @@ def modelo_fondo(paso=4):
     for a in frames(0, 240, paso):
         h, s, v = rgb2hsv(a)
         R, G, B = a[..., 0], a[..., 1], a[..., 2]
-        pink = ((np.abs(((h - 353 + 180) % 360) - 180) < 22)
+        # Ventana de tono ±14 y no ±22. Medido, el fondo del set vive entre
+        # H352 y H357 en todo el cuadro, así que ±14 le sobra. Con ±22 entraban
+        # los brillos especulares de los blobs del pack, que caen en H10-H17:
+        # el máximo se quedaba con ellos y el modelo terminaba con la forma de
+        # los blobs impresa en el fondo.
+        pink = ((np.abs(((h - 353 + 180) % 360) - 180) < 14)
                 & (s > 0.12) & (s < 0.60) & (v > 150))
         # El foco del set, arriba a la izquierda, quema el fondo hasta
         # (253,235,239): saturación 0,07, por debajo del piso de la rama de
@@ -148,7 +153,19 @@ def modelo_fondo(paso=4):
         mb = gblur(np.repeat(m, 3, 2) * 255, sigma) / 255
         f = np.where(m > 0.5, f, fb / np.clip(mb, 3e-3, None))
         m = np.maximum(m, (mb[..., :1] > 0.02).astype(np.float32))
-    return gblur(f, 12), vis.mean()
+    f = gblur(f, 12)
+    # Cinturón además de tirantes. Afinar la ventana de tono saca la fuga
+    # conocida, pero el modelo es un máximo y cualquier máximo es frágil: le
+    # basta un pixel del pack colado en un solo frame para dejar un bulto
+    # permanente, y ese bulto sale después como una mancha en TODOS los
+    # frames, porque la ganancia se calcula una vez.
+    # El fondo real es liso a esta escala, así que se le prohíbe al modelo
+    # sobresalir de su propio promedio local: lo que sube más de 2 niveles
+    # sobre el desenfoque de sigma 45 es un bulto, no fondo. El foco del set
+    # no se toca porque es ancho y el desenfoque lo conserva.
+    for _ in range(2):
+        f = np.minimum(f, gblur(f, 45) + 2)
+    return f, vis.mean()
 
 
 # --- 2. las dos correcciones --------------------------------------------
