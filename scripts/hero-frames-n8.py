@@ -7,18 +7,26 @@ Hermano de hero-frames.py, que arma el hero de tres clips. Este parte de un
 solo clip y hace dos correcciones que aquel no necesitaba.
 
 El clip: 241 frames a 24 fps, 1080x1920, HEVC 10 bits. El pack flota, gira 360,
-se abre y sale el paño. Se toma de 0 a FIN de dos en dos.
-  0..150   giro completo y aterrizaje
+se abre y sale el paño. Se toma de INI a FIN de dos en dos.
+  0..16    el pack de frente, casi quieto      <- se recorta
+  20..150  gira 360 y aterriza
   150..165 se abre la tapa
-  165..202 sube el paño                              <- termina acá
-  204..240 el paño sigue subiendo, se sale del cuadro y la tapa se cierra
+  165..210 sube el paño
+  210..228 el paño se sale por arriba del cuadro
+  228..240 la tapa se cierra y el pack queda de frente
 
-FIN=202 no es una decisión de peso: el set entero entra en presupuesto de
-sobra. Es de composición. Medido sobre los frames generados, la fila más alta
-con producto se mantiene en 25,8% del alto hasta el 202 y se dispara después
-(24,3% en el 204, 17,3% en el 210). El "Hasta hoy." cierra en el 24%, así que
-del 204 en adelante el paño le pasa por encima al titular. En el 202 el paño
-queda justo debajo, que además es donde la animación se ve mejor.
+Se recorta el principio y no el final, decisión de Charlie. El arco completo
+importa más que la pose inicial: el scrub termina en el pack cerrado de
+frente, que es la misma pose del frame 0, así que el recorrido cierra donde
+habría empezado.
+
+INI=20 es lo más tarde que se puede entrar con el pack todavía legible: del
+32 en adelante ya está de canto y no serviría de póster, que es el primer
+frame y además el LCP.
+
+Entre el 210 y el 228 el paño le pasa por encima al "Hasta hoy.". Es a
+propósito: el titular es casi negro y el paño es blanco, así que la lectura
+mejora en vez de empeorar, y el cruce da profundidad.
 
 Las dos correcciones, ambas medidas contra nude2b.png (el render bueno):
 
@@ -46,7 +54,9 @@ OUT = pathlib.Path(sys.argv[1]); OUT.mkdir(parents=True, exist_ok=True)
 
 W, H = 1080, 1920
 ROSA = np.array([243., 201., 211.])       # --rosa #F3C9D3
-INI, FIN, PASO = 0, int(os.environ.get('FIN', 202)), 2
+INI = int(os.environ.get('INI', 20))
+FIN = int(os.environ.get('FIN', 240))
+PASO = 2
 CAL_LG = int(os.environ.get('CAL_LG', 74))
 CAL_SM = int(os.environ.get('CAL_SM', 70))
 
@@ -117,8 +127,18 @@ def modelo_fondo(paso=4):
     vis = np.zeros((H, W), np.float32)
     for a in frames(0, 240, paso):
         h, s, v = rgb2hsv(a)
+        R, G, B = a[..., 0], a[..., 1], a[..., 2]
         pink = ((np.abs(((h - 353 + 180) % 360) - 180) < 22)
                 & (s > 0.12) & (s < 0.60) & (v > 150))
+        # El foco del set, arriba a la izquierda, quema el fondo hasta
+        # (253,235,239): saturación 0,07, por debajo del piso de la rama de
+        # arriba. Sin esta segunda rama el modelo no veía esa zona, la
+        # rellenaba por difusión desde bordes más saturados y la ganancia le
+        # quedaba corta: quedaba quemada, 35 niveles sobre --rosa contra los
+        # 6 del resto del cuadro. El paño blanco no se cuela acá porque es
+        # neutro (B ≈ G) y el fondo quemado sigue siendo magenta (R > B > G).
+        quemado = (v > 235) & (R - G >= 12) & (B - G >= 2) & (B < R)
+        pink = pink | quemado
         acc = np.where(pink[..., None], np.maximum(acc, a), acc)
         vis = np.maximum(vis, pink.astype(np.float32))
     m = vis[..., None].copy()
@@ -178,13 +198,17 @@ desvios = []
 for a in frames(INI, FIN, PASO):
     idx += 1
     c = fondo_plano(blobs_a_rosa(a), pl, gain)
-    # desvío del fondo ya corregido contra --rosa, en la banda alta que es
-    # donde el texto del hero se apoya sobre el cuadro
-    muestra = np.median(c[80:220, 60:1020].reshape(-1, 3), axis=0)
-    desvios.append(float(np.abs(muestra - ROSA).max()))
+    # Desvío del fondo ya corregido contra --rosa. Dos sondas: la banda alta,
+    # donde el texto del hero se apoya sobre el cuadro, y la zona del foco del
+    # set, que es la que se quemaba y por eso se vigila en cada corrida.
+    alta = np.median(c[80:220, 60:1020].reshape(-1, 3), axis=0)
+    foco = np.median(c[480:720, 20:300].reshape(-1, 3), axis=0)
+    desvios.append((float(np.abs(alta - ROSA).max()), float(np.abs(foco - ROSA).max())))
     escribir(c, idx)
     if idx % 15 == 0:
         print(f'  {idx:>3} frames', flush=True)
 
 print(f'\ntotal {idx} frames')
-print(f'desvío del fondo contra --rosa: max {max(desvios):.0f}, promedio {sum(desvios)/len(desvios):.1f}')
+alt = [d[0] for d in desvios]; foc = [d[1] for d in desvios]
+print(f'desvío contra --rosa, banda alta: max {max(alt):.0f}, promedio {sum(alt)/len(alt):.1f}')
+print(f'desvío contra --rosa, zona del foco: max {max(foc):.0f}, promedio {sum(foc)/len(foc):.1f}')
