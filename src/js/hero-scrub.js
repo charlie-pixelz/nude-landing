@@ -60,24 +60,8 @@ export function initHeroScrub() {
   const frames = new Array(N);
   let loaded = 0;
   let ready = false;
+  let currentFrame = -1;
   let active = true; // corta el trabajo fuera del viewport
-
-  // El frame real (target, según el scroll) y el que se dibuja (displayed,
-  // que lo persigue con inercia) se separan a propósito. Antes eran el mismo
-  // número: un swipe rápido en móvil movía scrollY cientos de px entre dos
-  // rAF, y el canvas saltaba de un frame a otro sin los intermedios — un
-  // corte, no un scrub. displayedFrame se acerca a targetFrame un 25% de la
-  // distancia que falta en cada cuadro, así que la imagen sí recorre los
-  // frames de en medio en vez de saltar. Converge en ~250ms tras un swipe
-  // brusco: se ve como que el video "alcanza" al dedo, no como que se cuelga.
-  // snapNext salta sin animar la primera vez que aparece, al activarse tras
-  // salir del viewport, y tras un resize — ahí no hay nada que suavizar,
-  // sería una animación de entrada no pedida.
-  const EASE = 0.25;
-  let targetFrame = 0;
-  let displayedFrame = 0;
-  let snapNext = true;
-  let animRaf = null;
 
   const ctx = canvas.getContext('2d');
 
@@ -136,7 +120,21 @@ export function initHeroScrub() {
     }
   }
 
-  function bitmapFor(frame) {
+  function frameForProgress(progress) {
+    return Math.round(progress * (N - 1));
+  }
+
+  function onScroll() {
+    if (!ready || !active) return;
+    const rect = track.getBoundingClientRect();
+    const trackTop = window.scrollY + rect.top;
+    const trackHeight = track.offsetHeight;
+    const viewportH = window.innerHeight;
+    const progress = Math.max(0, Math.min(1, (window.scrollY - trackTop) / (trackHeight - viewportH)));
+    const frame = frameForProgress(progress);
+    if (frame === currentFrame) return;
+    currentFrame = frame;
+
     let bitmap = frames[frame];
     if (!bitmap) {
       // el frame todavía no cargó: nunca se deja el canvas en blanco,
@@ -148,42 +146,7 @@ export function initHeroScrub() {
         }
       }
     }
-    return bitmap;
-  }
-
-  function ensureAnimating() {
-    if (animRaf) return;
-    const step = () => {
-      const diff = targetFrame - displayedFrame;
-      if (Math.abs(diff) < 0.5) {
-        displayedFrame = targetFrame;
-        draw(bitmapFor(Math.round(displayedFrame)));
-        animRaf = null;
-        return;
-      }
-      displayedFrame += diff * EASE;
-      draw(bitmapFor(Math.round(displayedFrame)));
-      animRaf = requestAnimationFrame(step);
-    };
-    animRaf = requestAnimationFrame(step);
-  }
-
-  function onScroll() {
-    if (!ready || !active) return;
-    const rect = track.getBoundingClientRect();
-    const trackTop = window.scrollY + rect.top;
-    const trackHeight = track.offsetHeight;
-    const viewportH = window.innerHeight;
-    const progress = Math.max(0, Math.min(1, (window.scrollY - trackTop) / (trackHeight - viewportH)));
-    targetFrame = progress * (N - 1);
-
-    if (snapNext) {
-      snapNext = false;
-      displayedFrame = targetFrame;
-      draw(bitmapFor(Math.round(displayedFrame)));
-      return;
-    }
-    ensureAnimating();
+    draw(bitmap);
   }
 
   let raf = null;
@@ -234,7 +197,7 @@ export function initHeroScrub() {
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(() => {
       sizeCanvas();
-      snapNext = true; // la geometría cambió; no es un scroll que haya que suavizar
+      currentFrame = -1;
       onScroll();
     }, 200);
   });
@@ -245,10 +208,7 @@ export function initHeroScrub() {
     (entries) => {
       entries.forEach((entry) => {
         active = entry.isIntersecting;
-        if (active) {
-          snapNext = true; // volver al viewport no es un scroll rápido, es aparecer
-          onScroll();
-        }
+        if (active) onScroll();
       });
     },
     { threshold: 0 }
