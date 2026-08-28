@@ -14,6 +14,7 @@ export default [
         createImageBitmap: 'readonly',
         IntersectionObserver: 'readonly',
         requestAnimationFrame: 'readonly',
+        performance: 'readonly',
         setTimeout: 'readonly',
         clearTimeout: 'readonly',
       },

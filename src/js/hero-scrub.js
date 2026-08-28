@@ -63,21 +63,30 @@ export function initHeroScrub() {
   let active = true; // corta el trabajo fuera del viewport
 
   // El frame real (target, según el scroll) y el que se dibuja (displayed,
-  // que lo persigue con inercia) se separan a propósito. Antes eran el mismo
-  // número: un swipe rápido en móvil movía scrollY cientos de px entre dos
-  // rAF, y el canvas saltaba de un frame a otro sin los intermedios — un
-  // corte, no un scrub. displayedFrame se acerca a targetFrame un 25% de la
-  // distancia que falta en cada cuadro, así que la imagen sí recorre los
-  // frames de en medio en vez de saltar. Converge en ~250ms tras un swipe
-  // brusco: se ve como que el video "alcanza" al dedo, no como que se cuelga.
+  // que lo persigue) se separan a propósito, con un tope de velocidad real:
+  // displayedFrame nunca avanza más rápido que MAX_FPS frames por segundo,
+  // sin importar qué tan lejos esté targetFrame. Es un límite absoluto, no
+  // una ease — una ease (acercarse un % de la distancia por cuadro) se probó
+  // primero y no sirvió: cuanto más lejos el salto, más frames avanza por
+  // cuadro, así que un swipe brusco seguía girando rapidísimo en los
+  // primeros cuadros. Acá el pack nunca gira más rápido que MAX_FPS, gire
+  // rápido o lento el dedo.
+  //
+  // MAX_FPS = 12 no es arbitrario: es la velocidad real del máster. Los
+  // frames se extrajeron cada 2 de un origen a 24 fps (ver
+  // scripts/hero-frames-n8.py), así que reproducirlos a 12 fps reconstruye
+  // el movimiento tal como fue filmado. El producto nunca gira más rápido de
+  // lo que giró frente a la cámara.
+  //
   // snapNext salta sin animar la primera vez que aparece, al activarse tras
   // salir del viewport, y tras un resize — ahí no hay nada que suavizar,
   // sería una animación de entrada no pedida.
-  const EASE = 0.25;
+  const MAX_FPS = 12;
   let targetFrame = 0;
   let displayedFrame = 0;
   let snapNext = true;
   let animRaf = null;
+  let lastTick = 0;
 
   const ctx = canvas.getContext('2d');
 
@@ -153,15 +162,26 @@ export function initHeroScrub() {
 
   function ensureAnimating() {
     if (animRaf) return;
-    const step = () => {
+    lastTick = performance.now();
+    const step = (now) => {
+      if (!active) {
+        // el track salió de pantalla mientras se ponía al día: no hay razón
+        // para seguir animando algo que nadie ve. Al reaparecer, el
+        // IntersectionObserver pone snapNext y esto se resuelve sin arrastre.
+        animRaf = null;
+        return;
+      }
+      const dt = (now - lastTick) / 1000;
+      lastTick = now;
       const diff = targetFrame - displayedFrame;
-      if (Math.abs(diff) < 0.5) {
+      const maxStep = MAX_FPS * dt;
+      if (Math.abs(diff) <= maxStep) {
         displayedFrame = targetFrame;
         draw(bitmapFor(Math.round(displayedFrame)));
         animRaf = null;
         return;
       }
-      displayedFrame += diff * EASE;
+      displayedFrame += Math.sign(diff) * maxStep;
       draw(bitmapFor(Math.round(displayedFrame)));
       animRaf = requestAnimationFrame(step);
     };
