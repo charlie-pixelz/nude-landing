@@ -10,13 +10,33 @@
   margin-bottom: 20px;
 }
 
+/* PRUEBA — el hero más alto para que el pack gire más lento.
+   Commit aparte a propósito: si no convence, se revierte entero.
+
+   Es la única forma segura de bajar la velocidad de giro. La otra —
+   limitar los frames por segundo en el JS — se probó dos veces y falla
+   siempre por lo mismo: desacopla la imagen del scroll, así que un swipe
+   rápido saca el hero de pantalla antes de que la animación termine y la
+   revelación se pierde. Acá el frame sigue atado al scroll, sólo cambia
+   cuánto scroll hace falta para cada frame, y por eso la animación nunca
+   se puede quedar a medias.
+
+   La cuenta, en móvil de 812px de alto:
+     250vh -> 1218px scrolleables / 111 frames = 11 px de scroll por frame
+     400vh -> 2436px scrolleables / 111 frames = 22 px de scroll por frame
+   El doble de scroll por frame es la mitad de velocidad de giro para el
+   mismo swipe. En escritorio se dobla igual: 200vh scrolleables -> 400vh.
+
+   El costo es de ritmo, no técnico: el hero pasa de 2,5 a 4 pantallas de
+   alto en móvil, o sea más scroll antes de llegar a la 01. Para ajustar
+   la velocidad, este es el número que se toca: más alto = más lento. */
 .hero-track {
-  height: 250vh;
+  height: 400vh;
   position: relative;
 }
 @media (min-width: 760px) {
   .hero-track {
-    height: 300vh;
+    height: 500vh;
   }
 }
 
