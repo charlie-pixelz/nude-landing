@@ -63,6 +63,23 @@ CAL_SM = int(os.environ.get('CAL_SM', 70))
 HUE_ORIG, HUE_DEST = 24.0, 344.0          # durazno de Higgsfield -> rosa de marca
 BANDA, PLUMA = (4.0, 52.0), 10.0
 
+# El panel azul del envase. Higgsfield no sólo cambió los blobs: dejó el
+# periwinkle mucho más apagado y oscuro que el envase real. Medido contra
+# nude2b.png, el render bueno:
+#     panel en nude8   #596E9D   H221,5  S 28%  L 48%
+#     panel en nude2b  #94A4DE   H227,0  S 53%  L 73%
+#     token --peri     #8FA2E3   H226,4  S 60%  L 73%
+# Son 25 puntos de luminosidad y la mitad de saturación: en pantalla no se
+# lee como periwinkle, se lee como un azul grisáceo sucio.
+#
+# La corrección va en HSV, no en HSL, y ahí el periwinkle pide MÁS brillo y
+# MENOS saturación HSV (al revés de lo que sugiere el HSL). Los objetivos
+# salen de la mediana del panel en el render bueno.
+BANDA_AZUL, PLUMA_AZUL = (200.0, 250.0), 12.0
+HUE_AZUL_DEST = 227.0
+S_AZUL_MED, V_AZUL_MED = 0.4331, 0.6157   # medido en el panel de nude8
+S_AZUL_OBJ, V_AZUL_OBJ = 0.3330, 0.8700   # medido en el panel de nude2b
+
 
 # --- utilidades ----------------------------------------------------------
 
@@ -179,6 +196,34 @@ def blobs_a_rosa(a):
     return hsv2rgb(h + delta * w, s, v)
 
 
+def azul_a_peri(a):
+    """Devuelve el panel azul al periwinkle de marca: lo levanta de brillo y le
+    baja la saturación HSV, que es como se sube un color a periwinkle sin
+    volverlo un azul eléctrico. La misma banda de tono con pluma que se usa
+    para los blobs, más dos guardas: un piso de saturación para que el cuerpo
+    negro (casi gris) no se tiña, y un piso de brillo para que las sombras
+    profundas no se levanten.
+
+    El brillo se sube multiplicando, no con gamma: gamma levantaría las
+    sombras mucho más que los medios y aplanaría el volumen del panel. Con
+    multiplicación el rango se conserva (medido: 137 niveles antes, 138
+    después) y el rolloff suave de arriba evita recortar los brillos
+    especulares del plástico (medido: 0,00% de pixeles recortados)."""
+    h, s, v = rgb2hsv(a)
+    lo, hi = BANDA_AZUL
+    w = (np.clip((h - (lo - PLUMA_AZUL)) / PLUMA_AZUL, 0, 1)
+         * np.clip(((hi + PLUMA_AZUL) - h) / PLUMA_AZUL, 0, 1))
+    w *= np.clip((s - 0.10) / 0.10, 0, 1)          # el cuerpo negro no se tiñe
+    w *= np.clip((v / 255 - 0.18) / 0.12, 0, 1)    # ni las sombras profundas
+    s2 = np.clip(s * (S_AZUL_OBJ / S_AZUL_MED), 0, 1)
+    x = (v / 255) * (V_AZUL_OBJ / V_AZUL_MED)
+    codo = 0.85
+    x = np.where(x <= codo, x, codo + (1 - codo) * np.tanh((x - codo) / (1 - codo)))
+    v2 = np.clip(x, 0, 1) * 255
+    hd = ((HUE_AZUL_DEST - h + 540) % 360) - 180   # rotación por el camino corto
+    return hsv2rgb(h + hd * w, s + (s2 - s) * w, v + (v2 - v) * w)
+
+
 def fondo_plano(a, pl, gain):
     d = np.abs(a - pl).mean(2)
     h, s, v = rgb2hsv(a)
@@ -214,7 +259,10 @@ idx = 0
 desvios = []
 for a in frames(INI, FIN, PASO):
     idx += 1
-    c = fondo_plano(blobs_a_rosa(a), pl, gain)
+    # Orden: primero el envase (blobs y panel azul), después el fondo. El
+    # fondo se mide contra el modelo del set y no debe ver los cambios de
+    # color del producto, que quedan protegidos por el peso de fondo_plano.
+    c = fondo_plano(azul_a_peri(blobs_a_rosa(a)), pl, gain)
     # Desvío del fondo ya corregido contra --rosa. Dos sondas: la banda alta,
     # donde el texto del hero se apoya sobre el cuadro, y la zona del foco del
     # set, que es la que se quemaba y por eso se vigila en cada corrida.
