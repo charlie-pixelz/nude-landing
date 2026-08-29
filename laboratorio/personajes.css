@@ -1,0 +1,177 @@
+/* Animaciones del personaje de marca — laboratorio.
+   Sigue brief-animaciones-svg.md. Esto NO entra al sitio todavía: vive fuera
+   de src/ a propósito, así que Vite no lo compila. Cuando se apruebe, se
+   mueve a src/styles/.
+
+   Reglas del brief que se respetan acá, y por qué importan:
+
+   · Se animan `translate`, `rotate` y `scale` como propiedades individuales,
+     NUNCA la propiedad `transform`. En back.svg los grupos no traen matrix y
+     `transform` sería seguro, pero los dos archivos `front` sí la traen y
+     escribir `transform` en CSS la pisaría, colapsando el dibujo a 1/4,48.
+     Se usa el mismo estilo en los tres para que el CSS sea intercambiable.
+
+   · `transform-box: fill-box` en todo lo que rota o escala. Sin eso el origen
+     es el (0,0) del viewBox y cualquier rotación manda la capa fuera de cuadro.
+
+   · Nada de `width`, `top`, `margin` ni `filter` en keyframes: sólo
+     propiedades compuestas y `opacity`.
+
+   Los selectores van prefijados con la clase del contenedor. Los id ya vienen
+   prefijados por personaje (bk- para back), porque los tres SVG repiten
+   nombres como Cuerpo y Brazo-derecho y eso sería HTML inválido al insertarlos
+   inline en el mismo documento. */
+
+.pj {
+  /* Perillas de calibración. Los controles de la página escriben acá. */
+  --ciclo: 7s;     /* duración del ciclo completo */
+  --alto: 18%;     /* altura del salto, en % del alto del propio personaje */
+  --sq: 0.07;      /* intensidad del squash & stretch */
+
+  /* El viewBox del back es 393x397. El aspect-ratio se fija en el contenedor
+     porque los tres SVG vienen con width/height al 100% y sus viewBox no
+     coinciden entre sí (397 / 386 / 385): sin esto, cambiar de personaje
+     dentro del mismo hueco da un salto de ~12px. */
+  aspect-ratio: 393 / 397;
+  width: 100%;
+  max-width: 320px;
+}
+
+.pj-svg {
+  display: block;
+  overflow: visible; /* el salto se sale del viewBox por arriba */
+}
+
+/* ── El salto ────────────────────────────────────────────────────────────
+   Un ciclo de 7s del que el salto ocupa los últimos 2s; el resto es reposo.
+   Las cinco fases del brief están todas, y el orden importa más que los
+   números exactos: sin la anticipación el salto se lee como "un div que
+   sube", y sin el impacto más fuerte que la anticipación el personaje no
+   pesa nada.
+
+       71,4%  arranca la anticipación   (5,00s)
+       75,0%  squash previo             (5,25s)
+       77,9%  despegue, stretch         (5,45s)
+       83,6%  punto alto, casi normal   (5,85s)
+       89,3%  contacto con el suelo     (6,25s)
+       91,4%  impacto, squash fuerte    (6,40s)
+       94,3%  rebote, overshoot suave   (6,60s)
+       97,9%  reposo                    (6,85s)
+
+   El origen va abajo al centro: con el origen al centro el personaje parece
+   flotar en vez de despegar del suelo. */
+#bk-salta {
+  transform-box: fill-box;
+  transform-origin: bottom center;
+  will-change: translate, scale;
+  animation: bk-salto var(--ciclo) linear infinite;
+}
+
+@keyframes bk-salto {
+  0%, 71.4% { translate: 0 0; scale: 1 1; }
+  75%       { translate: 0 0;
+              scale: calc(1 + var(--sq)) calc(1 - var(--sq) * 1.4); }
+  77.9%     { translate: 0 -2%;
+              scale: calc(1 - var(--sq) * 0.85) calc(1 + var(--sq) * 1.7); }
+  83.6%     { translate: 0 calc(-1 * var(--alto)); scale: 1 1; }
+  89.3%     { translate: 0 0;
+              scale: calc(1 - var(--sq) * 0.3) calc(1 + var(--sq) * 0.5); }
+  91.4%     { translate: 0 0;
+              scale: calc(1 + var(--sq) * 1.3) calc(1 - var(--sq) * 1.85); }
+  94.3%     { translate: 0 0;
+              scale: calc(1 - var(--sq) * 0.3) calc(1 + var(--sq) * 0.55); }
+  97.9%, 100% { translate: 0 0; scale: 1 1; }
+}
+
+/* ── La sombra ───────────────────────────────────────────────────────────
+   Es lo que más vende el salto: se achica y se aclara mientras el cuerpo
+   está en el aire, y vuelve de golpe —un poco pasada— en el impacto.
+   Queda FUERA del grupo que salta, si no subiría con el personaje.
+
+   Ojo: #bk-Sombra vive dentro de un <g> anónimo que sí trae un
+   matrix(1.0827,0,0,1,-7.68,26). Por eso acá tampoco se puede usar la
+   propiedad `transform`, aunque el grupo con id no traiga ninguna. */
+#bk-Sombra {
+  transform-box: fill-box;
+  transform-origin: center;
+  will-change: scale, opacity;
+  animation: bk-sombra var(--ciclo) linear infinite;
+}
+
+@keyframes bk-sombra {
+  0%, 71.4%   { scale: 1;    opacity: 1; }
+  77.9%       { scale: 1.04; opacity: 1; }
+  83.6%       { scale: 0.62; opacity: 0.45; }
+  89.3%       { scale: 1;    opacity: 1; }
+  91.4%       { scale: 1.14; opacity: 1; }
+  94.3%       { scale: 0.97; opacity: 1; }
+  97.9%, 100% { scale: 1;    opacity: 1; }
+}
+
+/* ── Las nalgas, con retraso ─────────────────────────────────────────────
+   Mismo wobble que el cuerpo pero 80ms tarde. Ese desfase es todo el efecto:
+   la masa blanda llega después que el esqueleto. Con delay negativo el
+   arranque quedaría a mitad de animación, así que va positivo y la primera
+   vuelta entra 80ms corrida — imperceptible en un ciclo de 7s. */
+#bk-Nalgas {
+  transform-box: fill-box;
+  transform-origin: top center;
+  will-change: scale;
+  animation: bk-nalgas var(--ciclo) linear infinite;
+  animation-delay: 80ms;
+}
+
+@keyframes bk-nalgas {
+  0%, 71.4%   { scale: 1 1; }
+  75%         { scale: calc(1 + var(--sq) * 0.7) calc(1 - var(--sq) * 0.9); }
+  83.6%       { scale: calc(1 - var(--sq) * 0.4) calc(1 + var(--sq) * 0.6); }
+  91.4%       { scale: calc(1 + var(--sq) * 1.5) calc(1 - var(--sq) * 1.6); }
+  94.3%       { scale: calc(1 - var(--sq) * 0.4) calc(1 + var(--sq) * 0.5); }
+  97.9%, 100% { scale: 1 1; }
+}
+
+/* ── Los brazos, de arrastre ─────────────────────────────────────────────
+   Rotación mínima desde el hombro, también con retraso. No es un saludo: es
+   el peso del brazo quedándose atrás. Si se pasa de grados, el personaje
+   empieza a "actuar" y el brandbook pide lo contrario. */
+#bk-Brazo-Izquierdo,
+#bk-Brazo-derecho {
+  transform-box: fill-box;
+  will-change: rotate;
+  animation: bk-brazo var(--ciclo) linear infinite;
+  animation-delay: 110ms;
+}
+#bk-Brazo-Izquierdo { transform-origin: 90% 12%; }
+#bk-Brazo-derecho   { transform-origin: 10% 12%; rotate: 0deg; }
+
+@keyframes bk-brazo {
+  0%, 71.4%   { rotate: 0deg; }
+  75%         { rotate: 2.5deg; }
+  83.6%       { rotate: -5deg; }
+  91.4%       { rotate: 4deg; }
+  94.3%       { rotate: -1.5deg; }
+  97.9%, 100% { rotate: 0deg; }
+}
+/* El brazo derecho arrastra al revés que el izquierdo. */
+#bk-Brazo-derecho { animation-name: bk-brazo-der; }
+@keyframes bk-brazo-der {
+  0%, 71.4%   { rotate: 0deg; }
+  75%         { rotate: -2.5deg; }
+  83.6%       { rotate: 5deg; }
+  91.4%       { rotate: -4deg; }
+  94.3%       { rotate: 1.5deg; }
+  97.9%, 100% { rotate: 0deg; }
+}
+
+/* ── Obligatorio ─────────────────────────────────────────────────────────
+   prefers-reduced-motion no es un adorno (CLAUDE.md). Con la preferencia
+   activa el personaje se queda quieto, sin excepción. */
+@media (prefers-reduced-motion: reduce) {
+  #bk-salta,
+  #bk-Sombra,
+  #bk-Nalgas,
+  #bk-Brazo-Izquierdo,
+  #bk-Brazo-derecho {
+    animation: none;
+  }
+}
