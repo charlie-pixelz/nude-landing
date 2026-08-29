@@ -13,6 +13,7 @@ export default [
         fetch: 'readonly',
         createImageBitmap: 'readonly',
         IntersectionObserver: 'readonly',
+        URLSearchParams: 'readonly',
         requestAnimationFrame: 'readonly',
         setTimeout: 'readonly',
         clearTimeout: 'readonly',

@@ -16,6 +16,8 @@
 //                   descarga escritorio: el presupuesto duro es el móvil.
 // 1080x1920 es la resolución nativa del máster; más grande sería inventar
 // pixeles que la fuente no tiene.
+import { PERFIL } from './hero-perfil.js';
+
 const SM_FRAMES = import.meta.glob('../assets/hero-frames/sm/*.webp', {
   eager: true,
   query: '?url',
@@ -127,8 +129,66 @@ export function initHeroScrub() {
     }
   }
 
+  // Cuánto del reparto por movimiento se aplica: 0 es el mapeo lineal, 1 es
+  // el reparto completo. Calibrado probando los dos en local, decisión de
+  // Charlie del 29 de agosto de 2026:
+  //
+  //   móvil       0,4  el swipe es rápido y ahí el giro sí se sentía acelerado
+  //   escritorio  0    con rueda o trackpad el scroll ya es lento y
+  //                    controlado, el giro nunca molestó, y comprimir los
+  //                    tramos quietos hace saltar más frames, que en pantalla
+  //                    grande se nota
+  //
+  // No es una inconsistencia: la queja de origen era sobre deslizar rápido,
+  // que es un gesto de móvil. El arreglo va donde está el problema.
+  //
+  // Se puede forzar desde la URL con ?reparto=0.7 para comparar en vivo sin
+  // reconstruir. Sólo se lee un número y se acota — nunca entra al DOM
+  // (ver CLAUDE.md).
+  const REPARTO_MOVIL = 0.4;
+  const REPARTO_ESCRITORIO = 0;
+
+  const REPARTO_FORZADO = (() => {
+    const crudo = new URLSearchParams(window.location.search).get('reparto');
+    const v = parseFloat(crudo);
+    return Number.isFinite(v) ? Math.min(1, Math.max(0, v)) : null;
+  })();
+
+  function reparto() {
+    if (REPARTO_FORZADO !== null) return REPARTO_FORZADO;
+    return mqEscritorio.matches ? REPARTO_ESCRITORIO : REPARTO_MOVIL;
+  }
+
+  // El scroll se repartía en partes iguales entre los frames, pero la
+  // secuencia no se mueve en partes iguales. Medido con
+  // scripts/perfil-movimiento.py: el giro de 360 concentra el 66% del cambio
+  // visual y se llevaba sólo el 40% del recorrido — por eso giraba rápido. Y
+  // entre los frames 44 y 65 el pack ya aterrizó y sólo se asienta: gastaba
+  // 19% del scroll en 7% del cambio.
+  //
+  // La mezcla va sobre la curva acumulada, no sobre el índice del frame. Es
+  // la diferencia entre que la perilla haga lo que dice y que no: mezclando
+  // índices, en 0,4 la zona muerta quedaba en 20% (intacta) y el scroll salía
+  // de la tapa y el paño, que es justo lo que hay que conservar. Sobre la
+  // acumulada el reparto interpola de verdad — 0,4 deja la zona muerta en
+  // 14% y devuelve ese scroll al giro.
+  const usaPerfil = PERFIL && PERFIL.length === N;
+
+  function acumulado(i, mezcla) {
+    return (1 - mezcla) * (i / (N - 1)) + mezcla * (PERFIL[i] / 1000);
+  }
+
   function frameForProgress(progress) {
-    return Math.round(progress * (N - 1));
+    const mezcla = reparto();
+    if (!usaPerfil || mezcla === 0) return Math.round(progress * (N - 1));
+
+    let i = 1;
+    while (i < N - 1 && acumulado(i, mezcla) < progress) i++;
+    const a = acumulado(i - 1, mezcla);
+    const b = acumulado(i, mezcla);
+    const t = b > a ? (progress - a) / (b - a) : 0;
+
+    return Math.round(i - 1 + t);
   }
 
   function onScroll() {
