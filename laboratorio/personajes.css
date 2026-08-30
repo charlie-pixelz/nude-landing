@@ -23,19 +23,24 @@
    inline en el mismo documento. */
 
 .pj {
-  /* Perillas de calibración. Los controles de la página escriben acá. */
-  --ciclo: 7s;     /* duración del ciclo completo */
-  --alto: 18%;     /* altura del salto, en % del alto del propio personaje */
-  --sq: 0.07;      /* intensidad del squash & stretch */
+  /* Perillas de calibración del salto (A). Los controles de la página
+     escriben acá; B y C no las usan, cada una trae su propio timing fijo
+     más abajo. Valores aprobados por Charlie el 29 de agosto de 2026. */
+  --ciclo: 3s;     /* duración del ciclo completo */
+  --alto: 8%;      /* altura del salto, en % del alto del propio personaje */
+  --sq: 0.06;      /* intensidad del squash & stretch */
 
-  /* El viewBox del back es 393x397. El aspect-ratio se fija en el contenedor
-     porque los tres SVG vienen con width/height al 100% y sus viewBox no
-     coinciden entre sí (397 / 386 / 385): sin esto, cambiar de personaje
-     dentro del mismo hueco da un salto de ~12px. */
-  aspect-ratio: 393 / 397;
   width: 100%;
   max-width: 320px;
 }
+
+/* El viewBox de cada SVG es distinto (397 / 386 / 385 de alto): sin fijarlo
+   por personaje, el contenedor toma el del último que cargó y el dibujo se
+   deforma. No es el caso del brief de "swap dentro del mismo hueco" (eso es
+   para cuando front se reemplace por front-02 al terminar la limpieza) sino
+   simplemente que acá conviven los tres a la vez. */
+.pj--back    { aspect-ratio: 393 / 397; }
+.pj--front   { aspect-ratio: 393 / 386; }
 
 .pj-svg {
   display: block;
@@ -163,15 +168,199 @@
   97.9%, 100% { rotate: 0deg; }
 }
 
+/* ══ B→C. front.svg — un solo personaje, limpieza y destellos en secuencia ═
+   Ya no son dos loops independientes: Charlie confirmó que es un único
+   personaje y una única historia — B y C comparten SVG (Cuerpo y Brazos
+   fusionados desde front.svg y front-02.svg, que resultaron ser el mismo
+   dibujo byte a byte) y un solo --ciclo-personaje, descrito en segundos
+   porque el total ya cambió una vez y probablemente vuelva a cambiar:
+
+       0,0s–5,2s    B, limpieza: los brazos pasan, la Mugre baja en 3 escalones
+       5,2s–6,1s    pausa en limpio
+       6,1s–8,1s    C, destellos: los 4 Brillos aparecen escalonados
+       8,1s–9,6s    pausa muerta, pedida para no atropellar el regreso
+       9,6s–10,5s   la Mugre vuelve con un fade lento, listo para repetir
+
+   10,5s en total: los 9s originales (limpieza + pausa corta + destellos)
+   más 1,5s de pausa nueva antes del regreso de la mugre. Todo lo de antes
+   de los 8,1s quedó en el mismo segundo exacto en que estaba — sólo se
+   estiró la cola. */
+.pj--front {
+  --ciclo-personaje: 10.5s;
+  /* Ejes de los brazos, calibrados en vivo con las perillas del panel y
+     confirmados por Charlie el 29 de agosto de 2026. Quedan lejos del
+     centro, cerca del borde de cada mano — que es justo lo que marcaste
+     en tu captura y lo que el centro (mi primer intento) no lograba. */
+  --eje-der-x: 90%;
+  --eje-der-y: 15%;
+  --eje-izq-x: 5%;
+  --eje-izq-y: 80%;
+}
+
+/* Se anima el ENVOLTORIO (.fr-piv-cuerpo), no #fr-Cuerpo directamente:
+   #fr-Cuerpo ya trae su propio transform="matrix(4.485791,...)" del SVG
+   original, y transform-box:fill-box + rotate sobre un grupo que YA tiene
+   un matrix propio calcula mal la posición final (confirmado: el cuerpo
+   terminaba 117px a la izquierda y 228px arriba de su contenedor). El
+   envoltorio no trae transform propio, así que no dispara el bug — mismo
+   patrón que ya usa bk-salta en A, que nunca lo sufrió porque back.svg no
+   tiene matrices. Mismo motivo por el que .f2-piv-brillo-N más abajo
+   también van envueltos: el bug no es exclusivo de rotate, scale también
+   lo dispara. */
+.fr-piv-cuerpo {
+  transform-box: fill-box;
+  transform-origin: bottom center;
+  will-change: rotate;
+  animation: fr-cuerpo var(--ciclo-personaje) linear infinite;
+}
+@keyframes fr-cuerpo {
+  0%, 1.7%      { rotate: 0deg; }
+  5.1%          { rotate: -1deg; }
+  8.6%, 12.9%   { rotate: 0deg; }
+  16.3%         { rotate: 1deg; }
+  19.7%, 24%    { rotate: 0deg; }
+  27.4%         { rotate: -1deg; }
+  30.9%, 35.1%  { rotate: 0deg; }
+  38.6%         { rotate: 1deg; }
+  42%, 49.7%    { rotate: 0deg; }
+  100%          { rotate: 0deg; }
+}
+
+/* Los brazos, corregidos con lo que marcaste: nada de translate — sólo
+   rotate, con el origen movido de la punta del brazo (donde estaba,
+   0%/40% y 100%/40%, el borde del propio bounding box) al punto de
+   contacto real con el cuerpo, que es donde pusiste los ejes. El translate
+   es justo lo que hacía que "flotaran": desplaza la mano entera por el
+   aire en vez de dejarla pivotar clavada en un punto, y sin un antebrazo
+   dibujado que la conecte al torso, ese desplazamiento se lee como
+   desconectado del cuerpo por completo.
+
+   Ahora en variables, no fijo: las perillas del panel las mueven en
+   vivo. */
+.fr-piv-brazo-der {
+  transform-box: fill-box;
+  transform-origin: var(--eje-der-x) var(--eje-der-y);
+  will-change: rotate;
+  animation: fr-brazo-der var(--ciclo-personaje) linear infinite;
+}
+@keyframes fr-brazo-der {
+  /* B: cuatro pasadas, más seguido que antes */
+  0%, 0.9%      { rotate: 0deg; }
+  3.4%          { rotate: -16deg; }
+  6%            { rotate: 5deg; }
+  8.6%, 12.9%   { rotate: 0deg; }
+  15.4%         { rotate: -16deg; }
+  18%           { rotate: 5deg; }
+  20.6%, 24.9%  { rotate: 0deg; }
+  27.4%         { rotate: -16deg; }
+  30%           { rotate: 5deg; }
+  32.6%, 36.9%  { rotate: 0deg; }
+  39.4%         { rotate: -16deg; }
+  42%           { rotate: 5deg; }
+  44.6%, 54.9%  { rotate: 0deg; }
+  /* C: un par de movimientos leves, más chicos que el barrido de B */
+  61.7%         { rotate: -6deg; }
+  65.1%         { rotate: 2deg; }
+  68.6%, 100%   { rotate: 0deg; }
+}
+
+/* Brazo izquierdo: mismo patrón en espejo, pero corrido ~5% respecto al
+   derecho — no sincronizados, como pediste. */
+.fr-piv-brazo-izq {
+  transform-box: fill-box;
+  transform-origin: var(--eje-izq-x) var(--eje-izq-y);
+  will-change: rotate;
+  animation: fr-brazo-izq var(--ciclo-personaje) linear infinite;
+}
+@keyframes fr-brazo-izq {
+  0%, 5.1%      { rotate: 0deg; }
+  7.7%          { rotate: 16deg; }
+  10.3%         { rotate: -5deg; }
+  12.9%, 18%    { rotate: 0deg; }
+  20.6%         { rotate: 16deg; }
+  23.1%         { rotate: -5deg; }
+  25.7%, 30.9%  { rotate: 0deg; }
+  33.4%         { rotate: 16deg; }
+  36%           { rotate: -5deg; }
+  38.6%, 43.7%  { rotate: 0deg; }
+  46.3%         { rotate: 16deg; }
+  48.9%         { rotate: -5deg; }
+  51.4%, 58.3%  { rotate: 0deg; }
+  66.9%         { rotate: 6deg; }
+  70.3%         { rotate: -2deg; }
+  73.7%, 100%   { rotate: 0deg; }
+}
+
+/* La Mugre: cae en tres escalones —no en cada pasada de brazo, en tres
+   momentos repartidos a lo largo de B— se queda en 0 durante la pausa y
+   los destellos, y vuelve con un fade lento recién al cerrar el ciclo
+   completo, después de C, como pediste.
+
+   Ahora vive DENTRO de .fr-piv-cuerpo (hermana de #fr-Cuerpo en el HTML),
+   no afuera: así hereda el mismo sway que el cuerpo — Charlie: "como ahora
+   se ve estática queda rara mientras el cuerpo se mueve". Sólo anima
+   opacity acá; el rotate lo hace el envoltorio compartido.
+
+   Entre que los destellos terminan de desvanecerse (8,1s) y que la mugre
+   empieza a volver (9,6s) hay 1,5s de pausa muerta a propósito — sin eso
+   el regreso se sentía atropellado, pegado justo al final de C. */
+#fr-Mugre {
+  will-change: opacity;
+  animation: fr-mugre var(--ciclo-personaje) linear infinite;
+}
+@keyframes fr-mugre {
+  0%, 16.3%     { opacity: 1; }
+  17.1%         { opacity: 0.66; }
+  31.7%         { opacity: 0.66; }
+  32.6%         { opacity: 0.33; }
+  45.4%         { opacity: 0.33; }
+  46.3%, 91.4%  { opacity: 0; }
+  100%          { opacity: 1; }
+}
+
+/* Los destellos: mismo pop de antes (scale + opacity, escalonados). scale()
+   compone sobre el matrix propio de cada Brillo, así que un mismo
+   "scale: 1.25" es un pop relativo igual para los cuatro aunque Brillo-1
+   traiga una escala base (0,49) muy distinta a la de los otros tres
+   (4,47). Terminan de desvanecerse a los 8,1s; de ahí a que la mugre
+   empiece a volver (9,6s) quedan sin más que la pausa de 1,5s pedida. */
+.f2-piv-brillo-1,
+.f2-piv-brillo-2,
+.f2-piv-brillo-3,
+.f2-piv-brillo-4 {
+  transform-box: fill-box;
+  transform-origin: center;
+  will-change: scale, opacity;
+  animation: f2-pop var(--ciclo-personaje) linear infinite;
+}
+@keyframes f2-pop {
+  0%, 55.7%   { scale: 0;    opacity: 0; }
+  58.3%       { scale: 1.25; opacity: 1; }
+  60.9%, 72%  { scale: 1;    opacity: 1; }
+  75.4%       { scale: 0.85; opacity: 0; }
+  77.1%, 100% { scale: 0;    opacity: 0; }
+}
+.f2-piv-brillo-2 { animation-delay: 250ms; }
+.f2-piv-brillo-3 { animation-delay: 500ms; }
+.f2-piv-brillo-4 { animation-delay: 750ms; }
+
 /* ── Obligatorio ─────────────────────────────────────────────────────────
    prefers-reduced-motion no es un adorno (CLAUDE.md). Con la preferencia
-   activa el personaje se queda quieto, sin excepción. */
+   activa los personajes se quedan quietos, sin excepción. */
 @media (prefers-reduced-motion: reduce) {
   #bk-salta,
   #bk-Sombra,
   #bk-Nalgas,
   #bk-Brazo-Izquierdo,
-  #bk-Brazo-derecho {
+  #bk-Brazo-derecho,
+  .fr-piv-cuerpo,
+  .fr-piv-brazo-der,
+  .fr-piv-brazo-izq,
+  #fr-Mugre,
+  .f2-piv-brillo-1,
+  .f2-piv-brillo-2,
+  .f2-piv-brillo-3,
+  .f2-piv-brillo-4 {
     animation: none;
   }
 }
