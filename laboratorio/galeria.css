@@ -60,19 +60,19 @@
   /* Perillas. Las que se calibran desde el panel del laboratorio. */
   --columnas:   25;
   --filas:      12;
-  --celda:      2.9vw;
-  --separacion: 0.8vw;
-  --giro:       90deg;   /* inclinación al empezar; siempre termina en 0 */
+  --celda:      2.8vw;
+  --separacion: 1vw;
+  --giro:       45deg;   /* inclinación al empezar; siempre termina en 0 */
   /* La escala arranca casi en 1 a propósito: quien abre las piezas es
      --dispersion, no el zoom. Con una escala inicial baja el conjunto se ve
      chico y junto al empezar, que es lo contrario de lo que se busca. */
-  --escala-ini: 0.66;
+  --escala-ini: 0.6;
   /* En 0 el pack queda clavado en el mismo pixel durante todo el scroll:
      el eje de giro es él y nada lo corre de ahí. Con cualquier otro valor
      el eje sigue siendo el pack, pero el conjunto además se desliza. */
   --deriva:     0vw;
   --contra:     1;       /* 1 = las fotos van a plomo; 0 = giran con la celda */
-  --dispersion: 80vw;    /* cuánto se abren las piezas al empezar */
+  --dispersion: 30vw;    /* cuánto se abren las piezas al empezar */
   /* La animación termina antes que el tramo pegajoso: lo que queda
      después es scroll con la composición ya armada y quieta, para que
      alcance a mirarse. Sin esto el último fotograma dura un instante y

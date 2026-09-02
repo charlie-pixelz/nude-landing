@@ -15,8 +15,16 @@
   /* texto sobre negro */
   --texto-cuerpo: #DDD6CE;
   --texto-bajada: #B8B0A8;
-  --texto-metadato: #7A736C;
-  --texto-marca-agua: #5C554F;
+  /* Era #7A736C y daba 4,02:1 sobre --negro, bajo el 4,5 de AA. Charlie
+     decidió el 2/9/2026 que la legibilidad manda sobre conservar el valor
+     heredado. Se subió lo mínimo para pasar —4,52:1— y se mantuvo en la
+     misma familia cálida del brandbook, así que a ojo es el mismo gris. */
+  --texto-metadato: #837B73;
+  /* Era #5C554F y dejaba el legal del pie en 2,57:1 sobre --negro. Sube al
+     mismo valor que el metadato: sobre negro los dos grises más callados del
+     brandbook no pueden pasar AA y seguir siendo distintos entre sí, así que
+     convergen. Sobre superficies claras sí se separan (ver .seccion-rosa). */
+  --texto-marca-agua: #837B73;
 
   /* texto sobre rosa */
   --rosa-titular: var(--negro);

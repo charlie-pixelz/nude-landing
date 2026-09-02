@@ -156,11 +156,11 @@
        baja la grilla crecería a lo alto hasta salirse. El tope en vh la
        ata a la dimensión que escasea: en pantallas normales manda el vw
        (2.9vw < 5.3vh) y en las anchas y bajas toma el relevo el vh. */
-    --celda:      min(2.9vw, 5.3vh);
-    --separacion: min(0.8vw, 1.46vh);
-    --giro:       90deg;
-    --escala-ini: 0.66;
-    --dispersion: 80vw;
+    --celda:      min(2.8vw, 5.1vh);
+    --separacion: min(1vw, 1.82vh);
+    --giro:       45deg;
+    --escala-ini: 0.6;
+    --dispersion: 30vw;
     /* La animación termina antes que el tramo pegajoso: lo que queda
        después es scroll con la composición ya armada y quieta, para que
        alcance a mirarse. Sin esto el último fotograma dura un instante y
@@ -256,92 +256,87 @@
 
   /* bano, cabeza — relación 1.0 */
   @keyframes galeria-foto-0 {
-    0%   { rotate: -90deg; scale: 1.0000; }
-    10%  { rotate: -81deg; scale: 1.1441; }
-    20%  { rotate: -72deg; scale: 1.2601; }
-    30%  { rotate: -63deg; scale: 1.3450; }
-    40%  { rotate: -54deg; scale: 1.3968; }
-    50%  { rotate: -45deg; scale: 1.4142; }
-    60%  { rotate: -36deg; scale: 1.3968; }
-    70%  { rotate: -27deg; scale: 1.3450; }
-    80%  { rotate: -18deg; scale: 1.2601; }
-    90%  { rotate:  -9deg; scale: 1.1441; }
-    100% { rotate:   0deg; scale: 1.0000; }
+    0%   { rotate: -45deg; scale: 1.4142; }
+    10%  { rotate: -40.5deg; scale: 1.4099; }
+    20%  { rotate: -36deg; scale: 1.3968; }
+    30%  { rotate: -31.5deg; scale: 1.3751; }
+    40%  { rotate: -27deg; scale: 1.3450; }
+    50%  { rotate: -22.5deg; scale: 1.3066; }
+    60%  { rotate: -18deg; scale: 1.2601; }
+    70%  { rotate: -13.5deg; scale: 1.2058; }
+    80%  { rotate: -9deg; scale: 1.1441; }
+    90%  { rotate: -4.5deg; scale: 1.0754; }
+    100% { rotate: -0deg; scale: 1.0000; }
   }
-
-  /* pack — relación 1.209 */
+  /* pack — relación 1.211 */
   @keyframes galeria-foto-1 {
-    0%   { rotate: -90deg; scale: 1.2090; }
-    10%  { rotate: -81deg; scale: 1.3505; }
-    20%  { rotate: -72deg; scale: 1.4588; }
-    30%  { rotate: -63deg; scale: 1.5312; }
-    40%  { rotate: -54deg; scale: 1.5659; }
-    50%  { rotate: -45deg; scale: 1.5620; }
-    60%  { rotate: -36deg; scale: 1.5196; }
-    70%  { rotate: -27deg; scale: 1.4399; }
-    80%  { rotate: -18deg; scale: 1.3247; }
-    90%  { rotate:  -9deg; scale: 1.1768; }
-    100% { rotate:   0deg; scale: 1.0000; }
+    0%   { rotate: -45deg; scale: 1.5634; }
+    10%  { rotate: -40.5deg; scale: 1.5469; }
+    20%  { rotate: -36deg; scale: 1.5208; }
+    30%  { rotate: -31.5deg; scale: 1.4854; }
+    40%  { rotate: -27deg; scale: 1.4408; }
+    50%  { rotate: -22.5deg; scale: 1.3873; }
+    60%  { rotate: -18deg; scale: 1.3253; }
+    70%  { rotate: -13.5deg; scale: 1.2551; }
+    80%  { rotate: -9deg; scale: 1.1771; }
+    90%  { rotate: -4.5deg; scale: 1.0919; }
+    100% { rotate: -0deg; scale: 1.0000; }
   }
-
-  /* manos — relación 1.264 */
+  /* manos — relación 1.268 */
   @keyframes galeria-foto-2 {
-    0%   { rotate: -90deg; scale: 1.2640; }
-    10%  { rotate: -81deg; scale: 1.4049; }
-    20%  { rotate: -72deg; scale: 1.5112; }
-    30%  { rotate: -63deg; scale: 1.5802; }
-    40%  { rotate: -54deg; scale: 1.6104; }
-    50%  { rotate: -45deg; scale: 1.6009; }
-    60%  { rotate: -36deg; scale: 1.5520; }
-    70%  { rotate: -27deg; scale: 1.4649; }
-    80%  { rotate: -18deg; scale: 1.3417; }
-    90%  { rotate:  -9deg; scale: 1.1854; }
-    100% { rotate:   0deg; scale: 1.0000; }
+    0%   { rotate: -45deg; scale: 1.6037; }
+    10%  { rotate: -40.5deg; scale: 1.5839; }
+    20%  { rotate: -36deg; scale: 1.5543; }
+    30%  { rotate: -31.5deg; scale: 1.5152; }
+    40%  { rotate: -27deg; scale: 1.4667; }
+    50%  { rotate: -22.5deg; scale: 1.4091; }
+    60%  { rotate: -18deg; scale: 1.3429; }
+    70%  { rotate: -13.5deg; scale: 1.2684; }
+    80%  { rotate: -9deg; scale: 1.1860; }
+    90%  { rotate: -4.5deg; scale: 1.0964; }
+    100% { rotate: -0deg; scale: 1.0000; }
   }
-
-  /* cajas-xl — relación 1.418 */
+  /* cajas-xl — relación 1.422 */
   @keyframes galeria-foto-3 {
-    0%   { rotate: -90deg; scale: 1.4180; }
-    10%  { rotate: -81deg; scale: 1.5570; }
-    20%  { rotate: -72deg; scale: 1.6576; }
-    30%  { rotate: -63deg; scale: 1.7174; }
-    40%  { rotate: -54deg; scale: 1.7350; }
-    50%  { rotate: -45deg; scale: 1.7098; }
-    60%  { rotate: -36deg; scale: 1.6425; }
-    70%  { rotate: -27deg; scale: 1.5348; }
-    80%  { rotate: -18deg; scale: 1.3892; }
-    90%  { rotate:  -9deg; scale: 1.2095; }
-    100% { rotate:   0deg; scale: 1.0000; }
+    0%   { rotate: -45deg; scale: 1.7126; }
+    10%  { rotate: -40.5deg; scale: 1.6839; }
+    20%  { rotate: -36deg; scale: 1.6448; }
+    30%  { rotate: -31.5deg; scale: 1.5956; }
+    40%  { rotate: -27deg; scale: 1.5366; }
+    50%  { rotate: -22.5deg; scale: 1.4681; }
+    60%  { rotate: -18deg; scale: 1.3905; }
+    70%  { rotate: -13.5deg; scale: 1.3043; }
+    80%  { rotate: -9deg; scale: 1.2101; }
+    90%  { rotate: -4.5deg; scale: 1.1085; }
+    100% { rotate: -0deg; scale: 1.0000; }
   }
-
-  /* duo, bolsillo, tendedero — relación 1.718 */
+  /* tendedero, duo, bolsillo — relación 1.731 */
   @keyframes galeria-foto-4 {
-    0%   { rotate: -90deg; scale: 1.7180; }
-    10%  { rotate: -81deg; scale: 1.8533; }
-    20%  { rotate: -72deg; scale: 1.9429; }
-    30%  { rotate: -63deg; scale: 1.9847; }
-    40%  { rotate: -54deg; scale: 1.9777; }
-    50%  { rotate: -45deg; scale: 1.9219; }
-    60%  { rotate: -36deg; scale: 1.8188; }
-    70%  { rotate: -27deg; scale: 1.6710; }
-    80%  { rotate: -18deg; scale: 1.4819; }
-    90%  { rotate:  -9deg; scale: 1.2564; }
-    100% { rotate:   0deg; scale: 1.0000; }
+    0%   { rotate: -45deg; scale: 1.9311; }
+    10%  { rotate: -40.5deg; scale: 1.8846; }
+    20%  { rotate: -36deg; scale: 1.8265; }
+    30%  { rotate: -31.5deg; scale: 1.7571; }
+    40%  { rotate: -27deg; scale: 1.6769; }
+    50%  { rotate: -22.5deg; scale: 1.5863; }
+    60%  { rotate: -18deg; scale: 1.4860; }
+    70%  { rotate: -13.5deg; scale: 1.3765; }
+    80%  { rotate: -9deg; scale: 1.2585; }
+    90%  { rotate: -4.5deg; scale: 1.1327; }
+    100% { rotate: -0deg; scale: 1.0000; }
   }
-
-  /* gimnasio, bolso — relación 2.045 */
+  /* bolso, gimnasio — relación 2.056 */
   @keyframes galeria-foto-5 {
-    0%   { rotate: -90deg; scale: 2.0450; }
-    10%  { rotate: -81deg; scale: 2.1763; }
-    20%  { rotate: -72deg; scale: 2.2539; }
-    30%  { rotate: -63deg; scale: 2.2761; }
-    40%  { rotate: -54deg; scale: 2.2422; }
-    50%  { rotate: -45deg; scale: 2.1531; }
-    60%  { rotate: -36deg; scale: 2.0110; }
-    70%  { rotate: -27deg; scale: 1.8194; }
-    80%  { rotate: -18deg; scale: 1.5830; }
-    90%  { rotate:  -9deg; scale: 1.3076; }
-    100% { rotate:   0deg; scale: 1.0000; }
+    0%   { rotate: -45deg; scale: 2.1609; }
+    10%  { rotate: -40.5deg; scale: 2.0957; }
+    20%  { rotate: -36deg; scale: 2.0175; }
+    30%  { rotate: -31.5deg; scale: 1.9269; }
+    40%  { rotate: -27deg; scale: 1.8244; }
+    50%  { rotate: -22.5deg; scale: 1.7107; }
+    60%  { rotate: -18deg; scale: 1.5864; }
+    70%  { rotate: -13.5deg; scale: 1.4523; }
+    80%  { rotate: -9deg; scale: 1.3093; }
+    90%  { rotate: -4.5deg; scale: 1.1582; }
+    100% { rotate: -0deg; scale: 1.0000; }
   }
 
   /* Sin soporte de scroll-driven animations (Firefox viejo, WebKit previo

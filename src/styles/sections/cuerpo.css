@@ -290,8 +290,13 @@
 .seccion-rosa .wrap {
   --texto-cuerpo:     var(--rosa-bajada);
   --texto-bajada:     var(--rosa-bajada);
-  --texto-metadato:   #6B565B;
-  --texto-marca-agua: #B0919A;
+  /* Sobre rosa las dos van al negro de marca. La marca de agua estaba en
+     #B0919A y dejaba el registro sanitario en 1,92:1 —ilegible—; Charlie
+     pidió negro, y sobre rosa el negro del brandbook da 12,62:1. En una
+     superficie clara la jerarquía la hacen el tamaño y el peso, no un gris
+     que no se lee. */
+  --texto-metadato:   var(--rosa-titular);
+  --texto-marca-agua: var(--rosa-titular);
   /* Lo que sobre negro era crema, sobre rosa es el negro de titular. */
   --crema:            var(--rosa-titular);
   /* Las divisorias eran claras sobre negro; acá tienen que ser oscuras y
@@ -859,9 +864,30 @@
 /* Es una banda de color: aporta sus 20 como cualquier otra superficie.
    El padding-block de 18 es el aire de adentro de la cinta, no el
    separador; si fueran lo mismo, esos 18px saldrían pintados de rosa. */
+/* ── Superficies de color pegadas ────────────────────────────
+   Cada superficie de color aporta 20px de margen para que, sumados a los
+   del vecino, quede un separador negro de 40. Eso funcionaba cuando las
+   vecinas eran negras: el margen se fundía con el fondo y no se veía.
+
+   Al intercalar los fondos aparecieron pares de superficies de color
+   contiguas (la 04 rosa con la 05 peri, la 07 rosa con la marquesina), y
+   ahí ese margen dejó de ser invisible: se lee como una franja negra
+   suelta entre dos colores. Charlie la reportó el 2/9/2026.
+
+   Entre dos superficies de color el separador se retira y los colores se
+   tocan, que es lo que "intercalado" quiere decir. Van los dos lados
+   porque los márgenes verticales contiguos colapsan al mayor: anular uno
+   solo dejaría los 20px del otro. */
+:is(.seccion-rosa, .seccion-peri, .marquesina):has(+ :is(.seccion-rosa, .seccion-peri, .marquesina)) {
+  margin-bottom: 0;
+}
+:is(.seccion-rosa, .seccion-peri, .marquesina) + :is(.seccion-rosa, .seccion-peri, .marquesina) {
+  margin-top: 0;
+}
+
 .marquesina {
   margin-block: 20px;
-  background: var(--rosa);
+  background: var(--peri);
   overflow: hidden;
   padding-block: 18px;
 }
