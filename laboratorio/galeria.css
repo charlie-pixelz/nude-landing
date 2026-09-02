@@ -1,0 +1,334 @@
+/* ════════════════════════════════════════════════════════════════
+   Laboratorio · galería de fotos de producto
+   Banco de pruebas, igual que personajes.css. Lo que se apruebe acá
+   se porta a src/styles/sections/galeria.css.
+   ════════════════════════════════════════════════════════════════ */
+
+:root {
+  --negro:  #141110;
+  --rosa:   #F3C9D3;
+  --peri:   #8FA2E3;
+  --crema:  #F6F1EA;
+  --linea:  #2E2926;
+}
+
+/* ─────────── ESCRITORIO · grilla movida por el scroll ───────────
+
+   Punto de partida: el pen de Jhey Tompkins (codepen.io/jh3y/pen/VwBgPxP).
+   De ahí queda la idea (una grilla que el scroll escala y gira) y poco más;
+   los cuatro cambios que siguen son de este proyecto.
+
+   1. El original ata la animación a `scroll(root)`, o sea al scroll de TODA
+      la página: la galería giraría durante las ocho secciones. Acá va con
+      `view-timeline` con nombre sobre la propia sección, en el rango
+      `contain`, que arranca exacto cuando el sticky se pega y termina
+      cuando se despega.
+
+   2. El original importa open-props desde unpkg. Fuera: son dos valores y
+      los tenemos como tokens propios.
+
+   3. EL GIRO TERMINA EN CERO. El original va de 0° a 270°, así que deja
+      todo torcido al final. Acá va de `--giro` a 0°: el último fotograma,
+      que es la impresión que le queda a quien scrollea, es la composición
+      derecha y ordenada. Todo lo demás está construido alrededor de eso.
+
+   4. Las piezas llegan de afuera hacia adentro (`--dispersion`): empiezan
+      separadas del centro y se juntan a medida que baja el scroll. El
+      original solo escala, que lee como zoom; esto lee como que la
+      composición se arma.
+
+   Sobre el recorte de las fotos, que es la parte con truco: la foto ocupa
+   exactamente su celda (100%/100%, `object-fit:cover`) y contra-gira para
+   quedar a plomo. Al contra-girar, la celda deja de coincidir con la foto y
+   asomarían las esquinas del fondo, así que la foto se agranda lo justo:
+
+       escala(θ) = cos θ + relación · sin θ
+
+   donde `relación` es el lado largo de la celda dividido por el corto y θ
+   es el ángulo entre foto y celda. Es la fórmula de la caja mínima que
+   contiene un rectángulo girado, o sea el mínimo exacto: ni una esquina
+   descubierta, ni un pixel de zoom de más. En θ=0 da 1, así que AL FINAL
+   DEL SCROLL la foto queda en su encuadre natural, sin ampliar.
+
+   Esa curva no es lineal, así que los fotogramas no se pueden interpolar
+   entre dos extremos: los `@keyframes` de las fotos se generan en JS con
+   diez paradas, una por proporción de celda distinta. El pen original
+   resolvía lo mismo poniendo la foto al 200% fijo, que tapa las esquinas
+   pero muestra solo el cuarto central de cada imagen en todo momento. */
+
+.galeria {
+  /* Perillas. Las que se calibran desde el panel del laboratorio. */
+  --columnas:   25;
+  --filas:      12;
+  --celda:      2.9vw;
+  --separacion: 0.8vw;
+  --giro:       90deg;   /* inclinación al empezar; siempre termina en 0 */
+  /* La escala arranca casi en 1 a propósito: quien abre las piezas es
+     --dispersion, no el zoom. Con una escala inicial baja el conjunto se ve
+     chico y junto al empezar, que es lo contrario de lo que se busca. */
+  --escala-ini: 0.66;
+  /* En 0 el pack queda clavado en el mismo pixel durante todo el scroll:
+     el eje de giro es él y nada lo corre de ahí. Con cualquier otro valor
+     el eje sigue siendo el pack, pero el conjunto además se desliza. */
+  --deriva:     0vw;
+  --contra:     1;       /* 1 = las fotos van a plomo; 0 = giran con la celda */
+  --dispersion: 80vw;    /* cuánto se abren las piezas al empezar */
+  --pista:      200vh;   /* cuánto scroll dura la galería */
+
+  height: var(--pista);
+  view-timeline: --galeria block;
+  background: var(--negro);
+}
+
+.galeria-escena {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  /* Al principio las piezas están dispersas y se salen de la caja: eso es
+     parte del efecto, la sección es una ventana a algo más grande. */
+  overflow: hidden;
+}
+
+.galeria-grilla {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: var(--separacion);
+  grid-template:
+    repeat(var(--filas),    var(--celda)) /
+    repeat(var(--columnas), var(--celda));
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(var(--escala-ini)) rotate(var(--giro));
+
+  animation: galeria-abre both linear;
+  animation-timeline: --galeria;
+  animation-range: contain 0% contain 100%;
+}
+
+/* --dx y --dy los pone el JS: es la dirección de cada pieza respecto del
+   centro de la grilla, normalizada, así las de la orilla se abren más que
+   las del medio y todas convergen al mismo tiempo. */
+.galeria-grilla li {
+  position: relative;
+  overflow: hidden;
+  border-radius: 4px;
+  background: var(--linea);
+  grid-column: var(--x1) / var(--x2);
+  grid-row:    var(--y1) / var(--y2);
+
+  translate: calc(var(--dx) * var(--dispersion)) calc(var(--dy) * var(--dispersion));
+  animation: galeria-junta both linear;
+  animation-timeline: --galeria;
+  animation-range: contain 0% contain 100%;
+}
+
+/* `translate`, `rotate` y `scale` como propiedades sueltas, no como
+   `transform`: así los keyframes generados sólo tocan rotate y scale y el
+   centrado se queda quieto donde está. */
+.galeria-grilla img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  translate: -50% -50%;
+
+  animation: var(--foto) both linear;
+  animation-timeline: --galeria;
+  animation-range: contain 0% contain 100%;
+}
+
+@keyframes galeria-abre {
+  from {
+    transform:
+      translate(-50%, -50%)
+      translateX(calc(var(--deriva) * -1))
+      scale(var(--escala-ini))
+      rotate(var(--giro));
+  }
+  to {
+    transform:
+      translate(-50%, -50%)
+      translateX(var(--deriva))
+      scale(1)
+      rotate(0deg);
+  }
+}
+
+@keyframes galeria-junta {
+  from { translate: calc(var(--dx) * var(--dispersion)) calc(var(--dy) * var(--dispersion)); }
+  to   { translate: 0 0; }
+}
+
+/* Sin soporte de scroll-driven animations (Firefox viejo, WebKit previo a
+   Safari 26) la grilla se queda en su estado final, que es justamente la
+   composición ordenada. No hay fallback en JS a propósito: el proyecto no
+   lleva librerías de scroll y esto es decoración, no contenido. */
+@supports not (animation-timeline: view()) {
+  .galeria { height: auto; }
+  .galeria-escena { position: static; height: auto; padding: 8vh 0; }
+  .galeria-grilla { position: static; transform: none; margin: 0 auto; }
+  .galeria-grilla li { translate: 0 0; animation: none; }
+  .galeria-grilla img { animation: none; rotate: 0deg; scale: 1; }
+}
+
+/* ─────────── MODO EDICIÓN ───────────
+   Sólo del laboratorio: nada de esto viaja a producción. Congela la
+   animación en su estado final y deja mover y redimensionar las piezas con
+   el mouse, que es la única forma razonable de que Charlie me pase una
+   composición sin tener que dictarme cuarenta números. */
+
+.galeria.editando { height: auto; }
+
+.galeria.editando .galeria-escena {
+  position: static;
+  height: auto;
+  padding: 5vh 0;
+  overflow: visible;
+}
+
+.galeria.editando .galeria-grilla {
+  position: static;
+  transform: none;
+  margin: 0 auto;
+  animation: none;
+  /* Las guías van con el paso real de la grilla (celda + separación), así
+     se ve dónde caen las líneas a las que se pega cada pieza. */
+  background-image:
+    repeating-linear-gradient(to right,  rgba(243,201,211,.16) 0 1px,
+      transparent 1px calc(var(--celda) + var(--separacion))),
+    repeating-linear-gradient(to bottom, rgba(243,201,211,.16) 0 1px,
+      transparent 1px calc(var(--celda) + var(--separacion)));
+}
+
+.galeria.editando .galeria-grilla li {
+  animation: none;
+  translate: 0 0;
+  cursor: grab;
+  touch-action: none;      /* si no, el navegador se queda con el arrastre */
+}
+.galeria.editando .galeria-grilla li:active { cursor: grabbing; }
+
+.galeria.editando .galeria-grilla img {
+  animation: none;
+  rotate: 0deg;
+  scale: 1;
+  pointer-events: none;    /* el arrastre lo toma el li, no la foto */
+}
+
+/* Rojo = esta pieza está encima de otra. Sin esto un solape se ve como una
+   foto que simplemente desapareció. */
+.galeria.editando .galeria-grilla li.pisando {
+  outline: 3px solid #FF4D4D;
+  outline-offset: -3px;
+}
+
+.tirador {
+  display: none;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 20px;
+  height: 20px;
+  background: var(--rosa);
+  border-radius: 4px 0 0 0;
+  cursor: nwse-resize;
+  z-index: 2;
+}
+.galeria.editando .tirador { display: block; }
+
+/* ─────────── MÓVIL · carrusel con marco orgánico ─────────── */
+
+.galeria-movil {
+  /* Dos perillas distintas y conviene no confundirlas:
+     --tarjeta agranda la foto entera sin tocar su forma, así los marcos que
+     dibujó Charlie entran sin deformarse ni un pixel.
+     --relacion la estira en vertical, que sí deforma el marco. */
+  --tarjeta:  80vw;
+  --relacion: 0.67;   /* ancho/alto. 0.67 = 2:3 */
+  padding: 8vh 0;
+  background: var(--negro);
+}
+
+.galeria-pista {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  /* El padding lateral deja asomar la foto vecina: es la señal de que hay
+     más y de para qué lado, sin tener que dibujar puntitos. Sale de restar:
+     lo que sobra a los lados de la tarjeta, repartido en dos. Así la tarjeta
+     queda centrada sola por más que cambie de ancho, y lo que asoma se ajusta
+     en consecuencia. */
+  padding: 0 calc((100% - var(--tarjeta)) / 2);
+  scroll-padding: 0 calc((100% - var(--tarjeta)) / 2);
+  /* Arrastrar con el dedo ya funciona solo por ser un scroller; esto le
+     saca la inercia rara en iOS y deja el snap más firme. */
+  overscroll-behavior-x: contain;
+}
+.galeria-pista::-webkit-scrollbar { display: none; }
+
+.galeria-pista li {
+  flex: 0 0 var(--tarjeta);
+  scroll-snap-align: center;
+  list-style: none;
+  aspect-ratio: var(--relacion);
+  position: relative;
+}
+
+/* Las tres formas se alternan foto por foto: el JS le pone --marco a cada
+   una según su posición en la lista. */
+.galeria-pista img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  clip-path: var(--marco);
+}
+
+.galeria-flechas {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.galeria-flecha {
+  width: 44px;               /* 44px es el mínimo táctil, no es un número suelto */
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--linea);
+  background: transparent;
+  color: var(--crema);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+.galeria-flecha:hover { border-color: var(--rosa); color: var(--rosa); }
+.galeria-flecha:focus-visible { outline: 2px solid var(--rosa); outline-offset: 3px; }
+.galeria-flecha svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; }
+
+/* ─────────── Preferencia de movimiento reducido ───────────
+   Con la preferencia activa la galería no se mueve sola en ningún lado: la
+   grilla queda armada y el carrusel deja de avanzar solo (el JS apaga el
+   temporizador) y de animar el desplazamiento. Las flechas y el arrastre
+   siguen funcionando, saltando sin transición. */
+@media (prefers-reduced-motion: reduce) {
+  .galeria { height: auto; }
+  .galeria-escena { position: static; height: auto; padding: 8vh 0; overflow: hidden; }
+  .galeria-grilla {
+    position: static;
+    transform: none;
+    margin: 0 auto;
+    animation: none;
+  }
+  .galeria-grilla li { translate: 0 0; animation: none; }
+  .galeria-grilla img { animation: none; rotate: 0deg; scale: 1; }
+  .galeria-pista { scroll-behavior: auto; }
+}

@@ -1,0 +1,739 @@
+<!doctype html>
+<html lang="es-CL">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Laboratorio · galería de fotos</title>
+<link rel="stylesheet" href="./galeria.css">
+<style>
+  /* Chrome del laboratorio. Nada de esto va al sitio. */
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--negro); color:var(--crema);
+         font:16px/1.5 ui-sans-serif,system-ui,sans-serif; }
+  .marco { padding:32px 24px; }
+  h1 { font-size:20px; font-weight:600; margin:0 0 4px; }
+  h2 { font-size:15px; letter-spacing:.14em; text-transform:uppercase;
+       color:#7A736C; margin:0 0 14px; font-weight:600; }
+  .sub { color:#B8B0A8; margin:0 0 24px; font-size:15px; max-width:64ch; }
+  .nota { max-width:64ch; color:#7A736C; font-size:14px; margin:18px 0 0; }
+
+  /* El panel se queda fijo al costado: hay que ver la grilla moverse
+     mientras se giran las perillas, y la grilla vive en un sticky. */
+  .panel { position:fixed; right:16px; top:16px; width:290px; z-index:10;
+           background:rgba(20,17,16,.94); border:1px solid var(--linea);
+           border-radius:12px; padding:16px; backdrop-filter:blur(6px);
+           max-height:calc(100vh - 32px); overflow-y:auto; }
+  .ctrl { display:grid; grid-template-columns:1fr 58px; gap:4px 10px;
+          align-items:center; margin-bottom:10px; }
+  .ctrl label { font-size:13px; color:#DDD6CE; }
+  .ctrl output { font-variant-numeric:tabular-nums; color:#B8B0A8; font-size:13px;
+                 text-align:right; }
+  .ctrl input { grid-column:1 / -1; width:100%; accent-color:var(--rosa); }
+  .grupo { border-top:1px solid var(--linea); margin-top:14px; padding-top:14px; }
+  button { font:inherit; font-size:13px; background:transparent; color:var(--crema);
+           border:1px solid var(--linea); border-radius:999px; padding:6px 13px;
+           cursor:pointer; }
+  button:hover, button[aria-pressed=true] { border-color:var(--rosa); color:var(--rosa); }
+  .botonera { display:flex; gap:8px; flex-wrap:wrap; }
+  .ayuda { font-size:12.5px; color:#7A736C; margin:12px 0 10px; }
+  .ctrl-num { grid-template-columns:1fr 64px; }
+  .ctrl-num input { grid-column:auto; background:transparent; color:var(--crema);
+                    border:1px solid var(--linea); border-radius:6px; padding:4px 6px;
+                    font:inherit; font-size:13px; }
+  #salida { width:100%; margin-top:10px; background:#0D0B0A; color:#DDD6CE;
+            border:1px solid var(--linea); border-radius:8px; padding:10px;
+            font:12px/1.45 ui-monospace,SFMono-Regular,Menlo,monospace;
+            resize:vertical; }
+  .relleno { height:70vh; display:grid; place-items:center; color:#5C554F;
+             font-size:13px; letter-spacing:.14em; text-transform:uppercase;
+             border-bottom:1px solid var(--linea); }
+
+  /* En el ancho del teléfono el panel fijo tapaba la galería entera, que es
+     justo lo que hay que mirar. Ahí pasa a fluir con la página. */
+  @media (max-width:700px) {
+    .panel { position:static; width:auto; margin:0 24px 24px; max-height:none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Las formas viven en un SVG oculto y se referencian desde CSS con
+     clip-path:url(#...). En objectBoundingBox (coordenadas 0..1) la forma se
+     adapta sola a la caja de cada foto, sin recalcular nada en JS.
+     Las cuatro formas las dibujó Charlie el 1 de septiembre de 2026. Entran
+     con su path original y una transformación que sólo lleva su caja a 0..1:
+     no se les re-ajusta ni un punto. Las generadas por código quedaron atrás
+     porque eran C1 pero no C2 — la tangente no se quebraba, la curvatura sí,
+     y eso el ojo lo lee como corte duro. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <clipPath id="blob-1" clipPathUnits="objectBoundingBox"><path d="M471.161,75.393c-120.39,-22.632 -300.067,-51.539 -360.343,-3.207c-60.275,48.332 -77.504,124.217 -29.829,213.436c47.675,89.219 -91.886,236.571 -26.526,489.382c65.361,252.811 23.038,296.588 35.794,397.111c12.755,100.523 150.04,166.614 315.151,109.32c165.111,-57.294 186.114,-84.546 274.482,-33.064c59.181,34.478 186.241,57.18 257.134,15.093c70.893,-42.087 95.142,-144.106 70.395,-190.254c-33.489,-62.449 -42.841,-158.131 6.267,-322.556c49.108,-164.425 -70.178,-337.927 -43.243,-403.288c26.935,-65.361 64.273,-220.689 -37.347,-273.469c-101.62,-52.78 -341.545,24.128 -461.936,1.497Z" transform="scale(0.00101113,0.00079570) translate(-36.70,-45.92)"/></clipPath>
+    <clipPath id="blob-2" clipPathUnits="objectBoundingBox"><path d="M1006.17,158.202c24.734,-85.595 -94.679,-111.497 -172.925,-92.704c-78.246,18.793 -122.496,53.056 -211.601,15.025c-89.104,-38.03 -182.543,-76.406 -260.447,-22.517c-77.903,53.889 -189.579,-36.834 -251.946,-8.222c-62.368,28.611 -64.456,86.142 -43.983,120.04c20.472,33.898 -55.267,213.998 2.542,275.575c57.809,61.577 56.409,89.923 -10.06,204.999c-35.682,61.775 -8.45,77.233 21.459,130.04c29.909,52.807 46.925,181.043 7.535,258.525c-39.39,77.482 -38.485,166.751 -16.99,193.681c21.495,26.93 65.684,70.323 103.465,57.537c37.781,-12.786 134.997,9.804 235.671,13.199c100.673,3.394 164.427,-74.603 244.628,-69.503c80.201,5.1 131.349,44.955 204.663,55.19c73.313,10.235 177.088,-24.152 154.261,-123.697c-22.827,-99.545 7.339,-90.881 24.222,-174.628c16.883,-83.746 -51.644,-211.582 -9.508,-281.845c42.136,-70.263 -31.849,-125.733 -45.558,-197.138c-13.708,-71.406 17.524,-120.472 41.293,-170.924c23.769,-50.452 -41.453,-97.037 -16.719,-182.633Z" transform="scale(0.00100082,0.00078608) translate(-40.81,-31.35)"/></clipPath>
+    <clipPath id="blob-3" clipPathUnits="objectBoundingBox"><path d="M999.334,113.551c-28.745,-45.121 -102.814,-31.369 -175.472,-39.683c-68.523,-7.841 -64.594,-24.996 -134.039,-29.509c-53.325,-3.466 -282.517,0.975 -322.217,21.894c-58.995,31.087 -250.857,-56.112 -299.07,56.628c-48.213,112.74 -0.924,165.893 23.564,231.646c24.489,65.753 5.701,215.045 -22.569,283.067c-30.685,73.83 -34.698,115.948 -20.072,186.499c14.626,70.551 41.149,96.808 26.914,252.51c-9.298,101.707 28.142,112.597 73.289,134.154c45.147,21.557 14.963,129.978 109.931,92.535c94.969,-37.444 235.503,-35.924 379.635,-6.789c144.133,29.136 162.144,-103.321 218.585,-106.849c56.441,-3.528 114.443,100.428 147.277,28.889c32.834,-71.539 34.113,-151.314 -22.959,-262.988c-57.072,-111.674 64.154,-353.624 45.618,-458.224c-18.535,-104.601 -82.333,-194.153 -43.637,-243.939c38.697,-49.786 43.966,-94.72 15.221,-139.841Z" transform="scale(0.00101173,0.00078877) translate(-41.28,-43.30)"/></clipPath>
+    <clipPath id="blob-4" clipPathUnits="objectBoundingBox"><path d="M1006.416,344.309c27.314,-46.711 63.763,-135.764 1.217,-216.991c-62.546,-81.226 -104.048,-49.691 -272.351,-49.691c-126.561,-0 -308.422,42.675 -379.589,-9.927c-71.167,-52.601 -239.742,-20.339 -278.075,47.698c-38.332,68.037 -36.281,298.875 5.215,379.983c41.496,81.107 -55.917,73.086 -34.885,188.036c18.974,103.697 58.556,154.68 25.066,207.655c-33.49,52.976 -63.914,154.866 -11.791,216.861c52.123,61.995 -8.406,60.535 57.418,156.987c65.824,96.453 269.899,26.588 326.295,-6.208c56.397,-32.797 85.666,-14.075 191.697,16.749c106.031,30.824 186.917,-84.786 236.676,-48.879c49.759,35.907 96.248,16.349 129.587,-37.142c33.339,-53.491 -24.124,-119.769 -35.578,-179.097c-34.616,-179.309 -33.082,-254.77 -6.532,-312.455c26.55,-57.685 56.122,-92.761 24.232,-181.955c-31.89,-89.193 -5.918,-124.913 21.396,-171.624Z" transform="scale(0.00099117,0.00078589) translate(-33.19,-41.54)"/></clipPath>
+  </defs>
+</svg>
+
+<!-- Los @keyframes de las fotos se escriben acá desde JS: dependen del giro,
+     del contra-giro y de la proporción de cada celda. -->
+<style id="keyframes-fotos"></style>
+
+<div class="panel">
+  <h2 style="margin-bottom:10px">Escritorio</h2>
+  <div class="ctrl">
+    <label for="c-giro">Giro inicial (termina en 0)</label><output id="o-giro"></output>
+    <input type="range" id="c-giro" min="0" max="90" step="1" value="90">
+  </div>
+  <div class="ctrl">
+    <label for="c-dispersion">Dispersión inicial</label><output id="o-dispersion"></output>
+    <input type="range" id="c-dispersion" min="0" max="100" step="1" value="80">
+  </div>
+  <div class="ctrl">
+    <label for="c-escala">Escala inicial</label><output id="o-escala"></output>
+    <input type="range" id="c-escala" min="0.2" max="1.4" step="0.01" value="0.66">
+  </div>
+  <div class="ctrl">
+    <label for="c-celda">Tamaño de celda</label><output id="o-celda"></output>
+    <input type="range" id="c-celda" min="1" max="9" step="0.1" value="2.9">
+  </div>
+  <div class="ctrl">
+    <label for="c-sep">Separación</label><output id="o-sep"></output>
+    <input type="range" id="c-sep" min="0" max="3" step="0.1" value="0.8">
+  </div>
+  <div class="ctrl">
+    <label for="c-deriva">Deriva lateral</label><output id="o-deriva"></output>
+    <input type="range" id="c-deriva" min="-30" max="30" step="1" value="0">
+  </div>
+  <div class="ctrl">
+    <label for="c-contra">Fotos a plomo</label><output id="o-contra"></output>
+    <input type="range" id="c-contra" min="0" max="1" step="0.05" value="1">
+  </div>
+  <div class="ctrl">
+    <label for="c-pista">Largo del scroll</label><output id="o-pista"></output>
+    <input type="range" id="c-pista" min="150" max="700" step="10" value="200">
+  </div>
+
+  <div class="grupo">
+    <h2>Composición</h2>
+    <div class="botonera" id="composiciones"></div>
+    <div class="botonera" style="margin-top:10px">
+      <button id="b-editar" aria-pressed="false">Editar a mano</button>
+    </div>
+    <div id="editor" hidden>
+      <p class="ayuda">Arrastra una foto para moverla. Tira del cuadrito rosado de
+      su esquina para cambiarle el tamaño. Todo se pega solo a la grilla.</p>
+      <div class="ctrl ctrl-num">
+        <label for="c-columnas">Columnas</label>
+        <input type="number" id="c-columnas" min="4" max="60" step="1">
+      </div>
+      <div class="ctrl ctrl-num">
+        <label for="c-filas">Filas</label>
+        <input type="number" id="c-filas" min="4" max="40" step="1">
+      </div>
+      <textarea id="salida" readonly rows="14" spellcheck="false"></textarea>
+      <div class="botonera" style="margin-top:8px">
+        <button id="b-copiar">Copiar y pasármelo</button>
+        <button id="b-deshacer">Volver al original</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="grupo">
+    <h2>Móvil</h2>
+    <div class="ctrl">
+      <label for="c-tarjeta">Ancho de la foto</label><output id="o-tarjeta"></output>
+      <input type="range" id="c-tarjeta" min="50" max="94" step="1" value="80">
+    </div>
+    <div class="ctrl">
+      <label for="c-relacion">Proporción</label><output id="o-relacion"></output>
+      <input type="range" id="c-relacion" min="0.6" max="0.85" step="0.01" value="0.67">
+    </div>
+    <div class="ctrl">
+      <label for="c-auto">Avance solo</label><output id="o-auto"></output>
+      <input type="range" id="c-auto" min="0" max="12" step="0.5" value="3">
+    </div>
+  </div>
+</div>
+
+<div class="marco">
+  <h1>Laboratorio · galería de fotos de producto</h1>
+  <p class="sub">Diez fotos, dos diseños. Arriba la grilla de escritorio movida por el
+  scroll; abajo el carrusel de móvil con los marcos orgánicos alternados. Las perillas
+  del panel escriben variables CSS en vivo: cuando algo te guste, dime los números y
+  los dejo fijos.</p>
+</div>
+
+<div class="relleno">Baja para que empiece la galería</div>
+
+<section class="galeria" id="galeria">
+  <div class="galeria-escena">
+    <ul class="galeria-grilla" id="grilla"></ul>
+  </div>
+</section>
+
+<div class="marco">
+  <h2>Móvil · carrusel con marco orgánico</h2>
+  <p class="sub" style="margin-bottom:20px">Angosta la ventana bajo 700px para verlo
+  como en el teléfono. Responde a las flechas, al arrastre con el dedo, a la rueda del
+  mouse y al teclado; y avanza solo cada tantos segundos mientras está en pantalla,
+  salvo que lo estés tocando tú.</p>
+</div>
+
+<div class="galeria-movil">
+  <ul class="galeria-pista" id="pista"></ul>
+  <div class="galeria-flechas">
+    <button class="galeria-flecha" id="antes" aria-label="Foto anterior">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <button class="galeria-flecha" id="despues" aria-label="Foto siguiente">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+</div>
+
+<div class="marco">
+  <p class="nota">Los cuatro marcos los dibujó Charlie y viven en
+  <code>assets/blob-1..4.svg</code>. No son el blob del logotipo: el brandbook prohíbe
+  deformarlo y una máscara de foto lo deformaría en cada proporción. Van alternados
+  1, 2, 3, 4, 1, 2… por la lista.</p>
+  <div style="height:40vh"></div>
+</div>
+
+<script type="module">
+  // ── Las diez fotos ────────────────────────────────────────────────
+  // El orden es el de lectura del carrusel en móvil: producto limpio,
+  // después el contexto de baño (que es donde se explica el gesto), y
+  // recién ahí las de calle y bolso.
+  const FOTOS = [
+    { archivo: 'pack',      alt: 'Pack de NUDE de 40 unidades, visto de frente sobre fondo rosado.' },
+    { archivo: 'bano',      alt: 'Una mano saca un paño del pack abierto, apoyado en un piso de madera junto al inodoro.' },
+    { archivo: 'manos',     alt: 'Dos manos sostienen el pack de 40 unidades frente a una pared de azulejos rosados.' },
+    { archivo: 'cajas-xl',  alt: 'Tres cajas XL de NUDE apiladas en diagonal sobre fondo rosado.' },
+    { archivo: 'tendedero', alt: 'Tres sachets de NUDE colgados con pinzas de un cordel, sobre fondo rosado.' },
+    { archivo: 'cabeza',    alt: 'Una persona sostiene tres packs sobre su cabeza; del de arriba asoma un paño.' },
+    { archivo: 'duo',       alt: 'Dos personas sostienen cada una una caja XL de NUDE.' },
+    { archivo: 'bolsillo',  alt: 'Un sachet de NUDE asomando del bolsillo delantero de unos jeans.' },
+    { archivo: 'bolso',     alt: 'Una persona guarda un sachet de NUDE en un bolso cruzado.' },
+    { archivo: 'gimnasio',  alt: 'Dos sachets de NUDE dentro de un bolso de gimnasio abierto sobre una banca.' },
+  ];
+
+  const ruta = (archivo, ancho) => `../src/assets/img/galeria/${archivo}-${ancho}.webp`;
+
+  // ── Composiciones ────────────────────────────────────────────────
+  // Cada una define el tamaño de la grilla y dónde cae cada foto, en líneas
+  // de grid (x1/x2 = columna inicio/fin, y1/y2 = fila).
+  //
+  // "pack" va siempre al centro exacto y a toda la altura: es la foto limpia
+  // del producto y la que Charlie pidió al medio. Para que caiga centrada,
+  // los bloques de izquierda y derecha tienen que medir lo mismo; con una
+  // celda de 3 columnas eso significa columna inicial = (columnas - 1) / 2.
+  // Si no se cumple, la foto central queda corrida y se nota sin poder decir
+  // por qué. El comprobante está en verificarCentrado().
+  // La grilla es sólo un sistema de coordenadas, no una obligación de llenar
+  // todo: las celdas vacías son parte de la composición. La referencia hace
+  // exactamente eso — sus diez piezas empiezan en las filas 1, 2, 4, 4, 4, 7,
+  // 7 y 6, con huecos entre medio. La versión anterior de esto empacaba las
+  // fotos hasta no dejar espacio y terminaba pareciendo un muro de ladrillos.
+  //
+  // De ahí que las grillas sean finas (25, 27 o 17 columnas para diez fotos):
+  // una cuadrícula chica sólo permite pegar las piezas unas con otras, una
+  // fina permite escalonarlas y dejar aire de tamaños distintos.
+  const COMPOSICIONES = {
+    // Compuesta por Charlie el 31 de agosto de 2026 con el editor a mano.
+    'dispersa': {
+      columnas: 25, filas: 12,
+      celdas: {
+        gimnasio:  [1, 6, 2, 12],    bano:       [6, 11, 1, 6],
+        'cajas-xl':[6, 11, 6, 13],   duo:        [11, 16, 1, 4],
+        pack:      [11, 16, 4, 10],  bolsillo:   [11, 16, 10, 13],
+        manos:     [16, 21, 1, 5],   cabeza:     [16, 21, 5, 10],
+        tendedero: [16, 21, 10, 13], bolso:      [21, 26, 2, 12],
+      },
+    },
+    'ancha': {
+      columnas: 27, filas: 10,
+      celdas: {
+        bano:      [1, 5, 1, 5],     tendedero:  [6, 10, 3, 7],
+        bolsillo:  [1, 4, 6, 11],    manos:      [5, 9, 7, 11],
+        bolso:     [9, 12, 7, 11],
+        pack:      [12, 17, 1, 11],
+        cabeza:    [17, 21, 1, 5],   'cajas-xl': [22, 28, 2, 7],
+        gimnasio:  [17, 20, 6, 11],  duo:        [21, 27, 7, 11],
+      },
+    },
+    'compacta': {
+      columnas: 17, filas: 14,
+      celdas: {
+        bano:      [1, 4, 1, 6],     tendedero:  [4, 7, 3, 8],
+        bolsillo:  [1, 4, 7, 12],    manos:      [4, 7, 9, 14],
+        bolso:     [1, 4, 12, 15],
+        pack:      [7, 12, 3, 13],
+        cabeza:    [12, 15, 1, 6],   'cajas-xl': [15, 18, 3, 8],
+        gimnasio:  [12, 15, 8, 13],  duo:        [15, 18, 10, 15],
+      },
+    },
+  };
+
+  const galeria = document.getElementById('galeria');
+  const grilla  = document.getElementById('grilla');
+  const hojaKf  = document.getElementById('keyframes-fotos');
+
+  // Copia intacta para el botón "volver al original".
+  const ORIGINALES = structuredClone(COMPOSICIONES);
+  let editando = false;
+
+  function verificarComposiciones() {
+    for (const [nombre, c] of Object.entries(COMPOSICIONES)) {
+      // 1. pack tiene que caer en el centro exacto.
+      const [px1, px2] = c.celdas.pack;
+      const centroPack = (px1 + px2) / 2;
+      const centroGrilla = (1 + c.columnas + 1) / 2;
+      if (centroPack !== centroGrilla) {
+        console.warn(`[galería] "${nombre}": pack está en ${centroPack} y el ` +
+                     `centro de la grilla es ${centroGrilla}.`);
+      }
+
+      const piezas = Object.entries(c.celdas);
+
+      // 2. Nadie se sale de la grilla. Las líneas van de 1 a n+1.
+      for (const [n, [x1, x2, y1, y2]] of piezas) {
+        if (x1 < 1 || x2 > c.columnas + 1 || y1 < 1 || y2 > c.filas + 1) {
+          console.warn(`[galería] "${nombre}" · ${n}: se sale de la grilla de ` +
+                       `${c.columnas}x${c.filas}.`);
+        }
+      }
+
+      // 3. Nadie se pisa con nadie. Con celdas vacías a propósito, un solape
+      //    no se ve como error: se ve como una foto que desapareció debajo de
+      //    otra. Barato de chequear, caro de encontrar a ojo.
+      for (let i = 0; i < piezas.length; i++) {
+        for (let j = i + 1; j < piezas.length; j++) {
+          const [na, [ax1, ax2, ay1, ay2]] = piezas[i];
+          const [nb, [bx1, bx2, by1, by2]] = piezas[j];
+          if (ax1 < bx2 && bx1 < ax2 && ay1 < by2 && by1 < ay2) {
+            console.warn(`[galería] "${nombre}": ${na} y ${nb} se pisan.`);
+          }
+        }
+      }
+    }
+  }
+  verificarComposiciones();
+
+  let composicionActual = 'dispersa';
+
+  const num = (id) => Number(document.getElementById(id).value);
+
+  // ── La curva de cobertura ────────────────────────────────────────
+  // Cuánto hay que agrandar una foto para que tape su celda cuando entre
+  // ambas hay θ grados de diferencia. Es la caja mínima que contiene un
+  // rectángulo girado: exacta, no un margen de seguridad a ojo.
+  //   relacion = lado largo de la celda / lado corto
+  const cobertura = (gradosTheta, relacion) => {
+    const t = gradosTheta * Math.PI / 180;
+    return Math.cos(t) + relacion * Math.sin(t);
+  };
+
+  // Esa curva no es lineal, así que no se puede interpolar entre los dos
+  // extremos: a mitad de camino la foto se quedaría corta y asomarían las
+  // esquinas. Por eso los keyframes se escriben con paradas intermedias.
+  const PARADAS = 10;
+
+  function escribirKeyframes(relaciones) {
+    const giro = num('c-giro');
+    const contra = num('c-contra');
+    let css = '';
+    relaciones.forEach((relacion, i) => {
+      let cuerpo = '';
+      for (let s = 0; s <= PARADAS; s++) {
+        const avance = s / PARADAS;
+        // El ángulo entre foto y celda se cierra hasta 0 al final del scroll.
+        const theta = giro * contra * (1 - avance);
+        cuerpo += `${(avance * 100).toFixed(0)}%{` +
+                  `rotate:${(-theta).toFixed(2)}deg;` +
+                  `scale:${cobertura(theta, relacion).toFixed(4)}}`;
+      }
+      css += `@keyframes galeria-foto-${i}{${cuerpo}}`;
+    });
+    hojaKf.textContent = css;
+  }
+
+  // ── Pintar una composición ───────────────────────────────────────
+  function pintarComposicion(nombre) {
+    composicionActual = nombre;
+    const c = COMPOSICIONES[nombre];
+    galeria.style.setProperty('--columnas', c.columnas);
+    galeria.style.setProperty('--filas', c.filas);
+
+    const celda = num('c-celda');
+    const sep = num('c-sep');
+    const lado = (n) => n * celda + (n - 1) * sep;
+
+    const centroX = (1 + c.columnas + 1) / 2;
+    const centroY = (1 + c.filas + 1) / 2;
+
+    // Primera pasada: geometría de cada pieza.
+    const piezas = [];
+    for (const { archivo, alt } of FOTOS) {
+      const celdaDef = c.celdas[archivo];
+      if (!celdaDef) continue;
+      const [x1, x2, y1, y2] = celdaDef;
+      const ancho = lado(x2 - x1);
+      const alto  = lado(y2 - y1);
+      piezas.push({
+        archivo, alt, x1, x2, y1, y2,
+        relacion: Math.max(ancho / alto, alto / ancho),
+        offX: (x1 + x2) / 2 - centroX,
+        offY: (y1 + y2) / 2 - centroY,
+      });
+    }
+
+    // Las direcciones se normalizan con la MISMA escala en los dos ejes (el
+    // mayor corrimiento horizontal). Así una grilla ancha se abre más de
+    // lado que de arriba abajo, que es lo que se pidió, en vez de repartir
+    // por igual y volverse circular.
+    const escalaOff = Math.max(...piezas.map(p => Math.abs(p.offX))) || 1;
+
+    // ── Eje de giro sobre el pack ──────────────────────────────────
+    // Por defecto la grilla gira y escala en torno a su propio centro. Se
+    // fija explícitamente en el centro del pack para que el eje sea una
+    // decisión y no una coincidencia: si mañana el pack se mueve de lugar,
+    // el eje lo sigue en vez de quedarse donde estaba.
+    //
+    // La línea de columna k empieza a (k-1)·(celda+separación) del borde,
+    // y el ancho total de la grilla es columnas·(celda+separación) menos la
+    // última separación, que no existe.
+    const ejeCentro = (l1, l2, cuantas) => {
+      const salto = celda + sep;
+      const centro = ((l1 - 1) * salto + (l2 - 1) * salto - sep) / 2;
+      return centro / (cuantas * salto - sep);
+    };
+    const [ex1, ex2, ey1, ey2] = c.celdas.pack;
+    grilla.style.transformOrigin =
+      `${(ejeCentro(ex1, ex2, c.columnas) * 100).toFixed(3)}% ` +
+      `${(ejeCentro(ey1, ey2, c.filas) * 100).toFixed(3)}%`;
+
+    // Las piezas viven DENTRO de la grilla, así que su desplazamiento se gira
+    // junto con ella. Con --giro en 90° eso convertía la apertura horizontal
+    // en vertical y las fotos entraban desde arriba y abajo, fuera de la
+    // pantalla. Se corrige girando el vector al revés antes de escribirlo:
+    // al aplicarle después la rotación de la grilla, queda apuntando a donde
+    // se quería en pantalla. La compensación se va con el giro, que termina
+    // en 0, así que al final no altera nada.
+    const gr = num('c-giro') * Math.PI / 180;
+    const cosG = Math.cos(gr), sinG = Math.sin(gr);
+
+    // Una animación por proporción de celda distinta, no una por foto.
+    const relaciones = [...new Set(piezas.map(p => p.relacion.toFixed(3)))].map(Number);
+    escribirKeyframes(relaciones);
+
+    grilla.replaceChildren();
+    for (const p of piezas) {
+      const li = document.createElement('li');
+      const ux = p.offX / escalaOff, uy = p.offY / escalaOff;
+      li.style.cssText =
+        `--x1:${p.x1};--x2:${p.x2};--y1:${p.y1};--y2:${p.y2};` +
+        `--dx:${( ux * cosG + uy * sinG).toFixed(3)};` +
+        `--dy:${(-ux * sinG + uy * cosG).toFixed(3)};` +
+        `--foto:galeria-foto-${relaciones.findIndex(r => r === Number(p.relacion.toFixed(3)))}`;
+      li.dataset.foto = p.archivo;
+      const img = document.createElement('img');
+      img.src = ruta(p.archivo, 880);
+      img.alt = '';          // decorativa en la grilla: el alt real va en móvil
+      img.loading = 'lazy';
+      img.decoding = 'async';
+      const tirador = document.createElement('span');
+      tirador.className = 'tirador';
+      li.append(img, tirador);
+      grilla.append(li);
+    }
+    if (editando) { marcarSolapes(); refrescarSalida(); }
+  }
+
+  const botonera = document.getElementById('composiciones');
+  Object.keys(COMPOSICIONES).forEach((nombre, i) => {
+    const b = document.createElement('button');
+    b.textContent = nombre;
+    b.setAttribute('aria-pressed', String(i === 0));
+    b.addEventListener('click', () => {
+      botonera.querySelectorAll('button').forEach(o => o.setAttribute('aria-pressed', 'false'));
+      b.setAttribute('aria-pressed', 'true');
+      pintarComposicion(nombre);
+    });
+    botonera.append(b);
+  });
+
+  // ── Perillas ─────────────────────────────────────────────────────
+  // Mismo patrón que enlaza() en personajes.html: el rango escribe una
+  // variable CSS y el output muestra el valor con su unidad. `rehace` marca
+  // las que cambian la geometría de las celdas o de la curva de cobertura y
+  // obligan a regenerar los keyframes.
+  const enlaza = (id, out, prop, fmt, rehace = false) => {
+    const r = document.getElementById(id), o = document.getElementById(out);
+    const pinta = () => {
+      if (prop) galeria.style.setProperty(prop, fmt(r.value));
+      o.textContent = fmt(r.value);
+      if (rehace) pintarComposicion(composicionActual);
+    };
+    r.addEventListener('input', pinta);
+    return pinta;
+  };
+  const pintores = [
+    enlaza('c-giro',       'o-giro',       '--giro',       v => v + 'deg', true),
+    enlaza('c-dispersion', 'o-dispersion', '--dispersion', v => v + 'vw'),
+    enlaza('c-escala',     'o-escala',     '--escala-ini', v => Number(v).toFixed(2)),
+    enlaza('c-celda',      'o-celda',      '--celda',      v => v + 'vw',  true),
+    enlaza('c-sep',        'o-sep',        '--separacion', v => v + 'vw',  true),
+    enlaza('c-deriva',     'o-deriva',     '--deriva',     v => v + 'vw'),
+    enlaza('c-contra',     'o-contra',     '--contra',     v => Number(v).toFixed(2), true),
+    enlaza('c-pista',      'o-pista',      '--pista',      v => v + 'vh'),
+  ];
+  pintores.forEach(p => p());
+  pintarComposicion('dispersa');
+
+  // ══════════════════════════════════════════════════════════════════
+  // MODO EDICIÓN
+  // Sólo del laboratorio. Existe porque describir una composición con
+  // palabras no funciona y dictar cuarenta números tampoco: es más rápido
+  // arrastrar las fotos y que el laboratorio escriba las coordenadas.
+  // ══════════════════════════════════════════════════════════════════
+
+  const editor  = document.getElementById('editor');
+  const salida  = document.getElementById('salida');
+  const inCols  = document.getElementById('c-columnas');
+  const inFilas = document.getElementById('c-filas');
+
+  // Cuánto mide una celda más su separación, en píxeles. Es el paso al que
+  // se pega todo: convertir píxeles arrastrados a columnas movidas.
+  const pasoCelda = () => (num('c-celda') + num('c-sep')) / 100 * innerWidth;
+
+  const seSolapan = (a, b) =>
+    a[0] < b[1] && b[0] < a[1] && a[2] < b[3] && b[2] < a[3];
+
+  function marcarSolapes() {
+    const celdas = COMPOSICIONES[composicionActual].celdas;
+    for (const li of grilla.children) {
+      const propia = celdas[li.dataset.foto];
+      const choca = Object.entries(celdas).some(
+        ([n, otra]) => n !== li.dataset.foto && seSolapan(propia, otra));
+      li.classList.toggle('pisando', choca);
+    }
+  }
+
+  // El texto que sale es exactamente la entrada que va en COMPOSICIONES,
+  // lista para pegar. Nada de traducir a mano.
+  function refrescarSalida() {
+    const c = COMPOSICIONES[composicionActual];
+    const ancho = Math.max(...Object.keys(c.celdas).map(n => n.length)) + 2;
+    const filas = Object.entries(c.celdas).map(([n, v]) => {
+      const clave = /^[a-z][a-z0-9]*$/.test(n) ? n + ':' : `'${n}':`;
+      return `    ${clave.padEnd(ancho)} [${v.join(', ')}],`;
+    }).join('\n');
+    salida.value =
+      `'${composicionActual}': {\n` +
+      `  columnas: ${c.columnas}, filas: ${c.filas},\n` +
+      `  celdas: {\n${filas}\n  },\n},`;
+  }
+
+  // ── Arrastrar y redimensionar ────────────────────────────────────
+  let gesto = null;
+
+  grilla.addEventListener('pointerdown', (e) => {
+    if (!editando) return;
+    const li = e.target.closest('li');
+    if (!li) return;
+    gesto = {
+      li,
+      foto: li.dataset.foto,
+      modo: e.target.classList.contains('tirador') ? 'medir' : 'mover',
+      x: e.clientX,
+      y: e.clientY,
+      origen: [...COMPOSICIONES[composicionActual].celdas[li.dataset.foto]],
+    };
+    // La captura evita perder el arrastre si el cursor se sale de la pieza.
+    // Si el navegador la rechaza el arrastre igual funciona, sólo que menos
+    // tolerante, así que no vale la pena romper todo por eso.
+    try { li.setPointerCapture(e.pointerId); } catch { /* sin captura */ }
+    e.preventDefault();
+  });
+
+  grilla.addEventListener('pointermove', (e) => {
+    if (!gesto) return;
+    const p = pasoCelda();
+    const dcx = Math.round((e.clientX - gesto.x) / p);
+    const dcy = Math.round((e.clientY - gesto.y) / p);
+    const c = COMPOSICIONES[composicionActual];
+    let [x1, x2, y1, y2] = gesto.origen;
+
+    if (gesto.modo === 'mover') {
+      // Mover conserva el tamaño: se corren las dos líneas juntas, con tope
+      // en los bordes para que nada se salga de la grilla.
+      const ancho = x2 - x1, alto = y2 - y1;
+      x1 = Math.min(Math.max(1, x1 + dcx), c.columnas + 1 - ancho);
+      y1 = Math.min(Math.max(1, y1 + dcy), c.filas + 1 - alto);
+      x2 = x1 + ancho;
+      y2 = y1 + alto;
+    } else {
+      // Redimensionar mueve sólo la esquina de abajo a la derecha, con un
+      // mínimo de una celda.
+      x2 = Math.min(Math.max(x1 + 1, x2 + dcx), c.columnas + 1);
+      y2 = Math.min(Math.max(y1 + 1, y2 + dcy), c.filas + 1);
+    }
+
+    c.celdas[gesto.foto] = [x1, x2, y1, y2];
+    const s = gesto.li.style;
+    s.setProperty('--x1', x1); s.setProperty('--x2', x2);
+    s.setProperty('--y1', y1); s.setProperty('--y2', y2);
+    marcarSolapes();
+    refrescarSalida();
+  });
+
+  // Al soltar se repinta entero: cambiar el tamaño de una pieza cambia su
+  // proporción, y con ella los keyframes de cobertura de su foto.
+  grilla.addEventListener('pointerup', () => {
+    if (!gesto) return;
+    gesto = null;
+    pintarComposicion(composicionActual);
+  });
+
+  // ── Entrar y salir del modo ──────────────────────────────────────
+  const btEditar = document.getElementById('b-editar');
+  btEditar.addEventListener('click', () => {
+    editando = !editando;
+    galeria.classList.toggle('editando', editando);
+    btEditar.setAttribute('aria-pressed', String(editando));
+    btEditar.textContent = editando ? 'Salir de edición' : 'Editar a mano';
+    editor.hidden = !editando;
+    if (editando) {
+      const c = COMPOSICIONES[composicionActual];
+      inCols.value = c.columnas;
+      inFilas.value = c.filas;
+      galeria.scrollIntoView({ block: 'start' });
+      marcarSolapes();
+      refrescarSalida();
+    }
+  });
+
+  // Cambiar el tamaño de la grilla puede dejar piezas afuera: se recortan
+  // al borde nuevo en vez de desaparecer sin aviso.
+  const redimensionarGrilla = () => {
+    const c = COMPOSICIONES[composicionActual];
+    c.columnas = Math.max(4, Number(inCols.value) || c.columnas);
+    c.filas    = Math.max(4, Number(inFilas.value) || c.filas);
+    for (const [n, v] of Object.entries(c.celdas)) {
+      const ancho = Math.min(v[1] - v[0], c.columnas);
+      const alto  = Math.min(v[3] - v[2], c.filas);
+      const x1 = Math.min(v[0], c.columnas + 1 - ancho);
+      const y1 = Math.min(v[2], c.filas + 1 - alto);
+      c.celdas[n] = [x1, x1 + ancho, y1, y1 + alto];
+    }
+    pintarComposicion(composicionActual);
+  };
+  inCols.addEventListener('change', redimensionarGrilla);
+  inFilas.addEventListener('change', redimensionarGrilla);
+
+  document.getElementById('b-copiar').addEventListener('click', async (e) => {
+    await navigator.clipboard.writeText(salida.value);
+    e.target.textContent = 'Copiado';
+    setTimeout(() => { e.target.textContent = 'Copiar y pasármelo'; }, 1500);
+  });
+
+  document.getElementById('b-deshacer').addEventListener('click', () => {
+    COMPOSICIONES[composicionActual] =
+      structuredClone(ORIGINALES[composicionActual]);
+    inCols.value  = COMPOSICIONES[composicionActual].columnas;
+    inFilas.value = COMPOSICIONES[composicionActual].filas;
+    pintarComposicion(composicionActual);
+  });
+
+  // ── Carrusel de móvil ────────────────────────────────────────────
+  const pista = document.getElementById('pista');
+  const MARCOS = ['1', '2', '3', '4'];
+  FOTOS.forEach(({ archivo, alt }, i) => {
+    const li = document.createElement('li');
+    const img = document.createElement('img');
+    img.src = ruta(archivo, 560);
+    img.alt = alt;                      // acá sí es contenido, no decoración
+    img.loading = 'lazy';
+    img.decoding = 'async';
+    img.style.setProperty('--marco', `url(#blob-${MARCOS[i % MARCOS.length]})`);
+    li.append(img);
+    pista.append(li);
+  });
+
+  const quieto = matchMedia('(prefers-reduced-motion: reduce)');
+
+  // Mover "una foto" es mover el ancho de una tarjeta más la separación. Se
+  // mide del DOM en vez de recalcularlo de los vw, así sigue siendo correcto
+  // si cambia el tamaño de la ventana o el gap.
+  const paso = () => {
+    const [a, b] = pista.children;
+    return b ? b.getBoundingClientRect().left - a.getBoundingClientRect().left : 0;
+  };
+  const alFinal = () => pista.scrollLeft >= pista.scrollWidth - pista.clientWidth - 2;
+
+  function mover(signo, volver = false) {
+    const destino = volver ? 0 : pista.scrollLeft + signo * paso();
+    pista.scrollTo({ left: destino, behavior: quieto.matches ? 'auto' : 'smooth' });
+    reiniciarReloj();
+  }
+  document.getElementById('antes').addEventListener('click', () => mover(-1));
+  document.getElementById('despues').addEventListener('click', () => mover(1));
+
+  // ── Avance solo ──────────────────────────────────────────────────
+  // Tres condiciones para que corra, y las tres importan:
+  //   · que el carrusel esté en pantalla (el PLAN pide que las piezas se
+  //     detengan fuera de vista, y un timer invisible es batería regalada);
+  //   · que nadie tenga la preferencia de movimiento reducido activa;
+  //   · que el usuario no haya tocado nada hace poco. Cualquier movimiento,
+  //     propio o ajeno, reinicia el reloj, así el avance automático nunca
+  //     compite con el dedo.
+  let reloj = null;
+  let enPantalla = false;
+
+  function reiniciarReloj() {
+    clearTimeout(reloj);
+    const segundos = num('c-auto');
+    if (!enPantalla || quieto.matches || segundos === 0) return;
+    reloj = setTimeout(() => {
+      alFinal() ? mover(0, true) : mover(1);
+    }, segundos * 1000);
+  }
+
+  new IntersectionObserver(([e]) => {
+    enPantalla = e.isIntersecting;
+    reiniciarReloj();
+  }, { threshold: 0.4 }).observe(pista);
+
+  // Un scroll del usuario también reinicia el reloj: el debounce evita
+  // reprogramarlo en cada uno de los cientos de eventos de un solo arrastre.
+  let debounce = null;
+  pista.addEventListener('scroll', () => {
+    clearTimeout(debounce);
+    debounce = setTimeout(reiniciarReloj, 120);
+  }, { passive: true });
+  ['pointerdown', 'keydown'].forEach(ev =>
+    pista.addEventListener(ev, reiniciarReloj, { passive: true }));
+  quieto.addEventListener('change', reiniciarReloj);
+  document.getElementById('c-auto').addEventListener('input', reiniciarReloj);
+  // Las dos perillas de la tarjeta van sobre .galeria-movil, no sobre la
+  // sección de escritorio, así que necesitan su propio enlace.
+  // Acá el valor que va al CSS y el que se muestra son distintos: aspect-ratio
+  // necesita el número crudo, pero "0.80" no le dice nada a nadie y "4:5" sí.
+  const movil = document.querySelector('.galeria-movil');
+  const enlazaMovil = (id, out, prop, valor, etiqueta = valor) => {
+    const r = document.getElementById(id), o = document.getElementById(out);
+    const pinta = () => {
+      movil.style.setProperty(prop, valor(r.value));
+      o.textContent = etiqueta(r.value);
+    };
+    r.addEventListener('input', pinta); pinta();
+  };
+  enlazaMovil('c-tarjeta', 'o-tarjeta', '--tarjeta', v => v + 'vw');
+  const RAZONES = { '0.80': '4:5', '0.75': '3:4', '0.67': '2:3', '0.71': '5:7' };
+  enlazaMovil('c-relacion', 'o-relacion', '--relacion',
+              v => Number(v).toFixed(2),
+              v => RAZONES[Number(v).toFixed(2)] ?? Number(v).toFixed(2));
+  enlaza('c-auto', 'o-auto', null, v => Number(v) === 0 ? 'no' : v + 's')();
+</script>
+</body>
+</html>
