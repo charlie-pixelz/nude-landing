@@ -65,8 +65,14 @@ export const PERFIL = [
 ''', encoding='utf-8')
 
 print(f'{len(frames)} frames -> {DEST.relative_to(BASE)}')
-for etq, a, b in (('giro', 0, 44), ('asentado', 44, 65),
-                  ('tapa y paño', 65, 104), ('cierre', 104, len(frames) - 1)):
-    lin = (b - a) / (len(frames) - 1) * 100
+# Los tramos se declaran como fracción del recorrido, no como índices: el
+# número de frames cambia cada vez que se cambia el clip o el paso, y con
+# índices fijos este reporte se caía (pasó al montar nude9, que trae 100
+# frames donde el anterior tenía 111).
+ult = len(frames) - 1
+for etq, fa, fb in (('giro', 0.00, 0.63), ('asentado', 0.63, 0.73),
+                    ('tapa y paño', 0.73, 0.93), ('cierre', 0.93, 1.00)):
+    a, b = round(fa * ult), round(fb * ult)
+    lin = (b - a) / ult * 100
     mov = (cum[b] - cum[a]) * 100
     print(f'  {etq:12} lineal {lin:5.1f}%  ->  por movimiento {mov:5.1f}%')
