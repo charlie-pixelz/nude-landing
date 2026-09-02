@@ -194,10 +194,30 @@
      margen de sobra antes de que empiece el difuminado. */
   .hero-arriba .h1 {
     max-width: min(44vw, 620px);
+    /* Charlie lo pidió más grande el 2/9/2026 y el brandbook está de
+       acuerdo: Halloween Days va "siempre sobre 120px" en titulares de
+       portada, y estaba en 76. El tope de 132 no es arbitrario — medido,
+       "Hasta hoy." mide 533px a ese tamaño y en la ventana más apretada
+       donde aplica este bloque quedan 657px libres antes del canvas, así
+       que nunca parte en dos líneas ni se mete en el difuminado. El piso
+       de 80 es para el tramo 760-1000px, donde 9vw se queda corto pero la
+       columna también es angosta. */
+    font-size: clamp(80px, 9vw, 132px);
   }
   .hero-setup {
-    max-width: min(34vw, 460px);
-    font-size: 22px;
+    /* Al crecer la tipografía el setup ya no cabía en 460px y se partía en
+       dos líneas. Medido: a 27px la frase mide 511px y hasta el canvas hay
+       657, así que la columna sube a la del titular y vuelve a una línea. */
+    max-width: min(44vw, 620px);
+    font-size: clamp(20px, 1.9vw, 27px);
+  }
+  /* El bloque B sube en la misma proporción que el titular: Charlie pidió
+     los dos más grandes, no sólo el de arriba. */
+  .hero-abajo .bajada {
+    font-size: clamp(19px, 1.6vw, 23px);
+  }
+  .hero-abajo .firma {
+    font-size: clamp(20px, 1.7vw, 25px);
   }
 }
 @media (min-width: 760px) {
