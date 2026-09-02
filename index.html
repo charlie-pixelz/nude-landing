@@ -131,7 +131,7 @@
   <!-- Sección nueva del handoff de copy. Es el giro: dos líneas cortas, el
        dato, y el remate. El remate es la única línea en rosa de la sección,
        porque es la primera vez que el sitio dice el nombre. -->
-  <section class="pad" id="aparicion">
+  <section class="pad seccion-rosa" id="aparicion" data-nav="pink">
     <div class="wrap">
       <p class="kicker rv">02 · La aparición</p>
       <div class="aparicion-lineas">
@@ -144,13 +144,13 @@
   </section>
 
   <!-- ══════════ 03 · MANIFIESTO ══════════ -->
-  <!-- Sobre rosa, no sobre negro. Javier leyó las cuatro primeras seguidas y
-       dijo que en negro corrido la lectura se hace pesada. De las cuatro,
-       esta es la que más texto tiene: siete párrafos de cuerpo contra las
-       líneas sueltas de la 01, 02 y 04. Es la que gana con oscuro sobre
-       claro, y además es la sección ancla — la que lleva la firma de marca —
-       que es justo el papel que el brandbook le da al rosa. -->
-  <section class="pad seccion-rosa" id="manifiesto" data-nav="pink">
+  <!-- Vuelve a negro. Era rosa porque Javier encontró pesado leer cuatro
+       secciones negras seguidas, y el rosa acá rompía esa racha. El 2 de
+       septiembre de 2026 pidió resolver lo mismo de otra forma: intercalar
+       los fondos de toda la página, de modo que ningún par de secciones
+       vecinas repita color. Con la 02 y la 04 en rosa, la racha ya está
+       rota y esta puede volver al fondo dominante. -->
+  <section class="pad" id="manifiesto">
     <!-- Tres filas de grilla, y cada elemento declara la suya: el kicker se
          lleva la fila 1 completa, el titular la 2, y el personaje y el cuerpo
          comparten la 3. Así el cuerpo arranca a la misma altura que el
@@ -248,7 +248,7 @@
   <!-- Pasa a ir después del manifiesto: el handoff de copy la numera 04, y el
        orden importa. Primero el problema, la aparición y el porqué; recién
        ahí el gesto. -->
-  <section class="pad" id="como">
+  <section class="pad seccion-rosa" id="como" data-nav="pink">
     <div class="wrap">
       <p class="kicker rv">04 · Así se empieza</p>
       <h2 class="h2 rv-split" data-split>Cómo se hace.</h2>
@@ -271,6 +271,21 @@
     </div>
   </section>
 
+  <!-- ══════════ GALERÍA DE PRODUCTO · EN ESPERA ══════════ -->
+  <!-- Javier pidió el 2 de septiembre de 2026 dejarla fuera por ahora: está
+       pidiendo reemplazar algunas fotos y no la quiere arriba hasta tenerlas.
+
+       Va dentro de un <template> y no dentro de un comentario HTML. Los
+       comentarios no admiten "--" y el marcado está lleno: --x1, --dx, --foto.
+       Habría que mutilarlos para comentar y restaurarlos para reactivar, que
+       es justo el tipo de cambio que se hace mal a las seis de la tarde. El
+       contenido de un <template> es inerte: no se muestra, no pide imágenes y
+       queda literal, así que reactivarla es sacar esta envoltura y nada más.
+
+       src/js/galeria.js se desactiva solo al no encontrar #galeria, que es el
+       patrón de todos los módulos. Se sigue calibrando en
+       laboratorio/galeria.html. -->
+  <template id="galeria-en-espera">
   <!-- ══════════ GALERÍA DE PRODUCTO ══════════ -->
   <!-- Va entre la 04 y la 05 por indicación de Javier (primero pidió entre la
        03 y la 04, y lo corrigió). Sobre negro, como el resto del cuerpo: cae
@@ -384,6 +399,7 @@
       </div>
     </div>
   </section>
+  </template>
 
   <!-- ══════════ 05 · LA PRUEBA DE SIEMPRE (periwinkle) ══════════ -->
   <section class="pad seccion-peri" id="degrada" data-nav="peri">
@@ -404,6 +420,9 @@
       <p class="bajada seccion-bajada rv" style="--d:80ms">Todos XL, 20 x 18 cm. Cambia dónde vive cada uno.</p>
       <ul class="formatos">
         <li class="formato rv">
+          <img class="formato-foto" src="./src/assets/img/formatos/formato-01.webp"
+               alt="Pack de NUDE de 40 unidades, con tapa, visto de frente sobre fondo rosado." loading="lazy" decoding="async"
+               width="640" height="800">
           <p class="formato-cifra">40</p>
           <p class="formato-nombre">Wipes</p>
           <p class="formato-rol">El de la casa.</p>
@@ -411,6 +430,9 @@
           <a class="btn btn-secundario" href="#donde">Dónde encontrarlo</a>
         </li>
         <li class="formato rv" style="--d:90ms">
+          <img class="formato-foto" src="./src/assets/img/formatos/formato-02.webp"
+               alt="Tres packs de NUDE apilados, con un paño asomando del de arriba." loading="lazy" decoding="async"
+               width="640" height="800">
           <p class="formato-cifra">120</p>
           <p class="formato-nombre">Tripack</p>
           <p class="formato-rol">El que dura el mes.</p>
@@ -418,6 +440,9 @@
           <a class="btn btn-secundario" href="#donde">Dónde encontrarlo</a>
         </li>
         <li class="formato rv" style="--d:180ms">
+          <img class="formato-foto" src="./src/assets/img/formatos/formato-03.webp"
+               alt="Pack de NUDE de 10 unidades, visto de frente sobre fondo rosado." loading="lazy" decoding="async"
+               width="640" height="800">
           <p class="formato-marca">Para partir</p>
           <p class="formato-cifra">10</p>
           <p class="formato-nombre">Wipes</p>
@@ -426,6 +451,9 @@
           <a class="btn btn-secundario" href="#donde">Dónde encontrarlo</a>
         </li>
         <li class="formato rv" style="--d:270ms">
+          <img class="formato-foto" src="./src/assets/img/formatos/formato-04.webp"
+               alt="Sachets individuales de NUDE repartidos sobre fondo rosado; de uno asoma el paño." loading="lazy" decoding="async"
+               width="640" height="800">
           <p class="formato-cifra">30</p>
           <p class="formato-nombre">Single wipes</p>
           <p class="formato-rol">El que anda contigo.</p>
@@ -441,7 +469,7 @@
        (gotita, escudo, check, hoja). El brandbook prohíbe explícitamente la
        "iconografía de farmacia", así que acá el dato se ordena por tipografía
        y jerarquía de tono, que es lo que el propio manual pide. -->
-  <section class="pad" id="ficha">
+  <section class="pad seccion-rosa" id="ficha" data-nav="pink">
     <div class="wrap">
       <p class="kicker rv">07 · La ficha</p>
       <h2 class="h2 rv-split" data-split>Lo que trae.</h2>

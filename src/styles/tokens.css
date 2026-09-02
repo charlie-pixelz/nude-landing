@@ -6,6 +6,10 @@
   --rosa: #F3C9D3;
   --peri: #8FA2E3;
   --crema: #F6F1EA;
+  /* El mismo crema, con un nombre que las superficies de color no remapean.
+     Sirve para lo que tiene que seguir siendo claro aunque el token --crema
+     esté redefinido a negro dentro de una sección rosa (ver .seccion-rosa). */
+  --crema-real: #F6F1EA;
   --linea: #2E2926;
 
   /* texto sobre negro */

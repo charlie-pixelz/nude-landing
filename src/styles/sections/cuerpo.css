@@ -25,6 +25,13 @@
   padding-block: 20px;
 }
 
+/* Javier pidió el 2 de septiembre de 2026 sacar el nombre de las secciones
+   de la landing. El marcado se queda: la numeración es como nos referimos a
+   las secciones entre nosotros, y borrarla del HTML dejaría el archivo sin
+   esa referencia justo donde sirve. Una línea para revertirlo si cambia de
+   opinión. */
+.kicker { display: none; }
+
 .kicker {
   font-family: var(--f-mono);
   font-size: var(--fs-etiqueta);
@@ -258,20 +265,50 @@
   color: var(--rosa);
 }
 
-/* ── 03 · manifiesto ─────────────────────────────────────── */
-/* Superficie rosa, misma mecánica que .seccion-peri: la sección aporta sus
-   20px de margen y el vecino los otros 20 del separador. */
+/* ── Superficie rosa ─────────────────────────────────────────
+   La usan la 02, la 04 y la 07. Antes era exclusiva del manifiesto y sus
+   reglas nombraban clases de esa sección; al pedir Javier que los fondos se
+   intercalaran hubo que hacerla genérica.
+
+   No se remapa clase por clase. El CSS de las secciones ya pide sus colores
+   por token, así que basta con redefinir los tokens DENTRO de la sección y
+   todo lo de adentro se recolorea solo: lo que era crema sobre negro pasa a
+   ser negro sobre rosa sin tocar una sola regla de contenido. Cualquier
+   sección que se pinte de rosa mañana queda resuelta sin escribir nada.
+
+   El remapeo va en .wrap y no en la sección por una razón concreta: la
+   sección pinta su fondo con var(--rosa), y si el remapeo viviera en el
+   mismo elemento se pintaría con el valor remapeado. En el hijo no hay
+   ambigüedad. */
 .seccion-rosa {
+  /* Los 20 que le faltan al vecino para completar el separador de 40. */
   margin-block: 20px;
   background: var(--rosa);
   padding-block: clamp(48px, 7vh, 88px);
 }
-.seccion-rosa .kicker {
-  color: var(--rosa-bajada);
+
+.seccion-rosa .wrap {
+  --texto-cuerpo:     var(--rosa-bajada);
+  --texto-bajada:     var(--rosa-bajada);
+  --texto-metadato:   #6B565B;
+  --texto-marca-agua: #B0919A;
+  /* Lo que sobre negro era crema, sobre rosa es el negro de titular. */
+  --crema:            var(--rosa-titular);
+  /* Las divisorias eran claras sobre negro; acá tienen que ser oscuras y
+     suaves, o cortan la superficie. */
+  --linea:            rgba(20, 17, 16, 0.16);
+  /* El rosa de acento desaparece sobre rosa: pasa a ser el negro. */
+  --rosa:             var(--rosa-titular);
+  color: var(--rosa-titular);
 }
+
 .seccion-rosa .h2 {
   color: var(--rosa-titular);
 }
+/* El único botón que cae en una sección rosa es el secundario de la 04
+   (borde y texto). Con --linea y --crema ya remapeados queda oscuro sobre
+   rosa sin escribir nada; el primario, que es fondo rosa sobre negro, no
+   aparece en ninguna sección rosa. */
 .seccion-rosa .manifiesto-cuerpo p {
   color: var(--rosa-bajada);
 }
@@ -704,6 +741,27 @@
   margin-top: auto;
   align-self: flex-start;
   margin-top: 24px;
+}
+
+/* La foto de cada formato. Las cuatro entran ya recortadas a 4:5 por
+   scripts/fotos-formatos.sh, así que acá no hay que corregir proporciones:
+   el aspect-ratio está para que el navegador reserve el alto antes de que
+   la imagen llegue y la tarjeta no salte.
+
+   height:auto no es decorativo. Los atributos width/height del <img> se
+   traducen a hints de presentación, así que el height="800" del marcado
+   ganaba sobre el aspect-ratio y las fotos salían de 235x800 dentro de una
+   tarjeta flex en columna. Con height:auto el alto vuelve a salir de la
+   proporción y los atributos siguen sirviendo para lo suyo: reservar el
+   espacio antes de que la imagen llegue. */
+.formato-foto {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  display: block;
+  border-radius: 6px;
+  margin-bottom: 18px;
 }
 
 /* ── 07 · la ficha ───────────────────────────────────────── */
