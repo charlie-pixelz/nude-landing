@@ -202,20 +202,24 @@
 }
 @media (min-width: 760px) {
   .hero-zonas {
-    padding-top: calc(var(--nav-h) + clamp(70px, 15vh, 165px));
-    /* Más aire abajo: el bloque B sube y deja de pegarse al borde. En
-       escritorio el texto vive a la izquierda y el producto a la derecha,
-       así que moverlo no lo acerca al pack: no hay riesgo de contraste. */
-    /* Sube igual que bajó el bloque de arriba: con 90px de aire abajo y 123
-       arriba el conjunto quedaba descolgado hacia el pie. A 131 los dos
-       márgenes quedan parejos y el texto se lee centrado contra el alto de
-       la pantalla, que es lo que pidió Charlie. Acá se puede: en escritorio
-       el producto vive a la derecha, así que la franja central no tiene que
-       quedar libre para nada. */
-    padding-bottom: clamp(80px, 16vh, 180px);
-    /* El margen lateral de .wrap deja el texto un poco pegado al borde en
-       pantallas anchas; esto lo separa sin tocar el canvas. */
-    padding-inline: clamp(0px, 2vw, 40px);
+    /* En escritorio los dos bloques dejan de repartirse el alto con
+       space-between y pasan a ir juntos y centrados, con una separación
+       explícita. Con space-between la distancia entre el titular y el
+       bloque B era lo que sobraba —211px a 1425x900— y crecía sola en
+       pantallas altas: no había número que tocar. Ahora hay uno.
+
+       Esto se puede hacer sólo acá. En móvil los dos bloques tienen que
+       quedar fuera de la franja donde el pack les come el contraste, y de
+       eso se encarga el space-between de más arriba; en escritorio el
+       producto vive a la derecha y la franja central está libre. */
+    justify-content: center;
+    gap: var(--hero-separacion, clamp(72px, 11vh, 130px));
+    padding-top: calc(var(--nav-h) + clamp(20px, 3vh, 40px));
+    padding-bottom: clamp(20px, 3vh, 40px);
+    /* Iba en clamp(0px, 2vw, 40px) para despegar el texto del borde, pero
+       sumado al margen de .wrap dejaba el titular a 113px del canto y se
+       leía cargado a la derecha. El margen de .wrap ya alcanza. */
+    padding-inline: 0;
   }
 }
 
