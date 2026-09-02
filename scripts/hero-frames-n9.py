@@ -61,6 +61,14 @@ FIN = int(os.environ.get('FIN', 299))
 # tenía el hero anterior. De dos en dos serían 150 y el móvil se saldría
 # del presupuesto.
 PASO = int(os.environ.get('PASO', 3))
+# Hasta dónde mira el modelo del fondo. El paño blanco sube por el centro del
+# cuadro a partir del 230, y sus bordes difuminados se mezclan con el fondo
+# dando pixeles rosados MÁS CLAROS que el fondo real. Como el modelo es un
+# máximo por pixel, se los quedaba, y como la ganancia se calcula una vez, eso
+# salía de franja magenta vertical en la parte alta de los 100 frames. Cortar
+# antes del paño lo elimina de raíz. El pack sí sigue entrando en el tramo que
+# se mira, y no estorba: es oscuro y la ventana de tono lo descarta.
+FIN_MODELO = int(os.environ.get('FIN_MODELO', 225))
 # Calidad más baja que la del clip anterior (74/70) y aun así mejor imagen:
 # el supermuestreo 2:1 deja los frames más limpios, así que aguantan más
 # compresión. Con 70/74 el móvil quedaba en 2508 KB contra un tope de 2560,
@@ -127,8 +135,10 @@ def frames(ini, fin, paso):
 # --- 1. modelo del fondo del set ----------------------------------------
 
 def modelo_fondo(paso=4):
-    """El valor más claro que alcanza cada pixel, contando sólo los frames en
-    que ese pixel es fondo rosado. Filtrar por rosado importa: sin eso el
+    """La superficie de luz del set: qué valor tendría el fondo en cada pixel
+    si el producto no estuviera. Se junta el valor más claro que alcanza cada
+    pixel contando sólo los frames en que es fondo rosado, y a esa nube se le
+    ajusta un polinomio liso. Filtrar por rosado importa: sin eso el
     máximo se lleva el paño blanco, que sube por el centro desde el frame 200.
     Y el piso de brillo importa igual: el pack negro tiene sombras cálidas del
     mismo tono y saturación que el fondo, y sin él el modelo se traía un
@@ -136,7 +146,7 @@ def modelo_fondo(paso=4):
     se rellenan difundiendo el fondo vecino: el gradiente es liso y aguanta."""
     acc = np.zeros((H, W, 3), np.float32)
     vis = np.zeros((H, W), np.float32)
-    for a in frames(0, FIN, paso):
+    for a in frames(0, FIN_MODELO, paso):
         h, s, v = rgb2hsv(a)
         R, G, B = a[..., 0], a[..., 1], a[..., 2]
         # Ventana de tono ±14 y no ±22. Medido, el fondo del set vive entre
