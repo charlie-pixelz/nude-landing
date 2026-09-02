@@ -188,12 +188,23 @@
   .hero-arriba,
   .hero-abajo {
     max-width: none;
+    /* Charlie pidió el 2/9/2026 correr ambos bloques más a la izquierda.
+       A la derecha no hay margen para crecer (el frame del producto
+       empieza al 54% del viewport), así que el aumento de ancho se toma
+       enteramente aquí. No se resta un fijo: sólo se come el margen que
+       .wrap ya deja de sobra sobre el gutter mínimo de 24px, así que en el
+       tramo 760-1248px (donde .wrap no tiene sobra) esto no mueve nada y
+       nunca empuja el bloque fuera de pantalla. */
+    margin-left: max(24px, calc((100% - min(100% - 48px, 1200px)) / 2 - 80px));
   }
   /* El frame ocupa el 46% derecho y su borde izquierdo va difuminado sobre
-     un 10% de ese ancho. 44vw deja el titular dentro del rosa limpio, con
-     margen de sobra antes de que empiece el difuminado. */
+     un 10% de ese ancho. 48vw/700px deja el titular dentro del rosa limpio:
+     con el corrimiento a la izquierda de arriba, el borde derecho del
+     bloque queda en el mismo punto que antes de este cambio (768.5px a
+     1512 de ancho), con el mismo margen de sobra que ya estaba verificado
+     contra el difuminado. */
   .hero-arriba .h1 {
-    max-width: min(44vw, 620px);
+    max-width: min(48vw, 700px);
     /* Charlie lo pidió más grande el 2/9/2026 y el brandbook está de
        acuerdo: Halloween Days va "siempre sobre 120px" en titulares de
        portada, y estaba en 76. El tope de 132 no es arbitrario — medido,
@@ -208,16 +219,16 @@
     /* Al crecer la tipografía el setup ya no cabía en 460px y se partía en
        dos líneas. Medido: a 27px la frase mide 511px y hasta el canvas hay
        657, así que la columna sube a la del titular y vuelve a una línea. */
-    max-width: min(44vw, 620px);
-    font-size: clamp(20px, 1.9vw, 27px);
+    max-width: min(48vw, 700px);
+    font-size: clamp(20px, 2.1vw, 31px);
   }
   /* El bloque B sube en la misma proporción que el titular: Charlie pidió
      los dos más grandes, no sólo el de arriba. */
   .hero-abajo .bajada {
-    font-size: clamp(19px, 1.6vw, 23px);
+    font-size: clamp(19px, 1.8vw, 26px);
   }
   .hero-abajo .firma {
-    font-size: clamp(20px, 1.7vw, 25px);
+    font-size: clamp(20px, 1.9vw, 28px);
   }
 }
 @media (min-width: 760px) {
@@ -233,7 +244,9 @@
        eso se encarga el space-between de más arriba; en escritorio el
        producto vive a la derecha y la franja central está libre. */
     justify-content: center;
-    gap: var(--hero-separacion, clamp(72px, 11vh, 130px));
+    /* Sube en la misma proporción (~13%) que el resto del bloque el
+       2/9/2026, al agrandarlo por pedido de Charlie. */
+    gap: var(--hero-separacion, clamp(72px, 12.5vh, 148px));
     padding-top: calc(var(--nav-h) + clamp(20px, 3vh, 40px));
     padding-bottom: clamp(20px, 3vh, 40px);
     /* Iba en clamp(0px, 2vw, 40px) para despegar el texto del borde, pero
