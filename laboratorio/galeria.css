@@ -73,7 +73,14 @@
   --deriva:     0vw;
   --contra:     1;       /* 1 = las fotos van a plomo; 0 = giran con la celda */
   --dispersion: 80vw;    /* cuánto se abren las piezas al empezar */
-  --pista:      200vh;   /* cuánto scroll dura la galería */
+  /* La animación termina antes que el tramo pegajoso: lo que queda
+     después es scroll con la composición ya armada y quieta, para que
+     alcance a mirarse. Sin esto el último fotograma dura un instante y
+     la sección se va. --pista creció en la misma proporción para que el
+     armado no quede acelerado: 160vh de recorrido, 62% armando y 38%
+     en reposo. */
+  --armado:   62%;
+  --pista:      260vh;   /* cuánto scroll dura la galería */
 
   height: var(--pista);
   view-timeline: --galeria block;
@@ -106,7 +113,7 @@
 
   animation: galeria-abre both linear;
   animation-timeline: --galeria;
-  animation-range: contain 0% contain 100%;
+  animation-range: contain 0% contain var(--armado);
 }
 
 /* --dx y --dy los pone el JS: es la dirección de cada pieza respecto del
@@ -123,7 +130,7 @@
   translate: calc(var(--dx) * var(--dispersion)) calc(var(--dy) * var(--dispersion));
   animation: galeria-junta both linear;
   animation-timeline: --galeria;
-  animation-range: contain 0% contain 100%;
+  animation-range: contain 0% contain var(--armado);
 }
 
 /* `translate`, `rotate` y `scale` como propiedades sueltas, no como
@@ -140,7 +147,7 @@
 
   animation: var(--foto) both linear;
   animation-timeline: --galeria;
-  animation-range: contain 0% contain 100%;
+  animation-range: contain 0% contain var(--armado);
 }
 
 @keyframes galeria-abre {

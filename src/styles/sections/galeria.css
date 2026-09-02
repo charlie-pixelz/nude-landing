@@ -1,5 +1,5 @@
 /* ════════════════════════════════════════════════════════════════
-   GALERÍA DE PRODUCTO · entre la 03 y la 04
+   GALERÍA DE PRODUCTO · entre la 04 y la 05
 
    Diez fotos, dos maquetaciones, una sola lista en el HTML.
 
@@ -161,7 +161,14 @@
     --giro:       90deg;
     --escala-ini: 0.66;
     --dispersion: 80vw;
-    --pista:      200vh;
+    /* La animación termina antes que el tramo pegajoso: lo que queda
+       después es scroll con la composición ya armada y quieta, para que
+       alcance a mirarse. Sin esto el último fotograma dura un instante y
+       la sección se va. --pista creció en la misma proporción para que el
+       armado no quede acelerado: 160vh de recorrido, 62% armando y 38%
+       en reposo. */
+    --armado:     62%;
+    --pista:      260vh;
 
     height: var(--pista);
     view-timeline: --galeria block;
@@ -197,7 +204,7 @@
 
     animation: galeria-abre both linear;
     animation-timeline: --galeria;
-    animation-range: contain 0% contain 100%;
+    animation-range: contain 0% contain var(--armado);
   }
 
   /* --x1/--x2/--y1/--y2 (posición) y --dx/--dy (dirección de apertura)
@@ -217,7 +224,7 @@
     translate: calc(var(--dx) * var(--dispersion)) calc(var(--dy) * var(--dispersion));
     animation: galeria-junta both linear;
     animation-timeline: --galeria;
-    animation-range: contain 0% contain 100%;
+    animation-range: contain 0% contain var(--armado);
   }
 
   /* translate, rotate y scale como propiedades sueltas y no como
@@ -232,7 +239,7 @@
 
     animation: var(--foto) both linear;
     animation-timeline: --galeria;
-    animation-range: contain 0% contain 100%;
+    animation-range: contain 0% contain var(--armado);
   }
 
   .galeria-flechas { display: none; }
