@@ -1,0 +1,370 @@
+/* ════════════════════════════════════════════════════════════════
+   GALERÍA DE PRODUCTO · entre la 03 y la 04
+
+   Diez fotos, dos maquetaciones, una sola lista en el HTML.
+
+   Se escribió una sola lista y no dos bloques (uno por dispositivo) por
+   tres razones, en orden de peso:
+
+     1. Las imágenes. Con dos bloques y uno en display:none habría que
+        confiar en que el lazy-loading evite que un teléfono baje además
+        las versiones de escritorio. En la práctica Chrome no las carga,
+        pero es un efecto secundario, no una garantía. Con una lista el
+        <picture> elige por media query: el móvil baja 560w y punto. Es
+        la diferencia entre cumplir el presupuesto de la Fase 5 (600 KB
+        en móvil) y suponer que se cumple.
+     2. Un solo texto alternativo por foto. Duplicado se desincroniza el
+        día que se cambie una imagen.
+     3. Un solo orden. Mover una foto se toca en un lugar.
+
+   Las dos maquetaciones conviven en el mismo <li> sin pelearse: las
+   variables de grilla las ignora un contenedor flex, y `flex` lo ignora
+   una grilla.
+
+   Calibrado en laboratorio/galeria.html, que se conserva como banco de
+   pruebas. Los valores de acá salieron de ahí; si hay que recalibrar,
+   se hace allá y se traen los números.
+   ════════════════════════════════════════════════════════════════ */
+
+.galeria {
+  background: var(--negro);
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   MÓVIL · carrusel con marco orgánico
+   Va primero porque es el caso principal: 390px es el escenario real,
+   no un breakpoint de rescate.
+   ───────────────────────────────────────────────────────────────── */
+
+.galeria-escena {
+  --tarjeta:  80vw;
+  --relacion: 0.67;   /* ancho/alto — 2:3 */
+  padding: 12vh 0;
+}
+
+.galeria-lista {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  list-style: none;
+  margin: 0;
+  /* Lo que sobra a los lados de la tarjeta, repartido en dos: la deja
+     centrada sola y hace que asome la foto vecina, que es la señal de
+     que hay más y de para qué lado, sin dibujar puntitos. */
+  padding: 0 calc((100% - var(--tarjeta)) / 2);
+  scroll-padding: 0 calc((100% - var(--tarjeta)) / 2);
+  overscroll-behavior-x: contain;
+}
+.galeria-lista::-webkit-scrollbar { display: none; }
+
+.galeria-lista li {
+  flex: 0 0 var(--tarjeta);
+  scroll-snap-align: center;
+  aspect-ratio: var(--relacion);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Las cuatro formas se alternan foto por foto, con --marco en el HTML. */
+.galeria-lista img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  clip-path: var(--marco);
+}
+
+.galeria-flechas {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.galeria-flecha {
+  width: 44px;              /* mínimo táctil, no es un número suelto */
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--linea);
+  background: transparent;
+  color: var(--texto-cuerpo);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+.galeria-flecha:hover { border-color: var(--rosa); color: var(--rosa); }
+.galeria-flecha:focus-visible { outline: 2px solid var(--rosa); outline-offset: 3px; }
+.galeria-flecha svg {
+  width: 18px; height: 18px;
+  fill: none; stroke: currentColor; stroke-width: 2;
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   ESCRITORIO · grilla movida por el scroll
+
+   Punto de partida: el pen de Jhey Tompkins (codepen.io/jh3y/pen/VwBgPxP).
+   De ahí queda la idea — una grilla que el scroll escala y gira — y poco
+   más; los cuatro cambios que siguen son de este proyecto.
+
+   1. El original ata la animación a `scroll(root)`, o sea al scroll de
+      TODA la página: la galería giraría durante las ocho secciones. Acá
+      va con `view-timeline` con nombre sobre la propia sección, en el
+      rango `contain`, que arranca exacto cuando el sticky se pega y
+      termina cuando se despega.
+
+   2. El original importa open-props desde unpkg. Fuera: eran dos valores
+      y los tenemos como tokens propios.
+
+   3. EL GIRO TERMINA EN CERO. El original va de 0° a 270°, así que deja
+      todo torcido al final. Acá va de 90° a 0°: el último fotograma, que
+      es la impresión que le queda a quien scrollea, es la composición
+      derecha y ordenada.
+
+   4. Las piezas llegan de afuera hacia adentro (--dispersion): empiezan
+      separadas y se juntan a medida que baja el scroll. El original sólo
+      escala, que lee como zoom; esto lee como que la composición se arma.
+
+   Sobre el recorte de las fotos, que es la parte con truco: la foto ocupa
+   exactamente su celda (100%/100%, object-fit:cover) y contra-gira para
+   quedar a plomo. Al contra-girar, la celda deja de coincidir con la foto
+   y asomarían las esquinas del fondo, así que la foto se agranda lo justo:
+
+       escala(θ) = cos θ + relación · sin θ
+
+   donde `relación` es el lado largo de la celda dividido por el corto y θ
+   el ángulo entre foto y celda. Es la caja mínima que contiene un
+   rectángulo girado, o sea el mínimo exacto: ni una esquina descubierta,
+   ni un pixel de zoom de más. En θ=0 da 1, así que al final del scroll la
+   foto queda en su encuadre natural, sin ampliar.
+
+   Esa curva no es lineal, así que los fotogramas no se pueden interpolar
+   entre dos extremos: por eso los @keyframes traen paradas intermedias,
+   una tanda por proporción de celda. Están calculados, no estimados; el
+   déficit de cobertura máximo en todo el recorrido es 0,14% — sub-pixel.
+   El pen original resolvía lo mismo poniendo la foto al 200% fijo, que
+   tapa las esquinas pero muestra sólo el cuarto central de cada imagen
+   en todo momento.
+   ───────────────────────────────────────────────────────────────── */
+
+@media (min-width: 760px) {
+  .galeria {
+    --columnas:   25;
+    --filas:      12;
+    /* El tamaño se mide contra el ancho, así que en una pantalla ancha y
+       baja la grilla crecería a lo alto hasta salirse. El tope en vh la
+       ata a la dimensión que escasea: en pantallas normales manda el vw
+       (2.9vw < 5.3vh) y en las anchas y bajas toma el relevo el vh. */
+    --celda:      min(2.9vw, 5.3vh);
+    --separacion: min(0.8vw, 1.46vh);
+    --giro:       90deg;
+    --escala-ini: 0.66;
+    --dispersion: 80vw;
+    --pista:      200vh;
+
+    height: var(--pista);
+    view-timeline: --galeria block;
+  }
+
+  .galeria-escena {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    padding: 0;
+    /* Al principio las piezas están dispersas y se salen de la caja: eso
+       es parte del efecto, la sección es una ventana a algo más grande. */
+    overflow: hidden;
+  }
+
+  .galeria-lista {
+    display: grid;
+    gap: var(--separacion);
+    grid-template:
+      repeat(var(--filas),    var(--celda)) /
+      repeat(var(--columnas), var(--celda));
+
+    overflow: visible;
+    padding: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(var(--escala-ini)) rotate(var(--giro));
+    /* El eje de giro es el centro del pack. En esta composición coincide
+       con el centro de la grilla, pero se escribe explícito para que sea
+       una decisión y no una coincidencia. */
+    transform-origin: 50% 50%;
+
+    animation: galeria-abre both linear;
+    animation-timeline: --galeria;
+    animation-range: contain 0% contain 100%;
+  }
+
+  /* --x1/--x2/--y1/--y2 (posición) y --dx/--dy (dirección de apertura)
+     van en el HTML, pieza por pieza. --dx y --dy ya vienen compensados
+     por el giro inicial: como las piezas viven dentro de la grilla, su
+     desplazamiento gira junto con ella, y sin compensar la apertura
+     horizontal se volvía vertical y las fotos entraban desde arriba y
+     abajo, fuera de la pantalla. */
+  .galeria-lista li {
+    grid-column: var(--x1) / var(--x2);
+    grid-row:    var(--y1) / var(--y2);
+    flex: none;
+    aspect-ratio: auto;
+    border-radius: 4px;
+    background: var(--linea);
+
+    translate: calc(var(--dx) * var(--dispersion)) calc(var(--dy) * var(--dispersion));
+    animation: galeria-junta both linear;
+    animation-timeline: --galeria;
+    animation-range: contain 0% contain 100%;
+  }
+
+  /* translate, rotate y scale como propiedades sueltas y no como
+     `transform`: así los keyframes tocan sólo rotate y scale, y el
+     centrado se queda quieto donde está. */
+  .galeria-lista img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+    clip-path: none;          /* el marco orgánico es sólo de móvil */
+
+    animation: var(--foto) both linear;
+    animation-timeline: --galeria;
+    animation-range: contain 0% contain 100%;
+  }
+
+  .galeria-flechas { display: none; }
+
+  @keyframes galeria-abre {
+    from { transform: translate(-50%, -50%) scale(var(--escala-ini)) rotate(var(--giro)); }
+    to   { transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+  }
+
+  @keyframes galeria-junta {
+    from { translate: calc(var(--dx) * var(--dispersion)) calc(var(--dy) * var(--dispersion)); }
+    to   { translate: 0 0; }
+  }
+
+  /* bano, cabeza — relación 1.0 */
+  @keyframes galeria-foto-0 {
+    0%   { rotate: -90deg; scale: 1.0000; }
+    10%  { rotate: -81deg; scale: 1.1441; }
+    20%  { rotate: -72deg; scale: 1.2601; }
+    30%  { rotate: -63deg; scale: 1.3450; }
+    40%  { rotate: -54deg; scale: 1.3968; }
+    50%  { rotate: -45deg; scale: 1.4142; }
+    60%  { rotate: -36deg; scale: 1.3968; }
+    70%  { rotate: -27deg; scale: 1.3450; }
+    80%  { rotate: -18deg; scale: 1.2601; }
+    90%  { rotate:  -9deg; scale: 1.1441; }
+    100% { rotate:   0deg; scale: 1.0000; }
+  }
+
+  /* pack — relación 1.209 */
+  @keyframes galeria-foto-1 {
+    0%   { rotate: -90deg; scale: 1.2090; }
+    10%  { rotate: -81deg; scale: 1.3505; }
+    20%  { rotate: -72deg; scale: 1.4588; }
+    30%  { rotate: -63deg; scale: 1.5312; }
+    40%  { rotate: -54deg; scale: 1.5659; }
+    50%  { rotate: -45deg; scale: 1.5620; }
+    60%  { rotate: -36deg; scale: 1.5196; }
+    70%  { rotate: -27deg; scale: 1.4399; }
+    80%  { rotate: -18deg; scale: 1.3247; }
+    90%  { rotate:  -9deg; scale: 1.1768; }
+    100% { rotate:   0deg; scale: 1.0000; }
+  }
+
+  /* manos — relación 1.264 */
+  @keyframes galeria-foto-2 {
+    0%   { rotate: -90deg; scale: 1.2640; }
+    10%  { rotate: -81deg; scale: 1.4049; }
+    20%  { rotate: -72deg; scale: 1.5112; }
+    30%  { rotate: -63deg; scale: 1.5802; }
+    40%  { rotate: -54deg; scale: 1.6104; }
+    50%  { rotate: -45deg; scale: 1.6009; }
+    60%  { rotate: -36deg; scale: 1.5520; }
+    70%  { rotate: -27deg; scale: 1.4649; }
+    80%  { rotate: -18deg; scale: 1.3417; }
+    90%  { rotate:  -9deg; scale: 1.1854; }
+    100% { rotate:   0deg; scale: 1.0000; }
+  }
+
+  /* cajas-xl — relación 1.418 */
+  @keyframes galeria-foto-3 {
+    0%   { rotate: -90deg; scale: 1.4180; }
+    10%  { rotate: -81deg; scale: 1.5570; }
+    20%  { rotate: -72deg; scale: 1.6576; }
+    30%  { rotate: -63deg; scale: 1.7174; }
+    40%  { rotate: -54deg; scale: 1.7350; }
+    50%  { rotate: -45deg; scale: 1.7098; }
+    60%  { rotate: -36deg; scale: 1.6425; }
+    70%  { rotate: -27deg; scale: 1.5348; }
+    80%  { rotate: -18deg; scale: 1.3892; }
+    90%  { rotate:  -9deg; scale: 1.2095; }
+    100% { rotate:   0deg; scale: 1.0000; }
+  }
+
+  /* duo, bolsillo, tendedero — relación 1.718 */
+  @keyframes galeria-foto-4 {
+    0%   { rotate: -90deg; scale: 1.7180; }
+    10%  { rotate: -81deg; scale: 1.8533; }
+    20%  { rotate: -72deg; scale: 1.9429; }
+    30%  { rotate: -63deg; scale: 1.9847; }
+    40%  { rotate: -54deg; scale: 1.9777; }
+    50%  { rotate: -45deg; scale: 1.9219; }
+    60%  { rotate: -36deg; scale: 1.8188; }
+    70%  { rotate: -27deg; scale: 1.6710; }
+    80%  { rotate: -18deg; scale: 1.4819; }
+    90%  { rotate:  -9deg; scale: 1.2564; }
+    100% { rotate:   0deg; scale: 1.0000; }
+  }
+
+  /* gimnasio, bolso — relación 2.045 */
+  @keyframes galeria-foto-5 {
+    0%   { rotate: -90deg; scale: 2.0450; }
+    10%  { rotate: -81deg; scale: 2.1763; }
+    20%  { rotate: -72deg; scale: 2.2539; }
+    30%  { rotate: -63deg; scale: 2.2761; }
+    40%  { rotate: -54deg; scale: 2.2422; }
+    50%  { rotate: -45deg; scale: 2.1531; }
+    60%  { rotate: -36deg; scale: 2.0110; }
+    70%  { rotate: -27deg; scale: 1.8194; }
+    80%  { rotate: -18deg; scale: 1.5830; }
+    90%  { rotate:  -9deg; scale: 1.3076; }
+    100% { rotate:   0deg; scale: 1.0000; }
+  }
+
+  /* Sin soporte de scroll-driven animations (Firefox viejo, WebKit previo
+     a Safari 26) la grilla se queda armada, que es su estado final y una
+     composición válida por sí sola. No hay fallback en JS a propósito: el
+     proyecto no lleva librerías de scroll y esto es decoración. */
+  @supports not (animation-timeline: view()) {
+    .galeria { height: auto; }
+    .galeria-escena { position: static; height: auto; padding: 12vh 0; }
+    .galeria-lista { position: static; transform: none; margin: 0 auto; }
+    .galeria-lista li { translate: 0 0; animation: none; }
+    .galeria-lista img { animation: none; rotate: 0deg; scale: 1; }
+  }
+}
+
+/* ─────────── Preferencia de movimiento reducido ───────────
+   Con la preferencia activa la galería no se mueve sola en ningún lado:
+   la grilla queda armada y el carrusel deja de avanzar solo (eso lo apaga
+   el JS) y de animar el desplazamiento. Las flechas y el arrastre siguen
+   funcionando, saltando sin transición. */
+@media (prefers-reduced-motion: reduce) {
+  .galeria { height: auto; }
+  .galeria-escena { position: static; height: auto; padding: 12vh 0; overflow: hidden; }
+  .galeria-lista {
+    position: static;
+    transform: none;
+    margin: 0 auto;
+    animation: none;
+    scroll-behavior: auto;
+  }
+  .galeria-lista li { translate: 0 0; animation: none; }
+  .galeria-lista img { animation: none; rotate: 0deg; scale: 1; }
+}
