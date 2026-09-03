@@ -93,6 +93,37 @@
   pointer-events: none;
 }
 
+/* El contenido del hero NO se revela: se pinta completo desde el primer
+   frame. Charlie reportó el 3/9/2026 que al cargar se ve el titular partido
+   por la mitad, y eso no era un fallo de render sino la animación de entrada
+   a medio camino: .ln arranca en translateY(112%) dentro de una máscara con
+   overflow:hidden, así que mientras sube se ve sólo la mitad de arriba de
+   las letras. A 166px eso no se lee como una entrada, se lee como un error.
+
+   El costo real no era el corte sino la espera. El estado revelado lo pone
+   el IntersectionObserver de reveal.js, que corre en un módulo ES (diferido)
+   y necesita un frame más para disparar: medido en producción, el DOM queda
+   listo a los 1040ms y recién ahí empieza una transición de 0,8s con hasta
+   360ms de retardo. El titular y el CTA del hero, que son lo primero que
+   alguien ve y todo el trabajo del sitio en los primeros segundos, llegaban
+   cerca de los dos segundos.
+
+   Un reveal existe para lo que entra al hacer scroll. El hero ya está en
+   pantalla cuando la página abre: no hay entrada que animar. El resto del
+   sitio conserva sus reveals intactos.
+
+   Para devolver la animación: borrar este bloque. El markup no cambió, las
+   clases .rv y .rv-split siguen puestas y el JS las sigue observando; esto
+   sólo hace que su estado inicial ya sea el final. */
+.hero-zonas .rv,
+.hero-zonas .rv-split {
+  opacity: 1;
+  transform: none;
+}
+.hero-zonas .ln {
+  transform: none;
+}
+
 /* Las dos zonas limpias. space-between las ancla arriba y abajo y deja
    la franja central entera para el producto — que es exactamente donde
    el pack vive durante todo el scrub. Sin halo, sin caja, sin scrim:
