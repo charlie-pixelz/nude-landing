@@ -22,7 +22,10 @@ export function initNavZones() {
     const zone = zones.find((z) => line >= z.top && line < z.bottom);
     const mode = zone?.mode ?? '';
     nav.classList.toggle('on-peri', mode === 'peri');
-    nav.classList.toggle('on-pink', mode === 'pink');
+    // El hero usa los mismos colores de texto que una zona rosa, así que
+    // entra por on-pink, y suma on-hero para quitarse el fondo.
+    nav.classList.toggle('on-pink', mode === 'pink' || mode === 'hero');
+    nav.classList.toggle('on-hero', mode === 'hero');
   }
 
   measureZones();

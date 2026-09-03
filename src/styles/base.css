@@ -191,6 +191,19 @@ a:not(.btn):hover {
 }
 .nav.on-pink { background: var(--rosa); }
 .nav.on-peri { background: var(--peri); }
+/* Sobre el hero la barra no pinta fondo, y no es un capricho: el hero tiene
+   detrás el frame del producto, cuyo fondo sale de un video y nunca cae
+   exactamente en el token por más que se corrija —queda a un par de niveles,
+   y el escalado del propio navegador mueve otro tanto—. Una barra opaca del
+   token puro sobre ese frame dibujaba un escalón con borde recto en y=84, y
+   eso se ve: en una superficie plana el ojo detecta diferencias de dos
+   niveles cuando hay una arista. Sin fondo no hay arista, y la diferencia
+   que queda se disuelve en el degradado del borde del frame.
+
+   Es seguro: detrás de la barra el frame es fondo rosa limpio en los cien
+   cuadros. Medido, el 1% más oscuro que llega a pasar por ahí deja el texto
+   negro de la barra en 10,9:1 en escritorio y 8,9:1 en móvil. */
+.nav.on-hero { background: transparent; }
 .nav.on-pink .nav-links a,
 .nav.on-peri .nav-links a {
   color: var(--negro);

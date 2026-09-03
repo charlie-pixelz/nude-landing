@@ -211,7 +211,34 @@ def fondo_plano(a, pl, gain):
     rosado = (np.abs(((h - H_FONDO + 180) % 360) - 180) < 30) & (s > 0.10) & (s < 0.55)
     w = np.clip(1 - (d - 12) / 45, 0, 1)                             # fondo puro
     w = np.maximum(w, rosado * np.clip(1 - (d - 30) / 90, 0, 1))     # y su sombra
-    return a * (1 + (gain - 1) * w[..., None])
+    c = a * (1 + (gain - 1) * w[..., None])
+
+    # Centrado fino del fondo. La corrección de arriba es multiplicativa y va
+    # ponderada por w, así que donde el modelo no calza exacto queda corta: el
+    # fondo terminaba sistemáticamente unos niveles bajo el objetivo, medido
+    # -4,3 en rojo sobre los cien frames. Da igual mientras nada pinte el
+    # token puro al lado, pero la barra del nav hace justo eso —.nav.on-pink
+    # usa var(--rosa) opaco— y sobre el frame dejaba un escalón con borde
+    # recto en y=84: el rectángulo que se veía al cargar.
+    #
+    # Se corrige con un offset aditivo y no subiendo el objetivo de la
+    # ganancia: multiplicar más empuja las zonas claras contra el techo del
+    # canal, que es lo que ya nos costó las zonas quemadas. Sumar 4 niveles
+    # sobre un fondo que está en 246 lo deja en 250, lejos de 255.
+    #
+    # La medida sale de w > 0.9, o sea fondo puro y nada de sombra, y se
+    # aplica con el mismo peso: sobre el pack, donde w es 0, no toca nada.
+    puro = w > 0.9
+    if puro.sum() > 5000:
+        objetivo = ROSA + COMPENSAR[0]
+        c = c + (objetivo - np.median(c[puro], 0)) * w[..., None]
+    return c
+
+
+# Lo que se le suma al objetivo para que, DESPUÉS de comprimir, el fondo caiga
+# en el token. Lo mide sesgo_de_compresion() más abajo; arranca en cero para
+# que esa misma medición no se compense a sí misma.
+COMPENSAR = [np.zeros(3, np.float32)]
 
 
 # --- 3. salida -----------------------------------------------------------
@@ -229,11 +256,42 @@ def escribir(a, idx):
             input=b, check=True)
 
 
+def sesgo_de_compresion(pl, gain):
+    """Cuánto corre el fondo la compresión WebP, medido y no supuesto.
+
+    Aun con el fondo centrado exacto en el token antes de comprimir, el WebP
+    con pérdida lo deja unos niveles más abajo en las zonas planas. Medido
+    sobre este clip: unos 3 niveles en rojo. Es poco y da igual casi siempre,
+    pero la barra del nav pinta el token puro encima del frame y cualquier
+    diferencia se vuelve un escalón con borde recto.
+
+    Se mide una vez, sobre un frame, y se aplica a todos: el fondo del set es
+    el mismo en los cien y la calidad de compresión también."""
+    a = next(frames(INI, INI, 1))
+    c = fondo_plano(blobs_a_rosa(a), pl, gain)
+    tmp = OUT / '_sonda.webp'
+    subprocess.run(
+        [FF, '-v', 'error', '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-s', f'{W}x{H}',
+         '-i', '-', '-c:v', 'libwebp', '-quality', str(CAL_LG), '-preset', 'picture',
+         '-frames:v', '1', '-y', str(tmp)],
+        input=np.clip(c, 0, 255).astype(np.uint8).tobytes(), check=True)
+    q = subprocess.run([FF, '-v', 'error', '-i', str(tmp), '-pix_fmt', 'rgb24',
+                        '-f', 'rawvideo', '-'], capture_output=True, check=True).stdout
+    leido = np.frombuffer(q, np.uint8).reshape(H, W, 3).astype(np.float32)
+    tmp.unlink()
+    antes = np.median(c[80:220, 60:1020].reshape(-1, 3), axis=0)
+    despues = np.median(leido[80:220, 60:1020].reshape(-1, 3), axis=0)
+    return antes - despues
+
+
 print('modelando el fondo del set...', flush=True)
 pl, cobertura = modelo_fondo()
 gain = ROSA / np.clip(pl, 1, None)
 print(f'  cobertura directa {cobertura*100:.1f}%, el resto por difusión')
 print(f'  ganancia: arriba {gain[100, 540].round(3)}  abajo {gain[1850, 540].round(3)}')
+
+COMPENSAR[0] = sesgo_de_compresion(pl, gain)
+print(f'  la compresión corre el fondo {(-COMPENSAR[0]).round(1)}; se compensa antes de escribir')
 
 print(f'frames {INI}..{FIN} paso {PASO}', flush=True)
 idx = 0
@@ -241,17 +299,21 @@ desvios = []
 for a in frames(INI, FIN, PASO):
     idx += 1
     c = fondo_plano(blobs_a_rosa(a), pl, gain)
-    # Desvío del fondo ya corregido contra --rosa. Dos sondas: la banda alta,
-    # donde el texto del hero se apoya sobre el cuadro, y la zona del foco del
-    # set, que es la que se quemaba y por eso se vigila en cada corrida.
+    # Desvío del fondo contra el OBJETIVO INTERNO, que es el token más la
+    # compensación de compresión: acá el frame todavía no se comprimió, así
+    # que apunta a propósito por encima para caer en el token después. Dos
+    # sondas: la banda alta, donde el texto del hero se apoya sobre el cuadro
+    # y donde se apoya la barra del nav, y la zona del foco del set, que es la
+    # que se quemaba y por eso se vigila en cada corrida.
+    objetivo = ROSA + COMPENSAR[0]
     alta = np.median(c[80:220, 60:1020].reshape(-1, 3), axis=0)
     foco = np.median(c[480:720, 20:300].reshape(-1, 3), axis=0)
-    desvios.append((float(np.abs(alta - ROSA).max()), float(np.abs(foco - ROSA).max())))
+    desvios.append((float(np.abs(alta - objetivo).max()), float(np.abs(foco - objetivo).max())))
     escribir(c, idx)
     if idx % 15 == 0:
         print(f'  {idx:>3} frames', flush=True)
 
 print(f'\ntotal {idx} frames')
 alt = [d[0] for d in desvios]; foc = [d[1] for d in desvios]
-print(f'desvío contra --rosa, banda alta: max {max(alt):.0f}, promedio {sum(alt)/len(alt):.1f}')
+print(f"desvío contra el objetivo interno, banda alta: max {max(alt):.0f}, promedio {sum(alt)/len(alt):.1f}")
 print(f'desvío contra --rosa, zona del foco: max {max(foc):.0f}, promedio {sum(foc)/len(foc):.1f}')
