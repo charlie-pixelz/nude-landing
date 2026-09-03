@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="es-CL">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acá no hay nada · NUDE</title>
+  <!-- Este noindex sí es definitivo, a diferencia del de la portada: una
+       página de error no se indexa nunca. -->
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#141110">
+
+  <!-- ══════════ Por qué esta página es autocontenida ══════════
+       Vive en public/ y no pasa por el build: el CSS va acá adentro y las
+       fuentes se referencian por ruta absoluta. La razón es que GitHub Pages
+       sirve este archivo para CUALQUIER dirección que no exista, a cualquier
+       profundidad. Con rutas relativas, /nude-landing/algo funcionaría pero
+       /nude-landing/algo/mas no: el navegador las resolvería contra
+       /nude-landing/algo/ y no encontraría nada. Una página de error que se
+       ve rota es peor que no tenerla.
+
+       Las fuentes de public/fuentes/ son copias de las de src/assets/fonts/.
+       Están duplicadas a propósito: las del sitio salen del build con un
+       hash en el nombre, así que su ruta no se puede escribir a mano. Si
+       alguna vez se cambian las fuentes de marca, hay que copiarlas también
+       acá. Son las tres subseteadas, 56 KB en total, y solo se descargan si
+       alguien llega a esta página.
+
+       CUANDO SE MIGRE A nudewipes.cl hay que cambiar las cuatro rutas
+       absolutas de abajo: las tres fuentes y el enlace de vuelta. -->
+  <style>
+    @font-face {
+      font-family: 'Archivo Black';
+      src: url('/nude-landing/fuentes/archivo-black.woff2') format('woff2');
+      font-weight: 400; font-display: swap;
+    }
+    @font-face {
+      font-family: 'Archivo';
+      src: url('/nude-landing/fuentes/archivo-regular.woff2') format('woff2');
+      font-weight: 400; font-display: swap;
+    }
+    @font-face {
+      font-family: 'Space Mono';
+      src: url('/nude-landing/fuentes/space-mono-regular.woff2') format('woff2');
+      font-weight: 400; font-display: swap;
+    }
+
+    /* Los mismos valores que src/styles/tokens.css. */
+    :root {
+      --negro: #141110;
+      --rosa: #FAB8C4;
+      --peri: #8FA2E3;
+      --crema: #F6F1EA;
+      --texto-bajada: #B8B0A8;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--negro);
+      color: var(--crema);
+      font-family: 'Archivo', system-ui, sans-serif;
+      font-size: 17px;
+      line-height: 1.6;
+      min-height: 100svh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      -webkit-font-smoothing: antialiased;
+    }
+    .wrap { width: min(100% - 48px, 720px); text-align: center; }
+
+    /* 16px y no los 14 del prototipo: el brandbook pide etiqueta de 13-15px
+       y, en la misma frase, nada bajo 16. Gana el piso de 16, igual que en
+       el sitio. El rol de etiqueta lo dan la familia mono y el tracking. */
+    .codigo {
+      font-family: 'Space Mono', ui-monospace, monospace;
+      font-size: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--rosa);
+    }
+    h1 {
+      font-family: 'Archivo Black', system-ui, sans-serif;
+      font-size: clamp(46px, 10vw, 96px);
+      line-height: 1;
+      letter-spacing: -0.02em;
+      color: var(--rosa);
+      margin-top: 22px;
+      text-wrap: pretty;
+    }
+    p {
+      color: var(--texto-bajada);
+      font-size: clamp(19px, 2vw, 22px);
+      margin-top: 24px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 54px;
+      padding: 0 32px;
+      margin-top: 44px;
+      font-family: 'Space Mono', ui-monospace, monospace;
+      font-size: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      text-decoration: none;
+      border-radius: 999px;
+      background: var(--rosa);
+      color: var(--negro);
+      border: 1px solid var(--rosa);
+      transition: background 0.3s var(--ease), border-color 0.3s var(--ease);
+    }
+    .btn:hover { background: var(--peri); border-color: var(--peri); }
+    :focus-visible { outline: 2px solid var(--rosa); outline-offset: 3px; }
+    @media (prefers-reduced-motion: reduce) {
+      .btn { transition: none; }
+    }
+
+    /* La firma cierra toda pieza pública, y esta lo es. */
+    .firma {
+      margin-top: 56px;
+      font-family: 'Archivo Black', system-ui, sans-serif;
+      font-size: 17px;
+      letter-spacing: -0.01em;
+      color: var(--crema);
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <p class="codigo">404</p>
+    <h1>Acá no hay nada.</h1>
+    <p>El link se fue por el WC.</p>
+    <a class="btn" href="/nude-landing/">Volver al inicio</a>
+    <p class="firma">Así se hace.</p>
+  </main>
+</body>
+</html>
