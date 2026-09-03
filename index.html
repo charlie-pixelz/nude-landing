@@ -46,6 +46,19 @@
        primero que se ve al abrir. -->
   <meta name="theme-color" content="#FAB8C4">
 
+  <!-- Íconos. Los genera scripts/favicon.py desde el logotipo: la palabra
+       sola, negra sobre rosa. Lleva fondo propio y no es solo el logo porque
+       en la pestaña el fondo lo pone el navegador según el tema del sistema,
+       y un logotipo monocromo desaparece en uno de los dos.
+
+       Van declarados de forma explícita, y eso no es opcional acá: sin las
+       etiquetas el navegador busca /favicon.ico en la raíz del DOMINIO, que
+       en un project page de GitHub Pages no es la raíz del sitio. -->
+  <link rel="icon" href="./favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" href="./favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png">
+  <link rel="manifest" href="./site.webmanifest">
+
   <link rel="preload" as="image" href="./hero-poster.webp" fetchpriority="high">
 </head>
 <body>
