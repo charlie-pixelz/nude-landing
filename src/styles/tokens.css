@@ -1,9 +1,26 @@
 /* Tokens de marca — fuente única: Brand-Guidelines-NUDE.pdf, en la raíz del repo.
-   No se inventan valores fuera de esta lista. */
+   No se inventan valores fuera de esta lista, con una excepción vigente y
+   autorizada: --rosa (ver abajo). */
 :root {
   /* color de marca */
   --negro: #141110;
-  --rosa: #F3C9D3;
+  /* EXCEPCIÓN AL BRANDBOOK, autorizada. El brandbook pide #F3C9D3. A Javier
+     y al cliente les pareció que el sitio quedaba pálido y pidieron probar
+     un rosa más encendido; Charlie confirmó el permiso por escrito el
+     3/9/2026. Esto es una propuesta al cliente: si la rechaza, se vuelve a
+     #F3C9D3 cambiando esta línea y volviendo a correr hero-frames-n9.py.
+
+     El valor pedido era #FFBBC7 y este no es ese: el rojo baja de 255 a 250
+     a propósito. El fondo del hero está horneado en los frames y se aplana
+     multiplicando hacia este token, así que un objetivo con el canal rojo
+     en el tope aplasta contra el techo la zona del foco del set —medido:
+     9,87% del fondo saturado contra el 0,61% de hoy—, que es la condición
+     exacta que produjo las zonas quemadas del 2/9. Con 250 baja a 1,83%.
+     A ojo son el mismo rosa: 5 niveles de diferencia en rojo y 3 en verde
+     y azul. Si se toca este valor hay que regenerar los frames del hero:
+     el fondo del canvas y este token tienen que ser el MISMO color o se ve
+     la costura en el borde del frame. */
+  --rosa: #FAB8C4;
   --peri: #8FA2E3;
   --crema: #F6F1EA;
   /* El mismo crema, con un nombre que las superficies de color no remapean.

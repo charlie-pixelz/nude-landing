@@ -54,7 +54,12 @@ OUT = pathlib.Path(sys.argv[1]); OUT.mkdir(parents=True, exist_ok=True)
 (OUT / 'lg').mkdir(exist_ok=True); (OUT / 'sm').mkdir(exist_ok=True)
 
 W, H = 1080, 1920
-ROSA = np.array([243., 201., 211.])       # --rosa #F3C9D3
+# Tiene que ser el MISMO valor que --rosa en tokens.css: el fondo del frame
+# y el fondo del CSS se tocan en el borde izquierdo del canvas y cualquier
+# diferencia se ve como costura. Cambió el 3/9/2026 de #F3C9D3 a #FAB8C4 por
+# el pedido de un rosa más encendido; el porqué del hex exacto (y de que no
+# sea el #FFBBC7 que se pidió) está en el comentario de tokens.css.
+ROSA = np.array([250., 184., 196.])       # --rosa #FAB8C4
 INI = int(os.environ.get('INI', 0))
 FIN = int(os.environ.get('FIN', 299))
 # 300 cuadros de tres en tres dan 100 frames, en el orden de los 111 que
